@@ -244,34 +244,6 @@ export default function Calculator() {
   const [loading, setLoading] = useState(false);
   const [saved, setSaved] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
-  const [isHydrated, setIsHydrated] = useState(false);
-
-  const STORAGE_KEY = 'albion_calculator_manual_data_v2_albion_printer_match';
-
-  // 1. Hydrate from LocalStorage on mount
-  useEffect(() => {
-    const data = localStorage.getItem(STORAGE_KEY);
-    if (data) {
-      try {
-        const parsed = JSON.parse(data);
-        if (parsed.overrides) setItemOverrides(parsed.overrides);
-        if (parsed.sellPrices) setAllManualSellPrices(parsed.sellPrices);
-      } catch (e) {
-        console.error("Failed to hydrate prices", e);
-      }
-    }
-    setIsHydrated(true);
-  }, []);
-
-  // 2. Persist to LocalStorage on change
-  useEffect(() => {
-    if (!isHydrated) return;
-    const data = {
-      overrides: itemOverrides,
-      sellPrices: allManualSellPrices
-    };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-  }, [itemOverrides, allManualSellPrices, isHydrated]);
 
 
   // Dynamic Materials State
@@ -352,7 +324,7 @@ export default function Calculator() {
         }, {});
 
         setAllMarketPrices(prev => ({ ...prev, ...marketMap }));
-        setAllMarketQualityPrices(prev => ({ ...prev, ...qualityMarketMap }));
+        setAllMarketQualityPrices(prev => ({ ...prev, ...(qualityMarketMap as any) }));
       }
     } catch (error) {
       console.error("Fetch Data Failed:", error);

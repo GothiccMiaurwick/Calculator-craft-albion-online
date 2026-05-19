@@ -328,6 +328,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       ...readStoredValue(STORAGE_KEYS.calculatorPrefs, INITIAL_CALCULATOR_PREFERENCES),
     });
     setSidebarCollapsed(readStoredValue(STORAGE_KEYS.sidebarCollapsed, false));
+    
+    const manualData = readStoredValue('albion_calculator_manual_data_v2_albion_printer_match', { overrides: {}, sellPrices: {} });
+    setItemOverrides(manualData.overrides || {});
+    setAllManualSellPrices(manualData.sellPrices || {});
+
     setHasHydratedStorage(true);
   }, []);
 
@@ -365,6 +370,14 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     if (!hasHydratedStorage) return;
     localStorage.setItem(STORAGE_KEYS.sidebarCollapsed, JSON.stringify(sidebarCollapsed));
   }, [hasHydratedStorage, sidebarCollapsed]);
+
+  useEffect(() => {
+    if (!hasHydratedStorage) return;
+    localStorage.setItem('albion_calculator_manual_data_v2_albion_printer_match', JSON.stringify({
+      overrides: itemOverrides,
+      sellPrices: allManualSellPrices
+    }));
+  }, [hasHydratedStorage, itemOverrides, allManualSellPrices]);
 
   const addPlannerItem = useCallback((item: Omit<PlannerItem, 'id'>) => {
     const newItem = { ...item, id: Math.random().toString(36).slice(2, 11) };
