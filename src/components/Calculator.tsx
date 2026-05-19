@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useEffect, useRef, useMemo, memo } from 'react';
 import { useApp } from '@/lib/AppContext';
-import { TIERS, ENCHANTS, CITIES, SERVERS, getItemImageUrl, CATEGORIES } from '@/lib/items';
+import { TIERS, ENCHANTS, CITIES, SERVERS, getItemImageUrl, CATEGORIES, normalizeId } from '@/lib/items';
 import { fetchPrices, fetchItemMaterials } from '@/lib/api';
 import { calculateCrafting, isArtifactLikeMaterial, resolvePrice, getResourceField } from '@/lib/calcEngine';
 import { getAdjustedFocusCost, getCraftingSpecBonus, getExpectedSalePriceFromQualities, type QualityPriceMap } from '@/lib/craftingSpecs';
