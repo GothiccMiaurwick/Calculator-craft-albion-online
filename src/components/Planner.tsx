@@ -15,6 +15,8 @@ import {
   ReceiptText,
   Star,
   Weight,
+  ChevronDown,
+  ChevronUp,
 } from 'lucide-react';
 import { useApp } from '@/lib/AppContext';
 import { fetchPrices } from '@/lib/api';
@@ -37,9 +39,11 @@ import AddCraftModal from './AddCraftModal';
 import styles from './Planner.module.css';
 
 const EXTRA_COSTS_KEY = 'planner_extra_costs';
-const MATERIAL_WEIGHTS: Record<number, number> = { 4: 0.5, 5: 0.8, 6: 1.1, 7: 1.7, 8: 2.6 };
-const JOURNAL_WEIGHTS: Record<number, number> = { 4: 0.3, 5: 0.5, 6: 0.8, 7: 1.1, 8: 1.7 };
-const ARTIFACT_WEIGHT = 2;
+const MATERIAL_WEIGHTS: Record<number, number> = { 4: 0.5, 5: 0.7, 6: 1.1, 7: 1.7, 8: 2.8 };
+const JOURNAL_WEIGHTS: Record<number, number> = { 4: 0.34, 5: 0.51, 6: 0.76, 7: 1.14, 8: 1.71 };
+const ARTIFACT_WEIGHT = 2.0;
+const SHARD_WEIGHT = 0.1;
+
 const MOUNTS = [
   { name: 'Armored Horse', capacity: 325, itemId: 'T8_MOUNT_ARMORED_HORSE' },
   { name: 'Gallant Horse', capacity: 494, itemId: 'UNIQUE_MOUNT_GIANT_HORSE_ADC' },
@@ -51,15 +55,15 @@ const MOUNTS = [
   { name: "Elder's Transport Ox", capacity: 5000, itemId: 'T8_MOUNT_OX' },
 ];
 const BAG_OPTIONS = [
-  { name: 'No bag', bonus: 0 },
-  { name: 'T6 Bag', bonus: 432 },
-  { name: 'T7 Bag', bonus: 664 },
-  { name: 'T8 Bag', bonus: 1038 },
+  { name: 'No bag', bonus: 0, itemId: '' },
+  { name: 'T6 Bag', bonus: 432, itemId: 'T6_BAG' },
+  { name: 'T7 Bag', bonus: 664, itemId: 'T7_BAG' },
+  { name: 'T8 Bag', bonus: 1038, itemId: 'T8_BAG' },
 ];
 const FOOD_OPTIONS = [
-  { name: 'No food', bonus: 0 },
-  { name: 'Pork Pie', bonus: 0.3 },
-  { name: 'Avalonian Pork Pie', bonus: 0.45 },
+  { name: 'No food', bonus: 0, itemId: '' },
+  { name: 'Pork Pie', bonus: 0.3, itemId: 'T7_MEAL_PIE' },
+  { name: 'Avalonian Pork Pie', bonus: 0.45, itemId: 'T7_MEAL_PIE_AVALON' },
 ];
 const CRAFT_FAME_BONUSES = [
   { label: 'NONE', value: 1 },
@@ -135,10 +139,11 @@ function formatUnroundedValue(value: number, localeCode: string): string {
   });
 }
 
-function formatSignedUnroundedValue(value: number, localeCode: string): string {
-  const formatted = formatUnroundedValue(value, localeCode);
-  if (value > 0) return `+${formatted}`;
-  if (value < 0) return `-${formatted}`;
+function formatSignedExactValue(value: number, localeCode: string): string {
+  const rounded = Math.round(value);
+  const formatted = Math.abs(rounded).toLocaleString(localeCode);
+  if (rounded > 0) return `+${formatted}`;
+  if (rounded < 0) return `-${formatted}`;
   return formatted;
 }
 
@@ -225,17 +230,23 @@ function FormattedPlannerInput({
   );
 }
 
+function getWeightForMaterial(id: string): number {
+  if (isArtifactMaterial(id) || isSpecialIngredientMaterial(id)) {
+    // Shards, Souls, Relics are 0.1, specific item artifacts are 2.0
+    if (id.includes('SOUL') || id.includes('RUNE') || id.includes('RELIC') || id.includes('SHARD')) {
+      return SHARD_WEIGHT;
+    }
+    return ARTIFACT_WEIGHT;
+  }
+  const tier = getTierInfo(id).tier;
+  return MATERIAL_WEIGHTS[tier] ?? 0.1;
+}
+
 export default function Planner() {
-  const {
-    plannerItems,
-    removePlannerItem,
-    updatePlannerItem,
-    resources,
-    artifactPrices,
-    journals,
-    specs,
-    calculatorPreferences,
-    server,
+  const { 
+    plannerItems, updatePlannerItem, removePlannerItem, 
+    calculatorPreferences, resources, artifactPrices, journals, specs,
+    itemOverrides, allManualSellPrices, allMarketPrices, server
   } = useApp();
   const locale = calculatorPreferences.locale;
   const localeCode = getDisplayLocale(locale);
@@ -243,105 +254,82 @@ export default function Planner() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [extraCosts, setExtraCosts] = useState(() => readExtraCosts());
   const [selectedMountIndex, setSelectedMountIndex] = useState(2);
-  const [selectedBagIndex, setSelectedBagIndex] = useState(0);
-  const [selectedFoodIndex, setSelectedFoodIndex] = useState(0);
+  const [selectedBagIndex, setSelectedBagIndex] = useState(3);
+  const [selectedFoodIndex, setSelectedFoodIndex] = useState(1);
   const [craftFameBonus, setCraftFameBonus] = useState(1);
+  const [showCraftFame, setShowCraftFame] = useState(false);
+  const [showWeight, setShowWeight] = useState(false);
   const planificadorRef = useRef<HTMLElement | null>(null);
   const materialesRef = useRef<HTMLElement | null>(null);
   const resumenRef = useRef<HTMLElement | null>(null);
 
+  // Toggle helpers to ensure clean interaction
+  const toggleCraftFame = () => setShowCraftFame(prev => !prev);
+
+  // 1. Sync global resource prices into each planner item's snapshot
   useEffect(() => {
     plannerItems.forEach((item) => {
-      const hasPriceSnapshot = item.materialPricesSnapshot && Object.keys(item.materialPricesSnapshot).length > 0;
-      const expectedFallback = getFallbackRecipe(item.item.id);
-      const expectedSpecialIds = expectedFallback
-        .filter((mat) => isSpecialIngredientMaterial(mat.id))
-        .map((mat) => mat.id);
-      const hasExpectedSpecialIds = expectedSpecialIds.every((id) =>
-        item.materialsSnapshot.some((mat) => mat.id === id)
-      );
-      const needsShapeshifterMigration =
-        item.item.baseId.includes('SHAPESHIFTER') &&
-        expectedSpecialIds.length > 0 &&
-        !hasExpectedSpecialIds;
-      const expectedArtifactIds = expectedFallback
-        .filter((mat) => isArtifactMaterial(mat.id))
-        .map((mat) => mat.id);
-      const currentArtifactIds = item.materialsSnapshot
-        .filter((mat) => isArtifactMaterial(mat.id))
-        .map((mat) => mat.id);
-      const expectedCore = expectedFallback.map((mat) => `${mat.id}:${mat.quantity}`).sort();
-      const currentCore = item.materialsSnapshot.map((mat) => `${mat.id}:${mat.quantity}`).sort();
-      const needsRecipeQuantityMigration = JSON.stringify(expectedCore) !== JSON.stringify(currentCore);
-      const needsArtifactIdMigration =
-        expectedArtifactIds.length > 0 &&
-        JSON.stringify(expectedArtifactIds) !== JSON.stringify(currentArtifactIds);
+      const snapshot = Array.isArray(item.materialsSnapshot) ? item.materialsSnapshot : [];
+      const materials = snapshot.length > 0 ? snapshot : getFallbackRecipe(item.item.id);
 
-      if (hasPriceSnapshot && !needsShapeshifterMigration && !needsArtifactIdMigration && !needsRecipeQuantityMigration) {
-        return;
-      }
+      const materialPricesSnapshot: Record<string, number> = {};
+      let hasChanges = false;
 
-      const materials = needsShapeshifterMigration || needsArtifactIdMigration || needsRecipeQuantityMigration
-        ? expectedFallback
-        : Array.isArray(item.materialsSnapshot) && item.materialsSnapshot.length > 0
-          ? item.materialsSnapshot
-          : getFallbackRecipe(item.item.id);
-      const materialPricesSnapshot = materials.reduce<Record<string, number>>((acc, mat) => {
-        acc[mat.id] = resolvePrice(mat.id, resources, artifactPrices);
-        return acc;
-      }, {});
+      materials.forEach((mat) => {
+        const currentPrice = resolvePrice(mat.id, resources, artifactPrices);
+        const snapshotPrice = item.materialPricesSnapshot?.[mat.id] ?? 0;
 
-      const sameMaterials = JSON.stringify(item.materialsSnapshot) === JSON.stringify(materials);
-      const samePriceSnapshot = JSON.stringify(item.materialPricesSnapshot || {}) === JSON.stringify(materialPricesSnapshot);
-      if (sameMaterials && samePriceSnapshot) {
-        return;
-      }
+        materialPricesSnapshot[mat.id] = currentPrice;
 
-      updatePlannerItem(item.id, {
-        materialsSnapshot: materials,
-        materialPricesSnapshot,
+        if (currentPrice !== snapshotPrice) {
+          hasChanges = true;
+        }
       });
+
+      if (hasChanges) {
+        updatePlannerItem(item.id, {
+          materialsSnapshot: materials,
+          materialPricesSnapshot,
+        });
+      }
     });
   }, [plannerItems, updatePlannerItem, resources, artifactPrices]);
 
+  // 2. Fetch missing market prices for special ingredients if needed
   useEffect(() => {
     const syncSpecialMaterialPrices = async () => {
       for (const item of plannerItems) {
-        const materials = Array.isArray(item.materialsSnapshot) ? item.materialsSnapshot : [];
-        if (materials.length === 0) continue;
+        const snapshot = Array.isArray(item.materialsSnapshot) ? item.materialsSnapshot : [];
+        const materials = snapshot.length > 0 ? snapshot : getFallbackRecipe(item.item.id);
 
-        const missingIds = materials
-          .map((mat) => mat.id)
-          .filter((id) => {
-            const snapshotValue = item.materialPricesSnapshot?.[id];
-            if (typeof snapshotValue === 'number' && snapshotValue > 0) return false;
-            if (!isArtifactLikeMaterial(id)) return false;
-            return resolvePrice(id, resources, artifactPrices) <= 0;
-          });
+        const specialMats = materials.filter(m => !m.id.includes('ARTEFACT') && !m.id.includes('METALBAR') && !m.id.includes('LEATHER') && !m.id.includes('PLANKS') && !m.id.includes('FIBER') && !m.id.includes('CLOTH'));
+        if (specialMats.length === 0) continue;
 
+        const missingIds = specialMats.map(m => m.id).filter(id => (item.materialPricesSnapshot?.[id] ?? 0) === 0);
         if (missingIds.length === 0) continue;
 
         try {
-          const marketRows = await fetchPrices(Array.from(new Set(missingIds)), server, CITIES);
-          const fetchedPrices = marketRows.reduce<Record<string, number>>((acc, row) => {
-            if (row.quality !== 1) return acc;
-            const candidate = row.sell_price_min || row.buy_price_max || 0;
-            if (candidate > (acc[row.item_id] ?? 0)) {
-              acc[row.item_id] = candidate;
+          const prices = await fetchPrices(missingIds, server, CITIES);
+          if (prices && prices.length > 0) {
+            const newSnapshot = { ...(item.materialPricesSnapshot || {}) };
+            let updated = false;
+
+            prices.forEach(p => {
+              if (p.quality === 1 && (p.sell_price_min > 0 || p.buy_price_max > 0)) {
+                const val = p.sell_price_min || p.buy_price_max;
+                if (newSnapshot[p.item_id] !== val) {
+                  newSnapshot[p.item_id] = val;
+                  updated = true;
+                }
+              }
+            });
+
+            if (updated) {
+              updatePlannerItem(item.id, { materialPricesSnapshot: newSnapshot });
             }
-            return acc;
-          }, {});
-
-          if (Object.keys(fetchedPrices).length === 0) continue;
-
-          updatePlannerItem(item.id, {
-            materialPricesSnapshot: {
-              ...(item.materialPricesSnapshot || {}),
-              ...fetchedPrices,
-            },
-          });
-        } catch (error) {
-          console.error('Planner special material price sync failed:', error);
+          }
+        } catch (e) {
+          console.error("Failed to fetch special material prices for planner", e);
         }
       }
     };
@@ -373,21 +361,22 @@ export default function Planner() {
       const snapshot = Array.isArray(pi.materialsSnapshot) ? pi.materialsSnapshot : [];
       const materials = snapshot.length > 0 ? snapshot : getFallbackRecipe(pi.item.id);
       const priceSnapshot = pi.materialPricesSnapshot || {};
-      const salePrice = typeof pi.salePriceSnapshot === 'number' ? pi.salePriceSnapshot : 0;
+      const salePrice = allManualSellPrices[pi.item.id] ?? pi.salePriceSnapshot;
+      
       const calc = calculateCrafting({
         materials,
         resources,
         artifactPrices,
-        priceOverrides: priceSnapshot,
-        marketPrices: priceSnapshot,
+        priceOverrides: itemOverrides[pi.item.id] || {},
+        marketPrices: allMarketPrices,
         salePrice,
         returnRate: pi.returnRate,
-        taxRate: pi.taxRate,
+        taxRate: calculatorPreferences.tax, // Use global preference
         itemQuantity: pi.quantity,
       });
 
       const materialBreakdown = materials.map((mat) => {
-        const unitPrice = priceSnapshot[mat.id] ?? resolvePrice(mat.id, resources, artifactPrices, {}, priceSnapshot);
+        const unitPrice = resolvePrice(mat.id, resources, artifactPrices, itemOverrides[pi.item.id] || {}, allMarketPrices);
         const totalQty = getRequiredPurchaseQuantity(
           mat.quantity,
           pi.quantity,
@@ -404,23 +393,47 @@ export default function Planner() {
       });
 
       const journalProgress = getJournalProgress(pi.item, pi.tier, pi.enchant, pi.quantity);
+      const realInversion = materialBreakdown.reduce((sum, mat) => sum + mat.totalCost, 0);
+      
+      // Theoretical Inversion (No buffer) — used for per-item profit and ROI to match Albion Printer
+      const theoreticalInversion = materialBreakdown.reduce((sum, mat) => {
+        const netQty = mat.quantity * pi.quantity * (isReturnEligibleMaterial(mat.id) ? (1 - pi.returnRate / 100) : 1);
+        return sum + mat.unitPrice * netQty;
+      }, 0);
+
+      const rowRevenue = salePrice * pi.quantity;
+      const rowTax = rowRevenue * (pi.taxRate / 100);
+      const realProfit = rowRevenue - rowTax - realInversion;
+      const theoreticalProfit = rowRevenue - rowTax - theoreticalInversion;
 
       return {
         ...pi,
         salePrice,
         calc,
+        realInversion,
+        theoreticalInversion,
+        realProfit,
+        theoreticalProfit,
         journalProgress,
         materialBreakdown,
         totalSaleValue: salePrice * pi.quantity,
         totalFocus: pi.useFocus ? getAdjustedFocusCost(pi.item, pi.tier, pi.enchant, specs) * pi.quantity : 0,
       };
     });
-  }, [plannerItems, resources, artifactPrices, specs]);
+  }, [plannerItems, resources, artifactPrices, specs, calculatorPreferences.tax]);
 
   const activeRows = plannerRows.filter(row => !row.isDone);
 
   const materialTotals = useMemo(() => {
-    const totals: Record<string, { id: string; quantity: number; buyQty: number; label: string; tier: number; enchant: number; tierLabel: string }> = {};
+    const totals: Record<string, { 
+      id: string; 
+      quantity: number; 
+      label: string; 
+      tier: number; 
+      enchant: number; 
+      tierLabel: string; 
+      isEligible: boolean 
+    }> = {};
 
     activeRows.forEach((row) => {
       row.materialBreakdown.forEach((mat) => {
@@ -429,11 +442,11 @@ export default function Planner() {
           totals[mat.id] = {
             id: mat.id,
             quantity: 0,
-            buyQty: 0,
             label: getPlannerMaterialLabel(mat.id, locale),
             tier: tierInfo.tier,
             enchant: tierInfo.enchant,
             tierLabel: tierInfo.label,
+            isEligible: isReturnEligibleMaterial(mat.id),
           };
         }
         totals[mat.id].quantity += mat.totalQty;
@@ -441,36 +454,14 @@ export default function Planner() {
     });
 
     return Object.values(totals)
-      .map((entry) => ({
-        ...entry,
-        buyQty: Math.ceil(entry.quantity),
-      }))
+      .map((entry) => {
+        return {
+          ...entry,
+          buyQty: Math.ceil(entry.quantity),
+        };
+      })
       .sort((a, b) => b.tier - a.tier || b.enchant - a.enchant || a.label.localeCompare(b.label));
   }, [activeRows, locale]);
-
-  const groupedMaterials = useMemo(() => {
-    const groups = {
-      cuero: [] as typeof materialTotals,
-      tela: [] as typeof materialTotals,
-      tablas: [] as typeof materialTotals,
-      lingote: [] as typeof materialTotals,
-      artefactos: [] as typeof materialTotals,
-      especiales: [] as typeof materialTotals,
-      otros: [] as typeof materialTotals,
-    };
-
-    materialTotals.forEach((mat) => {
-      if (isArtifactMaterial(mat.id)) groups.artefactos.push(mat);
-      else if (isSpecialIngredientMaterial(mat.id)) groups.especiales.push(mat);
-      else if (mat.id.includes('LEATHER')) groups.cuero.push(mat);
-      else if (mat.id.includes('FIBER') || mat.id.includes('CLOTH')) groups.tela.push(mat);
-      else if (mat.id.includes('PLANKS')) groups.tablas.push(mat);
-      else if (mat.id.includes('METALBAR')) groups.lingote.push(mat);
-      else groups.otros.push(mat);
-    });
-
-    return groups;
-  }, [materialTotals]);
 
   const journalSummary = useMemo(() => {
     const entries: Record<
@@ -520,13 +511,10 @@ export default function Planner() {
       const partialPercent = (exactQuantity - fullQuantity) * 100;
       const buyQuantity = exactQuantity > 0 ? Math.ceil(exactQuantity) : 0;
 
-      // Net Journal Profit Formula (Santux):
-      // Each journal (even partial) contributes to profit proportionally.
-      // Profit per journal = (Sell Price * (1 - Tax)) - Buy Price
+      // Albion Printer: Apply tax to journal sell price for profit calculation
       const taxRate = calculatorPreferences.tax / 100;
       const netSellPrice = entry.sell * (1 - taxRate);
       const profitPerJournal = netSellPrice - entry.buy;
-      // Santux Formula: Total profit per journal line includes partials to match the original tool's results.
       const totalProfit = exactQuantity * profitPerJournal;
 
       return {
@@ -541,54 +529,111 @@ export default function Planner() {
 
     const buyTotal = details.reduce((sum, entry) => sum + entry.buy * entry.buyQuantity, 0);
     const sellTotal = details.reduce((sum, entry) => sum + entry.sell * entry.fullQuantity, 0);
+    
+    // Profit shown in summary (Net of Tax)
     const profit = details.reduce((sum, entry) => sum + entry.calculatedProfit, 0);
+
+    // Realized Profit = Revenue from FULL journals (Net of Tax) - Cost of ALL purchased journals
+    const realizedProfit = details.reduce((sum, entry) => {
+      const taxRate = calculatorPreferences.tax / 100;
+      const netSell = entry.sell * (1 - taxRate);
+      // Albion Printer: Net Journal Profit = (SellPrice * 0.935 - BuyPrice) * FullJournals
+      return sum + (entry.fullQuantity * (netSell - entry.buy));
+    }, 0);
 
     return {
       details,
       buyTotal,
       sellTotal,
       profit,
+      realizedProfit,
     };
   }, [activeRows, journals, calculatorPreferences.tax]);
 
-  const totalInvestment = activeRows.reduce((sum, row) => sum + row.calc.inversion, 0);
-  const totalProfit = activeRows.reduce((sum, row) => sum + row.calc.gananciaNeta, 0);
-  const totalFocus = activeRows.reduce((sum, row) => sum + row.totalFocus, 0);
-  const totalExtraInvestment = totalInvestment + journalSummary.buyTotal + extraCosts;
-  const totalNetProfit = totalProfit + journalSummary.profit - extraCosts;
-  const totalSaleValue = totalExtraInvestment + totalNetProfit;
-  const roi = totalExtraInvestment > 0 ? (totalNetProfit / totalExtraInvestment) * 100 : 0;
-  const blackMarketRows = activeRows.filter(row => row.blackMarket);
-  const craftFameRows = activeRows.map((row) => {
-    const famePerItem = getCraftingFameForItem(row.item, row.tier, row.enchant);
-    const totalFame = famePerItem * row.quantity * craftFameBonus * (calculatorPreferences.usePremium ? 1.5 : 1);
+  // Use real material investment per row (includes first-craft buffer)
+  const totalItemRealInversion = activeRows.reduce((sum, row) => sum + row.realInversion, 0);
 
-    return {
-      id: row.id,
-      item: row.item,
-      tier: row.tier,
-      enchant: row.enchant,
-      quantity: row.quantity,
-      famePerItem,
-      totalFame,
-    };
-  });
-  const totalCraftFame = craftFameRows.reduce((sum, row) => sum + row.totalFame, 0);
-  const materialWeight = materialTotals.reduce((sum, mat) => {
-    return sum + Math.ceil(mat.quantity) * (MATERIAL_WEIGHTS[mat.tier] ?? 0);
+  // Item-only theoretical net profit (matches the 1,728,793 target)
+  const itemOnlyNetProfit = activeRows.reduce((sum, row) => sum + row.calc.gananciaNeta, 0);
+
+  // Total investment (Materials Real + Journals + Extra Costs)
+  const totalExtraInvestment = totalItemRealInversion + journalSummary.buyTotal + extraCosts;
+
+  const totalFocus = activeRows.reduce((sum, row) => sum + row.totalFocus, 0);
+
+  // Total Profit = ItemTheoreticalProfit + JournalRealizedProfit - ExtraCosts (matches 1,963,937)
+  const totalNetProfit = itemOnlyNetProfit + journalSummary.realizedProfit - extraCosts;
+
+  // Total Sale Value (Albion Printer formula): Total Profit + Total Investment
+  const totalSaleValue = totalNetProfit + totalExtraInvestment;
+
+  // ROI based on Item Profit vs Item REAL Investment (matches 50.1%)
+  const roi = totalItemRealInversion > 0 ? (itemOnlyNetProfit / totalItemRealInversion) * 100 : 0;
+
+  const rawMaterialWeight = activeRows.reduce((sum, row) => {
+    return sum + row.materialBreakdown.reduce((innerSum, mat) => {
+      if (isArtifactMaterial(mat.id) || isSpecialIngredientMaterial(mat.id)) return innerSum;
+      const weight = getWeightForMaterial(mat.id);
+      return innerSum + (mat.quantity * row.quantity) * weight; // RAW weight
+    }, 0);
   }, 0);
-  const artifactWeight = [...groupedMaterials.artefactos, ...groupedMaterials.especiales].reduce((sum, mat) => {
-    return sum + Math.ceil(mat.quantity) * ARTIFACT_WEIGHT;
+
+  const rawArtifactWeight = activeRows.reduce((sum, row) => {
+    return sum + row.materialBreakdown.reduce((innerSum, mat) => {
+      if (isArtifactMaterial(mat.id) || isSpecialIngredientMaterial(mat.id)) {
+        const weight = getWeightForMaterial(mat.id);
+        return innerSum + (mat.quantity * row.quantity) * weight; // RAW weight
+      }
+      return innerSum;
+    }, 0);
   }, 0);
+
   const journalWeight = journalSummary.details.reduce((sum, journal) => {
-    return sum + journal.buyQuantity * (JOURNAL_WEIGHTS[journal.tier] ?? 0);
+    return sum + journal.buyQuantity * (JOURNAL_WEIGHTS[journal.tier] ?? 0.1);
   }, 0);
-  const transportWeight = materialWeight + artifactWeight + journalWeight;
+
+  const transportWeight = rawMaterialWeight + rawArtifactWeight + journalWeight;
   const selectedMount = MOUNTS[selectedMountIndex] ?? MOUNTS[0];
   const selectedBag = BAG_OPTIONS[selectedBagIndex] ?? BAG_OPTIONS[0];
   const selectedFood = FOOD_OPTIONS[selectedFoodIndex] ?? FOOD_OPTIONS[0];
   const transportCapacity = (selectedMount.capacity + selectedBag.bonus) * (1 + selectedFood.bonus);
   const transportTrips = transportWeight > 0 ? Math.ceil(transportWeight / transportCapacity) : 0;
+  const weightPercent = Math.min(100, (transportWeight / transportCapacity) * 100);
+
+  // Group materials by type for the materials tab columns
+  const groupedMaterials = useMemo(() => {
+    const lingote: typeof materialTotals = [];
+    const cuero: typeof materialTotals = [];
+    const tablas: typeof materialTotals = [];
+    const tela: typeof materialTotals = [];
+    const artefactos: typeof materialTotals = [];
+    const especiales: typeof materialTotals = [];
+
+    for (const mat of materialTotals) {
+      if (isArtifactMaterial(mat.id)) { artefactos.push(mat); continue; }
+      if (isSpecialIngredientMaterial(mat.id)) { especiales.push(mat); continue; }
+      const id = mat.id.toUpperCase();
+      if (id.includes('METALBAR'))      lingote.push(mat);
+      else if (id.includes('LEATHER'))  cuero.push(mat);
+      else if (id.includes('PLANKS'))   tablas.push(mat);
+      else if (id.includes('FIBER') || id.includes('CLOTH')) tela.push(mat);
+    }
+    return { lingote, cuero, tablas, tela, artefactos, especiales };
+  }, [materialTotals]);
+
+  // Craft Fame rows per active planner item
+  const craftFameRows = activeRows.map((row) => ({
+    id: row.id,
+    item: row.item,
+    tier: row.tier,
+    enchant: row.enchant,
+    quantity: row.quantity,
+    totalFame: row.journalProgress.famePerItem * row.quantity * craftFameBonus,
+  }));
+  const totalCraftFame = craftFameRows.reduce((sum, r) => sum + r.totalFame, 0);
+
+  // Black market rows
+  const blackMarketRows = activeRows.filter((row) => row.blackMarket);
 
   if (plannerItems.length === 0 && !showAddModal) {
     return (
@@ -707,7 +752,7 @@ export default function Planner() {
 
                   <div className={styles.profitCol}>
                     <span className={`${styles.profitValue} ${row.calc.gananciaNeta >= 0 ? styles.green : styles.red}`}>
-                      {formatSignedUnroundedValue(row.calc.gananciaNeta, localeCode)}
+                      {formatSignedExactValue(row.calc.gananciaNeta, localeCode)}
                     </span>
                     <span className={styles.profitSub}>
                       {row.salePrice > 0
@@ -745,15 +790,15 @@ export default function Planner() {
               <div className={`${styles.sumIconWrap} ${styles.sumIconCyan}`}><Wallet size={20} /></div>
               <div className={styles.sumDetails}>
                 <span className={styles.sumLabel}>{t(locale, 'investment')}</span>
-                <span className={styles.sumValue}>{formatExactValue(totalInvestment, localeCode)}</span>
+                <span className={styles.sumValue}>{formatExactValue(totalItemRealInversion, localeCode)}</span>
               </div>
             </div>
             <div className={styles.sumCard}>
               <div className={`${styles.sumIconWrap} ${styles.sumIconGreen}`}><LineChart size={20} /></div>
               <div className={styles.sumDetails}>
                 <span className={styles.sumLabel}>{t(locale, 'netProfit')}</span>
-                <span className={`${styles.sumValue} ${totalProfit >= 0 ? styles.green : styles.red}`}>
-                  {formatSignedUnroundedValue(totalProfit, localeCode)}
+                <span className={`${styles.sumValue} ${itemOnlyNetProfit >= 0 ? styles.green : styles.red}`}>
+                  {formatSignedExactValue(itemOnlyNetProfit, localeCode)}
                 </span>
               </div>
             </div>
@@ -777,11 +822,11 @@ export default function Planner() {
                 { title: locale === 'es' ? 'TELA' : 'CLOTH', items: groupedMaterials.tela },
                 { title: locale === 'es' ? 'TABLAS' : 'PLANKS', items: groupedMaterials.tablas },
                 { title: locale === 'es' ? 'ACERO' : 'STEEL', items: groupedMaterials.lingote },
-              ].map((group) => (
+              ].filter(group => group.items.length > 0).map((group) => (
                 <div key={group.title} className={styles.groupCard}>
-                  <span className={styles.groupTitle}>{group.title}</span>
+                  <span className={group.title}>{group.title}</span>
                   <div className={styles.groupList}>
-                    {group.items.length > 0 ? group.items.map((mat) => (
+                    {group.items.map((mat) => (
                       <div key={mat.id} className={styles.groupRow}>
                         <div className={styles.groupInfo}>
                           <img src={getItemImageUrl(getMaterialImageId(mat.id))} className={styles.groupImg} alt="" />
@@ -792,9 +837,7 @@ export default function Planner() {
                         </div>
                         <span className={styles.groupQty}>{formatWholeQuantity(mat.quantity, localeCode)}</span>
                       </div>
-                    )) : (
-                      <div className={styles.groupEmpty}>{t(locale, 'noMaterials')}</div>
-                    )}
+                    ))}
                   </div>
                 </div>
               ))}
@@ -864,105 +907,6 @@ export default function Planner() {
             </div>
           </div>
 
-          <div>
-            <div className={styles.sectionHeader}>
-              <Star size={20} className={styles.sectionIcon} />
-              <span className={styles.sectionTitle}>CRAFT FAME</span>
-              <select
-                className={styles.compactSelect}
-                value={craftFameBonus}
-                onChange={(e) => setCraftFameBonus(Number(e.target.value))}
-              >
-                {CRAFT_FAME_BONUSES.map((bonus) => (
-                  <option key={bonus.label} value={bonus.value}>{bonus.label}</option>
-                ))}
-              </select>
-            </div>
-            <div className={styles.famePanel}>
-              <div className={styles.transportTotal}>
-                <span>TOTAL FAME</span>
-                <strong>{formatExactValue(totalCraftFame, localeCode)}</strong>
-              </div>
-              <div className={styles.fameList}>
-                {craftFameRows.length > 0 ? craftFameRows.map((row) => (
-                  <div key={row.id} className={styles.fameRow}>
-                    <div className={styles.groupInfo}>
-                      <img src={getItemImageUrl(row.item.id)} className={styles.groupImg} alt="" />
-                      <div className={styles.groupMeta}>
-                        <span className={styles.groupName}>{getCraftDisplayName(row, locale)}</span>
-                        <span className={styles.groupTier}>{row.quantity.toLocaleString(localeCode)} craft(s)</span>
-                      </div>
-                    </div>
-                    <span className={styles.groupQty}>{formatExactValue(row.totalFame, localeCode)}</span>
-                  </div>
-                )) : (
-                  <div className={styles.panelEmpty}>NO CRAFT FAME</div>
-                )}
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <div className={styles.sectionHeader}>
-              <Weight size={20} className={styles.sectionIcon} />
-              <span className={styles.sectionTitle}>TRANSPORT WEIGHT</span>
-            </div>
-            <div className={styles.transportPanel}>
-              <div className={styles.weightGrid}>
-                <div className={styles.weightCard}>
-                  <span>MATERIALS</span>
-                  <strong>{materialWeight.toLocaleString(localeCode, { maximumFractionDigits: 1 })} KG</strong>
-                </div>
-                <div className={styles.weightCard}>
-                  <span>ARTIFACTS</span>
-                  <strong>{artifactWeight.toLocaleString(localeCode, { maximumFractionDigits: 1 })} KG</strong>
-                </div>
-                <div className={styles.weightCard}>
-                  <span>JOURNALS</span>
-                  <strong>{journalWeight.toLocaleString(localeCode, { maximumFractionDigits: 1 })} KG</strong>
-                </div>
-              </div>
-              <div className={styles.transportControls}>
-                <label>
-                  MOUNT
-                  <select value={selectedMountIndex} onChange={(e) => setSelectedMountIndex(Number(e.target.value))}>
-                    {MOUNTS.map((mount, index) => (
-                      <option key={mount.name} value={index}>{mount.name}</option>
-                    ))}
-                  </select>
-                </label>
-                <label>
-                  BAG
-                  <select value={selectedBagIndex} onChange={(e) => setSelectedBagIndex(Number(e.target.value))}>
-                    {BAG_OPTIONS.map((bag, index) => (
-                      <option key={bag.name} value={index}>{bag.name}</option>
-                    ))}
-                  </select>
-                </label>
-                <label>
-                  FOOD
-                  <select value={selectedFoodIndex} onChange={(e) => setSelectedFoodIndex(Number(e.target.value))}>
-                    {FOOD_OPTIONS.map((food, index) => (
-                      <option key={food.name} value={index}>{food.name}</option>
-                    ))}
-                  </select>
-                </label>
-              </div>
-              <div className={styles.mountResult}>
-                <img src={getItemImageUrl(selectedMount.itemId)} className={styles.groupImg} alt="" />
-                <div>
-                  <span>{selectedMount.name}</span>
-                  <strong>{transportCapacity.toLocaleString(localeCode, { maximumFractionDigits: 0 })} KG</strong>
-                </div>
-                <div className={styles.tripsBadge}>
-                  {transportTrips || 0} {locale === 'es' ? 'VIAJES' : 'TRIPS'}
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section ref={resumenRef} className={styles.anchorSection}>
           <div className={styles.journalSummaryCard}>
             <div className={styles.sectionHeader}>
               <Book size={18} className={styles.sectionIcon} />
@@ -975,7 +919,7 @@ export default function Planner() {
             <div className={styles.journalSummaryLine}>
               <span>{t(locale, 'journalNetProfit')}</span>
               <strong className={journalSummary.profit >= 0 ? styles.green : styles.red}>
-                {formatSignedUnroundedValue(journalSummary.profit, localeCode)}
+                {formatSignedExactValue(journalSummary.profit, localeCode)}
               </strong>
             </div>
             {journalSummary.details.map((journal) => (
@@ -984,13 +928,157 @@ export default function Planner() {
                   {journal.exactQuantity.toLocaleString(localeCode, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}x {getJournalDisplayName('', journal.type, locale)} / {getJournalWorkerName(journal.type, locale)} T{journal.tier}
                 </span>
                 <strong className={journal.calculatedProfit >= 0 ? styles.green : styles.red}>
-                  {formatSignedUnroundedValue(journal.calculatedProfit, localeCode)}
+                  {formatSignedExactValue(journal.calculatedProfit, localeCode)}
                 </strong>
               </div>
             ))}
             <p className={styles.note}>{t(locale, 'journalSessionNote')}</p>
           </div>
 
+          <div className={styles.collapsibleSection}>
+            <div className={styles.sectionHeader} onClick={toggleCraftFame} style={{ cursor: 'pointer' }}>
+              <Star size={20} className={styles.sectionIcon} />
+              <span className={styles.sectionTitle}>CRAFT FAME</span>
+              <div className={styles.headerActions}>
+                <select
+                  className={styles.compactSelect}
+                  value={craftFameBonus}
+                  onClick={(e) => e.stopPropagation()}
+                  onChange={(e) => setCraftFameBonus(Number(e.target.value))}
+                >
+                  {CRAFT_FAME_BONUSES.map((bonus) => (
+                    <option key={bonus.label} value={bonus.value}>{bonus.label}</option>
+                  ))}
+                </select>
+                <div className={styles.toggleBtn}>
+                  {showCraftFame ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+                </div>
+              </div>
+            </div>
+            {showCraftFame && (
+              <div className={styles.famePanel}>
+                <div className={styles.transportTotal}>
+                  <span>TOTAL FAME</span>
+                  <strong>{formatExactValue(totalCraftFame, localeCode)}</strong>
+                </div>
+                <div className={styles.fameList}>
+                  {craftFameRows.length > 0 ? craftFameRows.map((row) => (
+                    <div key={row.id} className={styles.fameRow}>
+                      <div className={styles.groupInfo}>
+                        <img src={getItemImageUrl(row.item.id)} className={styles.groupImg} alt="" />
+                        <div className={styles.groupMeta}>
+                          <span className={styles.groupName}>{getCraftDisplayName(row, locale)}</span>
+                          <span className={styles.groupTier}>{row.quantity.toLocaleString(localeCode)} craft(s)</span>
+                        </div>
+                      </div>
+                      <span className={styles.groupQty}>{formatExactValue(row.totalFame, localeCode)}</span>
+                    </div>
+                  )) : (
+                    <div className={styles.panelEmpty}>NO CRAFT FAME</div>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className={styles.collapsibleSection}>
+            <div className={styles.sectionHeader} onClick={() => setShowWeight(!showWeight)} style={{ cursor: 'pointer' }}>
+              <Weight size={20} className={styles.sectionIcon} />
+              <span className={styles.sectionTitle}>TRANSPORT WEIGHT</span>
+              <button className={styles.toggleBtn} style={{ marginLeft: 'auto' }}>
+                {showWeight ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+              </button>
+            </div>
+            {showWeight && (
+              <div className={styles.transportPanel}>
+                <div className={styles.transportLayout}>
+                  <div className={styles.transportDataSide}>
+                    <div className={styles.weightGridCompact}>
+                      <div className={styles.weightCard}>
+                        <span>MATERIALS</span>
+                        <strong>{rawMaterialWeight.toLocaleString(localeCode, { maximumFractionDigits: 1 })} KG</strong>
+                      </div>
+                      <div className={styles.weightCard}>
+                        <span>ARTIFACTS</span>
+                        <strong>{rawArtifactWeight.toLocaleString(localeCode, { maximumFractionDigits: 1 })} KG</strong>
+                      </div>
+                      <div className={styles.weightCard}>
+                        <span>JOURNALS</span>
+                        <strong>{journalWeight.toLocaleString(localeCode, { maximumFractionDigits: 1 })} KG</strong>
+                      </div>
+                      <div className={`${styles.weightCard} ${styles.weightCardTotal}`}>
+                        <span>TOTAL WEIGHT</span>
+                        <strong>{transportWeight.toLocaleString(localeCode, { maximumFractionDigits: 1 })} KG</strong>
+                      </div>
+                    </div>
+
+                    <div className={styles.transportControlsCompact}>
+                      <div className={styles.controlGroup}>
+                        <label>MOUNT</label>
+                        <select value={selectedMountIndex} onChange={(e) => setSelectedMountIndex(Number(e.target.value))}>
+                          {MOUNTS.map((mount, index) => (
+                            <option key={mount.name} value={index}>{mount.name}</option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className={styles.controlGroup}>
+                        <label>BAG</label>
+                        <select value={selectedBagIndex} onChange={(e) => setSelectedBagIndex(Number(e.target.value))}>
+                          {BAG_OPTIONS.map((bag, index) => (
+                            <option key={bag.name} value={index}>{bag.name}</option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className={styles.controlGroup}>
+                        <label>FOOD</label>
+                        <select value={selectedFoodIndex} onChange={(e) => setSelectedFoodIndex(Number(e.target.value))}>
+                          {FOOD_OPTIONS.map((food, index) => (
+                            <option key={food.name} value={index}>{food.name}</option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+
+                    <div className={styles.mountResultCompact}>
+                      <div className={styles.mountResultText}>
+                        <span>{selectedMount.name}</span>
+                        <div className={styles.weightProgressContainer}>
+                          <strong>{transportWeight.toLocaleString(localeCode, { maximumFractionDigits: 1 })} / {transportCapacity.toLocaleString(localeCode, { maximumFractionDigits: 0 })} KG</strong>
+                          <div className={styles.progressBar}>
+                            <div className={styles.progressFill} style={{ width: `${weightPercent}%` }}></div>
+                          </div>
+                        </div>
+                      </div>
+                      <div className={styles.tripsBadge}>
+                        {transportTrips || 0} {locale === 'es' ? 'VIAJES' : 'TRIPS'}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className={styles.transportImageSide}>
+                    <div className={styles.squareImageContainer}>
+                      <img src={getItemImageUrl(selectedMount.itemId)} className={styles.squareImg} alt="" />
+                    </div>
+                    <div className={styles.squareImageRow}>
+                      {selectedBag.itemId && (
+                        <div className={styles.squareImageContainerSmall}>
+                          <img src={getItemImageUrl(selectedBag.itemId)} className={styles.squareImg} alt="" />
+                        </div>
+                      )}
+                      {selectedFood.itemId && (
+                        <div className={styles.squareImageContainerSmall}>
+                          <img src={getItemImageUrl(selectedFood.itemId)} className={styles.squareImg} alt="" />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </section>
+
+        <section ref={resumenRef} className={styles.anchorSection}>
           <div>
             <div className={styles.sectionHeader}>
               <MoonStar size={18} className={styles.sectionIcon} />
@@ -1041,7 +1129,7 @@ export default function Planner() {
                 <Wallet size={24} color="#fc97b7" />
                 <div className={styles.finalLabel}>{t(locale, 'totalInvestment')}</div>
               </div>
-              <div className={styles.finalValue}>{formatExactValue(totalExtraInvestment, localeCode)}</div>
+              <div className={styles.finalValue}>{formatExactValue(Math.round(totalExtraInvestment), localeCode)}</div>
             </div>
 
             <div className={styles.finalRow}>
@@ -1050,7 +1138,7 @@ export default function Planner() {
                 <div className={styles.finalLabel}>{t(locale, 'totalProfit')}</div>
               </div>
               <div className={`${styles.finalValue} ${totalNetProfit >= 0 ? styles.green : styles.red}`}>
-                {formatSignedUnroundedValue(totalNetProfit, localeCode)}
+                {formatSignedExactValue(Math.round(totalNetProfit), localeCode)}
               </div>
             </div>
 
@@ -1059,7 +1147,7 @@ export default function Planner() {
                 <CheckSquare size={24} color="#a06f11" />
                 <div className={styles.finalLabel}>{t(locale, 'totalSaleValue')}</div>
               </div>
-              <div className={`${styles.finalValue} ${styles.gold}`}>{formatExactValue(totalSaleValue, localeCode)}</div>
+              <div className={`${styles.finalValue} ${styles.gold}`}>{formatExactValue(Math.round(totalSaleValue), localeCode)}</div>
             </div>
           </div>
         </section>

@@ -1,26 +1,101 @@
-@import "tailwindcss";
-
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg: #fff7fa;
+  --surface: #ffe1e7;
+  --surface-2: #ffd3df;
+  --surface-3: #fff9fb;
+  --active-cat: #ffd0dc;
+  --primary: #fc97b7;
+  --cyan: #d1f985;
+  --gradient: linear-gradient(135deg, #fc97b7 0%, #ffe1e7 48%, #d1f985 100%);
+  --text: #402934;
+  --text-muted: #7f5a67;
+  --text-dim: #b18191;
+  --border: rgba(252, 151, 183, 0.38);
+  --orange: #a06f11;
+  --red: #db476d;
+  --green: #4f8f38;
+  --focus-ring: 0 0 0 3px rgba(209, 249, 133, 0.72), 0 0 0 5px rgba(252, 151, 183, 0.42);
+  --sidebar-w: 270px;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 14px;
+  height: 100%;
+  overflow: hidden;
+  width: 100%;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+a:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+#__next {
+  height: 100%;
+}
+
+.app-layout {
+  display: flex;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+  width: 100%;
+}
+
+.main-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  height: 100vh;
+  height: 100svh;
+}
+
+/* scrollbar */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 99px; }
+
+/* Remove number input arrows globally */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+@media (max-width: 768px) {
+  html, body {
+    font-size: 13px;
   }
-}
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  .app-layout {
+    position: relative;
+  }
+
+  .main-content {
+    width: 100%;
+    min-height: 100svh;
+  }
 }

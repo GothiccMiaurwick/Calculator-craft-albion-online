@@ -1,0 +1,328 @@
+.calc-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* ─── Config Row ─── */
+.config-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 1rem;
+  flex-wrap: wrap;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1rem 1.5rem;
+}
+
+.config-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.config-group label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+}
+
+.cfg-select,
+.cfg-input {
+  background-color: var(--background);
+  border: 1px solid var(--border);
+  color: var(--text-main);
+  padding: 0.5rem 0.8rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.cfg-select:focus,
+.cfg-input:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+.btn-fetch {
+  background: var(--primary-gradient);
+  color: white;
+  border: none;
+  padding: 0.6rem 1.5rem;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.15s;
+  margin-left: auto;
+  letter-spacing: 0.5px;
+}
+
+.btn-fetch:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.btn-fetch:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ─── Main Grid ─── */
+.calc-grid {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.left-panel,
+.right-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* ─── Cards ─── */
+.section-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+}
+
+.section-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+}
+
+/* ─── Item Card ─── */
+.item-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1rem 1.5rem;
+}
+
+.item-img {
+  width: 64px;
+  height: 64px;
+  border-radius: 8px;
+  border: 2px solid var(--secondary);
+  object-fit: cover;
+}
+
+.item-name {
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.tier-badge {
+  background: var(--primary-gradient);
+  color: white;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+/* ─── Materials ─── */
+.material-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.material-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem;
+  background: rgba(255,255,255,0.02);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+
+.mat-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
+  object-fit: cover;
+}
+
+.mat-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.mat-qty {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.mat-price {
+  text-align: right;
+  font-size: 0.85rem;
+}
+
+.mat-total {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* ─── Table ─── */
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th {
+  text-align: left;
+  padding: 0.6rem 0.75rem;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border);
+}
+
+td {
+  text-align: left;
+  padding: 0.7rem 0.75rem;
+  font-size: 0.85rem;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+}
+
+tr:hover td {
+  background: rgba(255,255,255,0.02);
+}
+
+.price-sell { color: #2ecc71; }
+.price-buy { color: #00b0ff; }
+.muted { color: var(--text-muted); }
+
+/* ─── Config Fields ─── */
+.cfg-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 1rem;
+}
+
+.cfg-field label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+}
+
+.cfg-field .cfg-select,
+.cfg-field .cfg-input {
+  width: 100%;
+}
+
+.cfg-toggles {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-top: 0.5rem;
+}
+
+.toggle-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.toggle-label input {
+  accent-color: var(--primary);
+  width: 16px;
+  height: 16px;
+}
+
+/* ─── Profit Card ─── */
+.profit-card {
+  position: sticky;
+  top: 1rem;
+}
+
+.profit-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.4rem 0;
+  font-size: 0.9rem;
+}
+
+.profit-total {
+  font-weight: 700;
+  border-top: 1px solid var(--border);
+  margin-top: 0.5rem;
+  padding-top: 0.75rem;
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 0.75rem 0;
+}
+
+.profit-final {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.5rem;
+  padding: 1rem;
+  border-radius: 10px;
+}
+
+.profit-final.pos { background: rgba(46,204,113,0.1); border: 1px solid rgba(46,204,113,0.3); }
+.profit-final.neg { background: rgba(231,76,60,0.1); border: 1px solid rgba(231,76,60,0.3); }
+
+.profit-final span { font-weight: bold; font-size: 0.9rem; }
+
+.profit-amount {
+  font-size: 1.4rem;
+  font-weight: 800;
+  text-align: right;
+}
+
+.profit-final.pos .profit-amount { color: #2ecc71; }
+.profit-final.neg .profit-amount { color: #e74c3c; }
+
+.profit-pct {
+  font-size: 0.8rem;
+  text-align: right;
+  opacity: 0.7;
+}
+
+.profit-pos { border-color: rgba(46,204,113,0.3); }
+.profit-neg { border-color: rgba(231,76,60,0.3); }
+
+.no-data-hint {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  margin-top: 1rem;
+  padding: 0.75rem;
+  background: rgba(255,255,255,0.03);
+  border-radius: 8px;
+}

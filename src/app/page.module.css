@@ -1,0 +1,245 @@
+.welcome {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  flex-shrink: 0;
+}
+
+.topLeft { display: flex; align-items: center; gap: 10px; }
+
+.homeIcon { color: var(--text-dim); }
+
+.topTitle {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.synced {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #4f7b1f;
+  background: rgba(209, 249, 133, 0.42);
+  border: 1px solid rgba(209, 249, 133, 0.72);
+  padding: 3px 10px;
+  border-radius: 999px;
+  letter-spacing: 1px;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #d1f985;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%,100% { opacity:1; }
+  50% { opacity:0.4; }
+}
+
+.hero {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  padding: 2rem;
+}
+
+.logoWrap {
+  background: radial-gradient(circle, rgba(209, 249, 133, 0.55) 0%, rgba(255, 225, 231, 0.42) 58%, transparent 72%);
+  padding: 2rem;
+  border-radius: 50%;
+}
+
+.calcLogo {
+  width: 96px;
+  height: 116px;
+  border-radius: 20px;
+  padding: 14px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: 36px repeat(2, 1fr);
+  gap: 8px;
+  background: linear-gradient(145deg, #fc97b7 0%, #ffe1e7 56%, #d1f985 100%);
+  border: 2px solid rgba(252, 151, 183, 0.5);
+  box-shadow: 0 22px 44px rgba(252, 151, 183, 0.28);
+  animation: float 3s ease-in-out infinite;
+}
+
+.calcScreen {
+  grid-column: 1 / -1;
+  border-radius: 10px;
+  background: rgba(255, 249, 251, 0.78);
+  border: 1px solid rgba(64, 41, 52, 0.12);
+  position: relative;
+}
+
+.calcScreen::after {
+  content: '';
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  width: 24px;
+  height: 4px;
+  border-radius: 999px;
+  background: #402934;
+  transform: translateY(-50%);
+}
+
+.calcKey,
+.calcKeyAccent {
+  border-radius: 8px;
+  background: rgba(255, 249, 251, 0.8);
+  border: 1px solid rgba(64, 41, 52, 0.1);
+}
+
+.calcKeyAccent {
+  background: #d1f985;
+}
+
+@keyframes float {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.logoTitle {
+  font-size: 2.5rem;
+  font-weight: 900;
+  font-style: italic;
+  background: linear-gradient(90deg, #fc97b7, #d1f985);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 1px;
+}
+
+.divider {
+  width: 160px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(252, 151, 183, 0.62), rgba(209, 249, 133, 0.72), transparent);
+  border-radius: 999px;
+}
+
+.btnRow {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.btnPrimary {
+  padding: 14px 36px;
+  background: var(--gradient);
+  border: none;
+  border-radius: 10px;
+  color: #402934;
+  font-size: 0.9rem;
+  font-weight: 900;
+  letter-spacing: 2px;
+  cursor: pointer;
+  box-shadow: 0 0 24px rgba(252, 151, 183, 0.28);
+  transition: transform 0.15s, box-shadow 0.2s;
+}
+
+.btnPrimary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 36px rgba(209, 249, 133, 0.42);
+}
+
+.btnSecondary {
+  padding: 14px 36px;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  font-weight: 900;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.btnSecondary:hover {
+  color: var(--text);
+  border-color: rgba(252, 151, 183, 0.58);
+  background: rgba(255, 225, 231, 0.54);
+}
+
+.tagline {
+  font-size: 0.7rem;
+  font-style: italic;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+}
+
+@media (max-width: 768px) {
+  .topBar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    padding: 64px 16px 12px;
+  }
+
+  .topLeft {
+    align-items: flex-start;
+  }
+
+  .topTitle {
+    line-height: 1.4;
+  }
+
+  .hero {
+    padding: 1.5rem 1rem 2rem;
+    gap: 14px;
+  }
+
+  .logoWrap {
+    padding: 1.2rem;
+  }
+
+  .calcLogo {
+    width: 76px;
+    height: 92px;
+    border-radius: 16px;
+    padding: 10px;
+    grid-template-rows: 28px repeat(2, 1fr);
+    gap: 6px;
+  }
+
+  .logoTitle {
+    font-size: 1.9rem;
+    text-align: center;
+  }
+
+  .btnRow {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .btnPrimary,
+  .btnSecondary {
+    width: 100%;
+    padding: 14px 18px;
+  }
+
+  .tagline {
+    text-align: center;
+  }
+}
