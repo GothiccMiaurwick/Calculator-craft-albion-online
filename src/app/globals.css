@@ -22,6 +22,9 @@
 
 html, body {
   background: var(--bg);
+  background-image: 
+    radial-gradient(circle at top right, rgba(209, 249, 133, 0.28), transparent 30%),
+    linear-gradient(0deg, #fff7fa 0%, #ffe1e7 100%);
   color: var(--text);
   font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Consolas, monospace;
   font-size: 14px;

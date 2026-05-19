@@ -15,7 +15,7 @@ const RESOURCE_MAP: Record<string, keyof Omit<ResourceRow, 'tier'>> = {
 
 const SPECIAL_INGREDIENT_MARKERS = ['ALCHEMY_RARE', 'SKILLBOOK_STANDARD'];
 
-function getResourceField(normId: string): keyof Omit<ResourceRow, 'tier'> | undefined {
+export function getResourceField(normId: string): keyof Omit<ResourceRow, 'tier'> | undefined {
   const resourceKey = Object.keys(RESOURCE_MAP).find((key) => normId.includes(key));
   return resourceKey ? RESOURCE_MAP[resourceKey] : undefined;
 }

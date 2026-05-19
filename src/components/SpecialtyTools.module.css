@@ -3,7 +3,8 @@
   padding: 30px 32px 52px;
   background:
     radial-gradient(circle at top right, rgba(209, 249, 133, 0.38), transparent 26%),
-    linear-gradient(180deg, #fff7fa 0%, #ffe1e7 100%);
+    radial-gradient(circle at bottom left, rgba(252, 151, 183, 0.22), transparent 30%),
+    linear-gradient(0deg, #fff7fa 0%, #ffe1e7 100%);
   display: flex;
   flex-direction: column;
   gap: 22px;

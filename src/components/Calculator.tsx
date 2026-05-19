@@ -4,7 +4,7 @@ import { useState, useCallback, useEffect, useRef, useMemo, memo } from 'react';
 import { useApp } from '@/lib/AppContext';
 import { TIERS, ENCHANTS, CITIES, SERVERS, getItemImageUrl, CATEGORIES } from '@/lib/items';
 import { fetchPrices, fetchItemMaterials } from '@/lib/api';
-import { calculateCrafting, isArtifactLikeMaterial, resolvePrice } from '@/lib/calcEngine';
+import { calculateCrafting, isArtifactLikeMaterial, resolvePrice, getResourceField } from '@/lib/calcEngine';
 import { getAdjustedFocusCost, getCraftingSpecBonus, getExpectedSalePriceFromQualities, type QualityPriceMap } from '@/lib/craftingSpecs';
 import { getFallbackRecipe } from '@/lib/fallbacks';
 import { getCategoryNameById, getDisplayLocale, getItemName, getMaterialName, getServerName, getTreeItemName, t } from '@/lib/i18n';
@@ -238,7 +238,8 @@ export default function Calculator() {
     itemOverrides, setItemOverrides,
     allManualSellPrices, setAllManualSellPrices,
     allMarketPrices, setAllMarketPrices,
-    allMarketQualityPrices, setAllMarketQualityPrices 
+    allMarketQualityPrices, setAllMarketQualityPrices,
+    setResources, setArtifactPrices
   } = useApp();
   const [sellPrice, setSellPrice] = useState<number>(0);
   const [loading, setLoading] = useState(false);
@@ -248,6 +249,44 @@ export default function Calculator() {
 
   // Dynamic Materials State
   const [currentMats, setCurrentMats] = useState<any[]>([]);
+
+  const handleMaterialPriceChange = useCallback((matId: string, val: number) => {
+    const normId = normalizeId(matId);
+    
+    if (isArtifactLikeMaterial(normId)) {
+      setArtifactPrices(prev => ({
+        ...prev,
+        [normId]: val
+      }));
+    } else {
+      const field = getResourceField(normId);
+      if (field) {
+        const parts = normId.split('_');
+        const tierPrefix = parts[0]; // e.g. "T5"
+        let enchant = 0;
+        if (normId.includes('@')) enchant = parseInt(normId.split('@')[1], 10) || 0;
+        const targetTier = `${tierPrefix}.${enchant}`; // e.g. "T5.1"
+        
+        setResources(prev => prev.map(row => {
+          if (row.tier === targetTier) {
+            return { ...row, [field]: val };
+          }
+          return row;
+        }));
+      }
+    }
+
+    // Keep itemOverrides to avoid breaking any other local logic, though redundant now
+    if (selectedItem) {
+      setItemOverrides(prev => ({
+        ...prev,
+        [selectedItem.id]: {
+          ...(prev[selectedItem.id] || {}),
+          [matId]: val
+        }
+      }));
+    }
+  }, [setArtifactPrices, setResources, setItemOverrides, selectedItem]);
   const commitFocusedInput = () => {
     const active = document.activeElement;
     if (active instanceof HTMLElement) {
@@ -693,15 +732,7 @@ export default function Calculator() {
                         <FormattedInput
                           className={`${matInput} ${isOverridden ? overrideYellow : ''}`}
                           value={unitPrice}
-                          onChange={(val) => {
-                            setItemOverrides(prev => ({
-                              ...prev,
-                              [selectedItem.id]: {
-                                ...(prev[selectedItem.id] || {}),
-                                [mat.id]: val
-                              }
-                            }));
-                          }}
+                          onChange={(val) => handleMaterialPriceChange(mat.id, val)}
                         />
                       </div>
                     );
@@ -760,15 +791,7 @@ export default function Calculator() {
                             className={`${matInput} ${isOverridden ? overrideYellow : ''}`}
                             value={unitPrice}
                             style={{ color: isOverridden ? '#fbbf24' : '#ffd700' }}
-                            onChange={(val) => {
-                              setItemOverrides(prev => ({
-                                ...prev,
-                                [selectedItem.id]: {
-                                  ...(prev[selectedItem.id] || {}),
-                                  [mat.id]: val
-                                }
-                              }));
-                            }}
+                            onChange={(val) => handleMaterialPriceChange(mat.id, val)}
                           />
                         </div>
                       );

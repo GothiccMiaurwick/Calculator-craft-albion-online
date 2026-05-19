@@ -7,7 +7,7 @@
   background:
     radial-gradient(circle at top right, rgba(209, 249, 133, 0.42), transparent 24%),
     radial-gradient(circle at bottom left, rgba(252, 151, 183, 0.28), transparent 28%),
-    linear-gradient(180deg, #fff7fa 0%, #ffe1e7 100%);
+    linear-gradient(0deg, #fff7fa 0%, #ffe1e7 100%);
 }
 
 .topBar {
