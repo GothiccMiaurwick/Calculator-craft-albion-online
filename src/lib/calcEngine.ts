@@ -56,7 +56,7 @@ export function getRequiredPurchaseQuantity(
   const returnedQuantity = rawQuantity * returnRatio;
   const firstCraftBuffer = Math.ceil(Number(perCraftQuantity || 0) * returnRatio);
 
-  return Math.min(rawQuantity, Math.ceil(rawQuantity - returnedQuantity) + firstCraftBuffer);
+  return Math.min(rawQuantity, Math.round(rawQuantity - returnedQuantity) + firstCraftBuffer);
 }
 
 // NOTE: This function is kept for display purposes in materialBreakdown only.
