@@ -173,8 +173,9 @@ export function calculateCrafting(input: CalcInput): CalcResult {
   const inversion = Math.round(rawTotalCost - returnValue);
 
   // STEP 3: Net revenue after tax
+  // taxAmount is rounded to whole silver (Albion uses integer silver)
   const totalRevenue = Number(salePrice) * Number(itemQuantity);
-  const taxAmount = totalRevenue * (Number(taxRate) / 100);
+  const taxAmount = Math.round(totalRevenue * (Number(taxRate) / 100));
   const netRevenue = totalRevenue - taxAmount;
 
   // STEP 4: Net profit = netRevenue - inversion
