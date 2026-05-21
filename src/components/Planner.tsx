@@ -723,7 +723,23 @@ export default function Planner() {
                       <span className={styles.itemName}>{getItemName(row.item, locale).toUpperCase()}</span>
                       <div className={styles.itemTags}>
                         <span className={styles.rowBadge}>T{row.tier}.{row.enchant}</span>
-                        <span className={styles.rowBadge}>RR {row.returnRate.toFixed(1)}%</span>
+                        <span className={styles.rrEditBadge}>
+                          RR
+                          <input
+                            type="number"
+                            className={styles.rrEditInput}
+                            value={row.returnRate}
+                            min={0}
+                            max={100}
+                            step={0.1}
+                            onChange={(e) => {
+                              const val = parseFloat(e.target.value);
+                              if (!isNaN(val)) updatePlannerItem(row.id, { returnRate: Math.min(100, Math.max(0, val)) });
+                            }}
+                            onClick={(e) => e.stopPropagation()}
+                          />
+                          %
+                        </span>
                         {row.blackMarket && <span className={styles.marketBadge}>BM</span>}
                       </div>
                     </div>

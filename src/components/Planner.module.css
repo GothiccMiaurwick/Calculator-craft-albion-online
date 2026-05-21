@@ -286,6 +286,43 @@
   border: 1px solid rgba(252, 151, 183, 0.32);
 }
 
+.rrEditBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 0.62rem;
+  font-weight: 900;
+  letter-spacing: 0.7px;
+  background: rgba(252, 151, 183, 0.18);
+  color: #7f2f50;
+  border: 1px solid rgba(252, 151, 183, 0.32);
+}
+
+.rrEditInput {
+  background: transparent;
+  border: none;
+  width: 40px;
+  font-weight: 900;
+  font-size: 0.62rem;
+  color: #7f2f50;
+  text-align: center;
+  padding: 0;
+  margin: 0 2px;
+  outline: none;
+}
+
+.rrEditInput[type='number'] {
+  -moz-appearance: textfield;
+}
+
+.rrEditInput::-webkit-outer-spin-button,
+.rrEditInput::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
 .marketBadge {
   background: rgba(209, 249, 133, 0.42);
   color: #4f7b1f;
