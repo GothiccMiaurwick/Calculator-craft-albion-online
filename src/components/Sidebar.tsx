@@ -7,30 +7,30 @@ import { CATEGORIES, TreeItem, Subcategory } from '@/lib/items';
 import { AppView, useApp } from '@/lib/AppContext';
 import { getCategoryName, getSubcategoryName, getTreeItemName, t } from '@/lib/i18n';
 import {
-  Sword,
-  CircleUser,
-  Layers,
-  Wind,
-  Shield,
-  ShoppingBag,
-  Database,
-  Settings,
-  Hammer,
-  PanelLeftClose,
-  PanelLeftOpen,
-  Languages,
-  Search,
-  X,
-} from 'lucide-react';
+  CalcIcon,
+  TallerIcon,
+  SwordIcon,
+  HelmetIcon,
+  ChestIcon,
+  BootIcon,
+  ShieldIcon,
+  BagIcon,
+  DatabaseIcon,
+  SettingsIcon,
+  PanelIcon,
+  LangIcon,
+  SearchIcon,
+  CloseIcon,
+} from './Icons';
 import styles from './Sidebar.module.css';
 
 const ICON_MAP: Record<string, ReactNode> = {
-  Sword: <Sword size={18} />,
-  CircleUser: <CircleUser size={18} />,
-  Layers: <Layers size={18} />,
-  Wind: <Wind size={18} />,
-  Shield: <Shield size={18} />,
-  ShoppingBag: <ShoppingBag size={18} />,
+  Sword: <SwordIcon size={18} />,
+  CircleUser: <HelmetIcon size={18} />,
+  Layers: <ChestIcon size={18} />,
+  Wind: <BootIcon size={18} />,
+  Shield: <ShieldIcon size={18} />,
+  ShoppingBag: <BagIcon size={18} />,
 };
 
 const normalizeSearch = (value: string) =>
@@ -156,7 +156,7 @@ export default function Sidebar() {
           aria-label={t(locale, 'expandSidebar')}
           title={t(locale, 'expandSidebar')}
         >
-          <PanelLeftOpen size={18} />
+          <PanelIcon size={18} side="right" />
         </button>
       </aside>
     );
@@ -180,7 +180,7 @@ export default function Sidebar() {
           aria-label={t(locale, 'collapseSidebar')}
           title={t(locale, 'collapseSidebar')}
         >
-          <PanelLeftClose size={16} />
+          <PanelIcon size={16} side="left" />
         </button>
       </div>
 
@@ -189,19 +189,19 @@ export default function Sidebar() {
           className={`${styles.tab} ${currentView === 'calculator' ? styles.tabActive : ''}`}
           onClick={() => navigateTo('calculator')}
         >
-          {t(locale, 'calculator')}
+          <CalcIcon size={18} /> {t(locale, 'calculator')}
         </button>
         <button
           className={`${styles.tab} ${currentView === 'planner' ? styles.tabActive : ''}`}
           onClick={() => navigateTo('planner')}
         >
-          {t(locale, 'taller')}
+          <TallerIcon size={18} /> {t(locale, 'taller')}
           </button>
         </div>
 
       <div className={styles.searchWrap}>
         <div className={styles.searchInputShell}>
-          <Search size={15} />
+          <SearchIcon size={15} />
           <input
             className={styles.searchInput}
             value={searchQuery}
@@ -216,7 +216,7 @@ export default function Sidebar() {
               aria-label={locale === 'es' ? 'Limpiar busqueda' : 'Clear search'}
               title={locale === 'es' ? 'Limpiar busqueda' : 'Clear search'}
             >
-              <X size={13} />
+              <CloseIcon size={13} />
             </button>
           )}
         </div>
@@ -305,10 +305,10 @@ export default function Sidebar() {
             router.push('/database');
           }}
         >
-          <Database size={18} /> {t(locale, 'database')}
+          <DatabaseIcon size={18} /> {t(locale, 'database')}
         </button>
         <button className={styles.footerBtnGray} onClick={() => setSettingsOpen(prev => !prev)}>
-          <Settings size={18} /> {t(locale, 'settings')}
+          <SettingsIcon size={18} /> {t(locale, 'settings')}
         </button>
 
         {settingsOpen && (
@@ -317,7 +317,7 @@ export default function Sidebar() {
 
             <div className={styles.settingsBlock}>
               <div className={styles.settingsLabel}>
-                <Languages size={14} />
+                <LangIcon size={14} />
                 <span>{t(locale, 'interfaceLanguage')}</span>
               </div>
               <div className={styles.modeSwitch}>
@@ -338,7 +338,7 @@ export default function Sidebar() {
 
             <div className={styles.settingsBlock}>
               <div className={styles.settingsLabel}>
-                <PanelLeftClose size={14} />
+                <PanelIcon size={14} side="left" />
                 <span>{t(locale, 'navigationMode')}</span>
               </div>
               <div className={styles.modeSwitch}>

@@ -5,6 +5,7 @@ import { t } from '@/lib/i18n';
 import Calculator from '@/components/Calculator';
 import Planner from '@/components/Planner';
 import SpecialtyTools from '@/components/SpecialtyTools';
+import { CalcIcon, FlameIcon, SparkleIcon, ChefIcon } from '@/components/Icons';
 import styles from './page.module.css';
 
 export default function Home() {
@@ -40,10 +41,10 @@ export default function Home() {
         <h1 className={styles.logoTitle}>Mochi Craft</h1>
         <div className={styles.divider} />
         <div className={styles.btnRow}>
-          <button className={styles.btnPrimary} onClick={() => setCurrentView('calculator')}>{t(locale, 'calculator')}</button>
-          <button className={styles.btnSecondary} onClick={() => setCurrentView('refiner')}>{t(locale, 'refiner')}</button>
-          <button className={styles.btnSecondary} onClick={() => setCurrentView('enchanter')}>{t(locale, 'enchanter')}</button>
-          <button className={styles.btnSecondary} onClick={() => setCurrentView('cooking')}>{t(locale, 'cooking')}</button>
+          <button className={styles.btnPrimary} onClick={() => setCurrentView('calculator')}><CalcIcon size={18} /> {t(locale, 'calculator')}</button>
+          <button className={styles.btnSecondary} onClick={() => setCurrentView('refiner')}><FlameIcon size={18} /> {t(locale, 'refiner')}</button>
+          <button className={styles.btnSecondary} onClick={() => setCurrentView('enchanter')}><SparkleIcon size={18} /> {t(locale, 'enchanter')}</button>
+          <button className={styles.btnSecondary} onClick={() => setCurrentView('cooking')}><ChefIcon size={18} /> {t(locale, 'cooking')}</button>
         </div>
         <p className={styles.tagline}>&quot;crafted with love &lt;3&quot;</p>
       </div>

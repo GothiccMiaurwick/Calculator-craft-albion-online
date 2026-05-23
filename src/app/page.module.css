@@ -117,6 +117,9 @@
   cursor: pointer;
   box-shadow: 0 0 24px rgba(255, 133, 162, 0.28);
   transition: transform 0.15s, box-shadow 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .btnPrimary:hover {
@@ -135,6 +138,9 @@
   letter-spacing: 2px;
   cursor: pointer;
   transition: all 0.15s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .btnSecondary:hover {

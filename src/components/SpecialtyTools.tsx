@@ -1,7 +1,8 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { ArrowRight, ChefHat, FlameKindling, Package, Percent, Sparkles, Wallet } from 'lucide-react';
+import { ArrowRight, Package, Percent, Wallet } from 'lucide-react';
+import { FlameIcon, SparkleIcon, ChefIcon } from './Icons';
 import { AppView, useApp } from '@/lib/AppContext';
 import { getDisplayLocale, t } from '@/lib/i18n';
 import styles from './SpecialtyTools.module.css';
@@ -157,7 +158,7 @@ export default function SpecialtyTools({ view }: { view: ToolView }) {
   const title =
     view === 'refiner' ? t(locale, 'refiner') : view === 'enchanter' ? t(locale, 'enchanter') : t(locale, 'cooking');
   const icon =
-    view === 'refiner' ? <FlameKindling size={22} /> : view === 'enchanter' ? <Sparkles size={22} /> : <ChefHat size={22} />;
+    view === 'refiner' ? <FlameIcon size={22} /> : view === 'enchanter' ? <SparkleIcon size={22} /> : <ChefIcon size={22} />;
 
   return (
     <div className={styles.page}>
@@ -208,7 +209,7 @@ export default function SpecialtyTools({ view }: { view: ToolView }) {
       {view === 'enchanter' && (
         <section className={styles.panel}>
           <div className={styles.sectionTitle}>
-            <Sparkles size={18} />
+            <SparkleIcon size={18} />
             <span>{locale === 'es' ? 'MEJORA DE ENCANTAMIENTO' : 'ENCHANTMENT UPGRADE'}</span>
           </div>
           <div className={styles.flow}>
@@ -228,7 +229,7 @@ export default function SpecialtyTools({ view }: { view: ToolView }) {
       {view === 'cooking' && (
         <section className={styles.panel}>
           <div className={styles.sectionTitle}>
-            <ChefHat size={18} />
+            <ChefIcon size={18} />
             <span>{locale === 'es' ? 'RECETA DE COCINA' : 'COOKING RECIPE'}</span>
           </div>
           <div className={styles.segmented}>
