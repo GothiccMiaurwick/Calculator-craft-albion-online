@@ -68,50 +68,12 @@
   border-radius: 50%;
 }
 
-.calcLogo {
-  width: 96px;
-  height: 116px;
-  border-radius: 20px;
-  padding: 14px;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: 36px repeat(2, 1fr);
-  gap: 8px;
-  background: linear-gradient(145deg, #fc97b7 0%, #ffe8f0 56%, #d1f985 100%);
-  border: 2px solid rgba(255, 133, 162, 0.5);
-  box-shadow: 0 22px 44px rgba(255, 133, 162, 0.28);
+.starIcon {
+  width: 120px;
+  height: 120px;
+  display: block;
+  filter: drop-shadow(0 12px 28px rgba(252, 151, 183, 0.42));
   animation: float 3s ease-in-out infinite;
-}
-
-.calcScreen {
-  grid-column: 1 / -1;
-  border-radius: 10px;
-  background: rgba(255, 248, 252, 0.78);
-  border: 1px solid rgba(64, 41, 52, 0.12);
-  position: relative;
-}
-
-.calcScreen::after {
-  content: '';
-  position: absolute;
-  right: 8px;
-  top: 50%;
-  width: 24px;
-  height: 4px;
-  border-radius: 999px;
-  background: #402934;
-  transform: translateY(-50%);
-}
-
-.calcKey,
-.calcKeyAccent {
-  border-radius: 8px;
-  background: rgba(255, 248, 252, 0.8);
-  border: 1px solid rgba(64, 41, 52, 0.1);
-}
-
-.calcKeyAccent {
-  background: #d1f985;
 }
 
 @keyframes float {
@@ -214,13 +176,9 @@
     padding: 1.2rem;
   }
 
-  .calcLogo {
-    width: 76px;
-    height: 92px;
-    border-radius: 16px;
-    padding: 10px;
-    grid-template-rows: 28px repeat(2, 1fr);
-    gap: 6px;
+  .starIcon {
+    width: 90px;
+    height: 90px;
   }
 
   .logoTitle {

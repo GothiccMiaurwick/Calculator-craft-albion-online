@@ -35,12 +35,10 @@ export default function Home() {
 
       <div className={styles.hero}>
         <div className={styles.logoWrap}>
-          <div className={styles.calcLogo} aria-hidden="true">
-            <span className={styles.calcScreen} />
-            <span className={styles.calcKey} />
-            <span className={styles.calcKey} />
-            <span className={styles.calcKeyAccent} />
-          </div>
+          <svg className={styles.starIcon} viewBox="0 0 128 128" aria-hidden="true">
+            <path d="M64 2 C72 44 78 50 84 56 C100 72 126 64 126 64 C126 64 100 72 84 88 C78 94 72 100 64 126 C56 100 50 94 44 88 C28 72 2 64 2 64 C2 64 28 72 44 56 C50 50 56 44 64 2 Z" fill="#FC97B7" stroke="#402934" stroke-width="5" stroke-linejoin="round"/>
+            <polygon points="64,52 76,64 64,76 52,64" fill="#D1F985"/>
+          </svg>
         </div>
         <h1 className={styles.logoTitle}>Mochi Craft</h1>
         <div className={styles.divider} />
