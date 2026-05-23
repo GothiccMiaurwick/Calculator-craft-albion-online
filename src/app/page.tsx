@@ -35,28 +35,7 @@ export default function Home() {
 
       <div className={styles.hero}>
         <div className={styles.logoWrap}>
-          <svg className={styles.starIcon} viewBox="0 0 128 128" aria-hidden="true">
-            <defs>
-              <linearGradient id="chrome" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#ffffff"/>
-                <stop offset="20%" stop-color="#e0e0e0"/>
-                <stop offset="40%" stop-color="#a0a0a0"/>
-                <stop offset="50%" stop-color="#d8d8d8"/>
-                <stop offset="65%" stop-color="#888888"/>
-                <stop offset="80%" stop-color="#c0c0c0"/>
-                <stop offset="100%" stop-color="#666666"/>
-              </linearGradient>
-              <radialGradient id="shine" cx="35%" cy="30%" r="65%">
-                <stop offset="0%" stop-color="#ffffff" stop-opacity="0.85"/>
-                <stop offset="30%" stop-color="#ffffff" stop-opacity="0.2"/>
-                <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
-              </radialGradient>
-            </defs>
-            <path d="M64 6 L78 48 L124 48 L88 76 L102 120 L64 94 L26 120 L40 76 L4 48 L50 48 Z"
-                  fill="url(#chrome)" stroke="#777" stroke-width="1.5" stroke-linejoin="round"/>
-            <path d="M64 6 L78 48 L124 48 L88 76 L102 120 L64 94 L26 120 L40 76 L4 48 L50 48 Z"
-                  fill="url(#shine)"/>
-          </svg>
+          <img src="/icon.png" className={styles.starIcon} alt="" aria-hidden="true" />
         </div>
         <h1 className={styles.logoTitle}>Mochi Craft</h1>
         <div className={styles.divider} />
