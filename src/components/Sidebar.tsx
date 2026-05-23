@@ -193,9 +193,9 @@ export default function Sidebar() {
           className={`${styles.tab} ${currentView === 'planner' ? styles.tabActive : ''}`}
           onClick={() => navigateTo('planner')}
         >
-          {t(locale, 'planner')}
-        </button>
-      </div>
+          {t(locale, 'taller')}
+          </button>
+        </div>
 
       <div className={styles.searchWrap}>
         <div className={styles.searchInputShell}>
