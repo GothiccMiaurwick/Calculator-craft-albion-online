@@ -1054,7 +1054,7 @@ export default function Planner() {
                               <img src={getItemImageUrl(mount.itemId)} className={styles.optionImg} alt="" />
                               <div className={styles.optionMeta}>
                                 <span className={styles.optionName}>{mount.name}</span>
-                                <span className={styles.optionSub}>{mount.capacity.toLocaleString(localeCode)} kg</span>
+                                <span className={styles.optionSub}>{((mount.capacity + selectedBag.bonus) * (1 + selectedFood.bonus)).toLocaleString(localeCode)} kg</span>
                               </div>
                             </div>
                           ))}
