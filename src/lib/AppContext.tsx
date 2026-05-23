@@ -243,6 +243,7 @@ interface AppContextType {
   plannerItems: PlannerItem[];
   addPlannerItem: (item: Omit<PlannerItem, 'id'>) => void;
   removePlannerItem: (id: string) => void;
+  clearPlannerItems: () => void;
   updatePlannerItem: (id: string, updates: Partial<PlannerItem>) => void;
   resources: ResourceRow[];
   setResources: React.Dispatch<React.SetStateAction<ResourceRow[]>>;
@@ -278,6 +279,7 @@ const AppContext = createContext<AppContextType>({
   plannerItems: [],
   addPlannerItem: () => {},
   removePlannerItem: () => {},
+  clearPlannerItems: () => {},
   updatePlannerItem: () => {},
   resources: INITIAL_RESOURCES,
   setResources: () => INITIAL_RESOURCES,
@@ -396,6 +398,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setPlannerItems(prev => prev.filter(i => i.id !== id));
   }, []);
 
+  const clearPlannerItems = useCallback(() => {
+    setPlannerItems([]);
+  }, []);
+
   const updatePlannerItem = useCallback((id: string, updates: Partial<PlannerItem>) => {
     setPlannerItems(prev => {
       let changed = false;
@@ -423,7 +429,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       selectedTreeItem, setSelectedTreeItem,
       server, setServer,
       currentView, setCurrentView,
-      plannerItems, addPlannerItem, removePlannerItem, updatePlannerItem,
+      plannerItems, addPlannerItem, removePlannerItem, updatePlannerItem, clearPlannerItems,
       resources, setResources,
       journals, setJournals,
       artifactPrices, setArtifactPrices,

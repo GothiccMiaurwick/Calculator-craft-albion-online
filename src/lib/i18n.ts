@@ -6,6 +6,7 @@ export type Locale = 'es' | 'en';
 type TranslationKey =
   | 'calculator'
   | 'planner'
+  | 'taller'
   | 'enchanter'
   | 'cooking'
   | 'database'
@@ -61,6 +62,8 @@ type TranslationKey =
   | 'newCraft'
   | 'emptyPlanner'
   | 'emptyPlannerSubtitle'
+  | 'emptyTaller'
+  | 'emptyTallerSubtitle'
   | 'item'
   | 'materialsAndJournals'
   | 'profit'
@@ -97,6 +100,7 @@ const UI_TEXT: Record<Locale, Record<TranslationKey, string>> = {
   es: {
     calculator: 'CALCULADORA',
     planner: 'PLANIFICADOR',
+    taller: 'TALLER',
     enchanter: 'ENCANTADOR',
     cooking: 'COCINA',
     database: 'BASE DE DATOS',
@@ -152,6 +156,8 @@ const UI_TEXT: Record<Locale, Record<TranslationKey, string>> = {
     newCraft: 'AGREGAR NUEVO CRAFTEO',
     emptyPlanner: 'PLANIFICADOR VACIO',
     emptyPlannerSubtitle: 'AGREGA ITEMS PARA CALCULAR MATERIALES, DIARIOS, MERCADO NEGRO Y TU GANANCIA TOTAL.',
+    emptyTaller: 'TALLER VACIO',
+    emptyTallerSubtitle: 'AGREGA ITEMS PARA CALCULAR MATERIALES, DIARIOS, MERCADO NEGRO Y TU GANANCIA TOTAL.',
     item: 'ITEM',
     materialsAndJournals: 'MAT. Y DIARIOS REQ.',
     profit: 'GANANCIA',
@@ -187,6 +193,7 @@ const UI_TEXT: Record<Locale, Record<TranslationKey, string>> = {
   en: {
     calculator: 'CALCULATOR',
     planner: 'PLANNER',
+    taller: 'WORKSHOP',
     enchanter: 'ENCHANTER',
     cooking: 'COOKING',
     database: 'DATABASE',
@@ -242,6 +249,8 @@ const UI_TEXT: Record<Locale, Record<TranslationKey, string>> = {
     newCraft: 'ADD NEW CRAFT',
     emptyPlanner: 'EMPTY PLANNER',
     emptyPlannerSubtitle: 'ADD ITEMS TO CALCULATE MATERIALS, JOURNALS, BLACK MARKET AND YOUR TOTAL SESSION PROFIT.',
+    emptyTaller: 'EMPTY WORKSHOP',
+    emptyTallerSubtitle: 'ADD ITEMS TO CALCULATE MATERIALS, JOURNALS, BLACK MARKET AND YOUR TOTAL SESSION PROFIT.',
     item: 'ITEM',
     materialsAndJournals: 'MAT. & JOURNALS',
     profit: 'PROFIT',

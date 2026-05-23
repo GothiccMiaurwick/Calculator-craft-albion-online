@@ -17,8 +17,10 @@ import {
   Weight,
   ChevronDown,
   ChevronUp,
+  Save,
+  FolderOpen,
 } from 'lucide-react';
-import { useApp } from '@/lib/AppContext';
+import { useApp, PlannerItem } from '@/lib/AppContext';
 import { fetchPrices } from '@/lib/api';
 import { formatSilver } from '@/lib/api';
 import { CITIES, getItemImageUrl } from '@/lib/items';
@@ -244,7 +246,7 @@ function getWeightForMaterial(id: string): number {
 
 export default function Planner() {
   const { 
-    plannerItems, updatePlannerItem, removePlannerItem, 
+    plannerItems, addPlannerItem, updatePlannerItem, removePlannerItem, clearPlannerItems,
     calculatorPreferences, resources, artifactPrices, journals, specs,
     itemOverrides, allManualSellPrices, allMarketPrices, server
   } = useApp();
@@ -262,12 +264,63 @@ export default function Planner() {
   const [showMountDropdown, setShowMountDropdown] = useState(false);
   const [showBagDropdown, setShowBagDropdown] = useState(false);
   const [showFoodDropdown, setShowFoodDropdown] = useState(false);
+  const [showSaveModal, setShowSaveModal] = useState(false);
+  const [showLoadModal, setShowLoadModal] = useState(false);
+  const [saveName, setSaveName] = useState('');
   const planificadorRef = useRef<HTMLElement | null>(null);
   const materialesRef = useRef<HTMLElement | null>(null);
   const resumenRef = useRef<HTMLElement | null>(null);
 
   // Toggle helpers to ensure clean interaction
   const toggleCraftFame = () => setShowCraftFame(prev => !prev);
+
+  const SAVED_TALLERES_KEY = 'saved_talleres';
+
+  function getSavedTalleres() {
+    try {
+      return JSON.parse(localStorage.getItem(SAVED_TALLERES_KEY) || '[]');
+    } catch { return []; }
+  }
+
+  function saveTaller(name: string) {
+    const talleres = getSavedTalleres();
+    talleres.push({
+      id: Date.now().toString(),
+      name,
+      date: new Date().toISOString(),
+      data: {
+        plannerItems,
+        extraCosts,
+        selectedMountIndex,
+        selectedBagIndex,
+        selectedFoodIndex,
+        craftFameBonus,
+      },
+    });
+    localStorage.setItem(SAVED_TALLERES_KEY, JSON.stringify(talleres));
+  }
+
+  function loadTaller(id: string) {
+    const talleres = getSavedTalleres();
+    const found = talleres.find((t: { id: string }) => t.id === id);
+    if (!found) return;
+    const d = found.data;
+    clearPlannerItems();
+    d.plannerItems.forEach((item: PlannerItem) => {
+      const { id: omitId, ...rest } = item;
+      addPlannerItem(rest);
+    });
+    setExtraCosts(d.extraCosts);
+    setSelectedMountIndex(d.selectedMountIndex);
+    setSelectedBagIndex(d.selectedBagIndex);
+    setSelectedFoodIndex(d.selectedFoodIndex);
+    setCraftFameBonus(d.craftFameBonus);
+  }
+
+  function deleteTaller(id: string) {
+    const talleres = getSavedTalleres().filter((t: { id: string }) => t.id !== id);
+    localStorage.setItem(SAVED_TALLERES_KEY, JSON.stringify(talleres));
+  }
 
   // 1. Sync global resource prices into each planner item's snapshot
   useEffect(() => {
@@ -640,12 +693,18 @@ export default function Planner() {
       <div className={styles.planner}>
         <div className={styles.topBar}>
           <div className={styles.tabs}>
-            <button className={`${styles.tab} ${styles.tabActive}`}>{t(locale, 'planner')}</button>
+            <button className={`${styles.tab} ${styles.tabActive}`}>{t(locale, 'taller')}</button>
             <button className={styles.tab}>{t(locale, 'materialsNeeded')}</button>
             <button className={styles.tab}>{t(locale, 'craftingSummary')}</button>
           </div>
           <button className={styles.addBtn} onClick={() => setShowAddModal(true)}>
             <Plus size={16} strokeWidth={3} /> {t(locale, 'newCraft')}
+          </button>
+          <button className={styles.iconBtn} onClick={() => setShowSaveModal(true)} title={locale === 'es' ? 'GUARDAR TALLER' : 'SAVE WORKSHOP'}>
+            <Save size={16} />
+          </button>
+          <button className={styles.iconBtn} onClick={() => setShowLoadModal(true)} title={locale === 'es' ? 'CARGAR TALLER' : 'LOAD WORKSHOP'}>
+            <FolderOpen size={16} />
           </button>
         </div>
         <div className={styles.content}>
@@ -653,11 +712,72 @@ export default function Planner() {
             <div className={styles.iconWrap}>
               <Plus size={28} strokeWidth={2.5} color="#fc97b7" />
             </div>
-            <h2 className={styles.emptyTitle}>{t(locale, 'emptyPlanner')}</h2>
-            <p className={styles.emptySub}>{t(locale, 'emptyPlannerSubtitle')}</p>
+            <h2 className={styles.emptyTitle}>{t(locale, 'emptyTaller')}</h2>
+            <p className={styles.emptySub}>{t(locale, 'emptyTallerSubtitle')}</p>
           </div>
         </div>
         {showAddModal && <AddCraftModal onClose={() => setShowAddModal(false)} />}
+      {showSaveModal && (
+        <div className={styles.modalOverlay} onClick={() => setShowSaveModal(false)}>
+          <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+            <h3 className={styles.modalTitle}>{locale === 'es' ? 'GUARDAR TALLER' : 'SAVE WORKSHOP'}</h3>
+            <input
+              className={styles.modalInput}
+              type="text"
+              placeholder={locale === 'es' ? 'NOMBRE DEL TALLER...' : 'WORKSHOP NAME...'}
+              value={saveName}
+              onChange={(e) => setSaveName(e.target.value)}
+              autoFocus
+            />
+            <div className={styles.modalActions}>
+              <button className={styles.modalBtnCancel} onClick={() => { setShowSaveModal(false); setSaveName(''); }}>
+                {locale === 'es' ? 'CANCELAR' : 'CANCEL'}
+              </button>
+              <button
+                className={styles.modalBtnConfirm}
+                disabled={!saveName.trim()}
+                onClick={() => { saveTaller(saveName.trim()); setShowSaveModal(false); setSaveName(''); }}
+              >
+                {locale === 'es' ? 'GUARDAR' : 'SAVE'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {showLoadModal && (
+        <div className={styles.modalOverlay} onClick={() => setShowLoadModal(false)}>
+          <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+            <h3 className={styles.modalTitle}>{locale === 'es' ? 'CARGAR TALLER' : 'LOAD WORKSHOP'}</h3>
+            {getSavedTalleres().length === 0 ? (
+              <p className={styles.modalEmpty}>{locale === 'es' ? 'NO HAY TALLERES GUARDADOS' : 'NO SAVED WORKSHOPS'}</p>
+            ) : (
+              <div className={styles.savedList}>
+                {getSavedTalleres().toReversed().map((t: { id: string; name: string; date: string }) => (
+                  <div key={t.id} className={styles.savedItem}>
+                    <div className={styles.savedInfo}>
+                      <span className={styles.savedName}>{t.name}</span>
+                      <span className={styles.savedDate}>{new Date(t.date).toLocaleDateString(localeCode)}</span>
+                    </div>
+                    <div className={styles.savedActions}>
+                      <button className={styles.modalBtnConfirm} onClick={() => { loadTaller(t.id); setShowLoadModal(false); }}>
+                        {locale === 'es' ? 'CARGAR' : 'LOAD'}
+                      </button>
+                      <button className={styles.modalBtnDanger} onClick={() => deleteTaller(t.id)}>
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+            <div className={styles.modalActions}>
+              <button className={styles.modalBtnCancel} onClick={() => setShowLoadModal(false)}>
+                {locale === 'es' ? 'CERRAR' : 'CLOSE'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       </div>
     );
   }
@@ -670,7 +790,7 @@ export default function Planner() {
             className={`${styles.tab} ${activeTab === 'planificador' ? styles.tabActive : ''}`}
             onClick={() => scrollToSection('planificador')}
           >
-            {t(locale, 'planner')}
+            {t(locale, 'taller')}
           </button>
           <button
             className={`${styles.tab} ${activeTab === 'materiales' ? styles.tabActive : ''}`}
@@ -696,6 +816,12 @@ export default function Planner() {
           </div>
           <button className={styles.addBtn} onClick={() => setShowAddModal(true)}>
             <Plus size={16} strokeWidth={3} /> {t(locale, 'newCraft')}
+          </button>
+          <button className={styles.iconBtn} onClick={() => setShowSaveModal(true)} title={locale === 'es' ? 'GUARDAR TALLER' : 'SAVE WORKSHOP'}>
+            <Save size={16} />
+          </button>
+          <button className={styles.iconBtn} onClick={() => setShowLoadModal(true)} title={locale === 'es' ? 'CARGAR TALLER' : 'LOAD WORKSHOP'}>
+            <FolderOpen size={16} />
           </button>
         </div>
       </div>
@@ -1220,6 +1346,69 @@ export default function Planner() {
       </div>
 
       {showAddModal && <AddCraftModal onClose={() => setShowAddModal(false)} />}
+
+      {showSaveModal && (
+        <div className={styles.modalOverlay} onClick={() => setShowSaveModal(false)}>
+          <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+            <h3 className={styles.modalTitle}>{locale === 'es' ? 'GUARDAR TALLER' : 'SAVE WORKSHOP'}</h3>
+            <input
+              className={styles.modalInput}
+              type="text"
+              placeholder={locale === 'es' ? 'NOMBRE DEL TALLER...' : 'WORKSHOP NAME...'}
+              value={saveName}
+              onChange={(e) => setSaveName(e.target.value)}
+              autoFocus
+            />
+            <div className={styles.modalActions}>
+              <button className={styles.modalBtnCancel} onClick={() => { setShowSaveModal(false); setSaveName(''); }}>
+                {locale === 'es' ? 'CANCELAR' : 'CANCEL'}
+              </button>
+              <button
+                className={styles.modalBtnConfirm}
+                disabled={!saveName.trim()}
+                onClick={() => { saveTaller(saveName.trim()); setShowSaveModal(false); setSaveName(''); }}
+              >
+                {locale === 'es' ? 'GUARDAR' : 'SAVE'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showLoadModal && (
+        <div className={styles.modalOverlay} onClick={() => setShowLoadModal(false)}>
+          <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+            <h3 className={styles.modalTitle}>{locale === 'es' ? 'CARGAR TALLER' : 'LOAD WORKSHOP'}</h3>
+            {getSavedTalleres().length === 0 ? (
+              <p className={styles.modalEmpty}>{locale === 'es' ? 'NO HAY TALLERES GUARDADOS' : 'NO SAVED WORKSHOPS'}</p>
+            ) : (
+              <div className={styles.savedList}>
+                {getSavedTalleres().toReversed().map((t: { id: string; name: string; date: string }) => (
+                  <div key={t.id} className={styles.savedItem}>
+                    <div className={styles.savedInfo}>
+                      <span className={styles.savedName}>{t.name}</span>
+                      <span className={styles.savedDate}>{new Date(t.date).toLocaleDateString(localeCode)}</span>
+                    </div>
+                    <div className={styles.savedActions}>
+                      <button className={styles.modalBtnConfirm} onClick={() => { loadTaller(t.id); setShowLoadModal(false); }}>
+                        {locale === 'es' ? 'CARGAR' : 'LOAD'}
+                      </button>
+                      <button className={styles.modalBtnDanger} onClick={() => deleteTaller(t.id)}>
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+            <div className={styles.modalActions}>
+              <button className={styles.modalBtnCancel} onClick={() => setShowLoadModal(false)}>
+                {locale === 'es' ? 'CERRAR' : 'CLOSE'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

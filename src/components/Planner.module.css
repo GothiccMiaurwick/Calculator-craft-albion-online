@@ -114,6 +114,178 @@
   transform: translateY(-1px);
 }
 
+.iconBtn {
+  background: rgba(255, 249, 251, 0.78);
+  border: 1px solid rgba(252, 151, 183, 0.28);
+  color: #b07e8e;
+  border-radius: 12px;
+  padding: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.18s ease, opacity 0.18s ease;
+}
+
+.iconBtn:hover {
+  background: rgba(252, 151, 183, 0.18);
+  transform: translateY(-1px);
+}
+
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(64, 41, 52, 0.58);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  backdrop-filter: blur(4px);
+}
+
+.modalContent {
+  background: #fff9fb;
+  border-radius: 20px;
+  padding: 28px 32px;
+  width: 90%;
+  max-width: 420px;
+  box-shadow: 0 12px 40px rgba(64, 41, 52, 0.28);
+}
+
+.modalTitle {
+  font-size: 0.94rem;
+  font-weight: 950;
+  color: #402934;
+  letter-spacing: 0.8px;
+  margin: 0 0 18px;
+}
+
+.modalInput {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid rgba(252, 151, 183, 0.28);
+  border-radius: 14px;
+  font-size: 0.85rem;
+  background: white;
+  color: #402934;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.18s;
+}
+
+.modalInput:focus {
+  border-color: #fc97b7;
+}
+
+.modalActions {
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
+  justify-content: flex-end;
+}
+
+.modalBtnCancel {
+  background: rgba(255, 249, 251, 0.78);
+  border: 1px solid rgba(252, 151, 183, 0.28);
+  color: #b07e8e;
+  border-radius: 12px;
+  padding: 10px 20px;
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.6px;
+  cursor: pointer;
+}
+
+.modalBtnCancel:hover {
+  background: rgba(252, 151, 183, 0.18);
+}
+
+.modalBtnConfirm {
+  background: linear-gradient(135deg, #fc97b7 0%, #d1f985 100%);
+  color: #402934;
+  border: none;
+  border-radius: 12px;
+  padding: 10px 20px;
+  font-size: 0.72rem;
+  font-weight: 950;
+  letter-spacing: 0.6px;
+  cursor: pointer;
+}
+
+.modalBtnConfirm:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.modalBtnDanger {
+  background: rgba(255, 100, 100, 0.12);
+  border: 1px solid rgba(255, 100, 100, 0.3);
+  color: #d44;
+  border-radius: 10px;
+  padding: 8px 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.modalBtnDanger:hover {
+  background: rgba(255, 100, 100, 0.22);
+}
+
+.modalEmpty {
+  color: #b07e8e;
+  font-size: 0.82rem;
+  text-align: center;
+  padding: 20px 0;
+  margin: 0;
+}
+
+.savedList {
+  max-height: 300px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.savedItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 14px;
+  background: rgba(255, 249, 251, 0.78);
+  border: 1px solid rgba(252, 151, 183, 0.2);
+  border-radius: 14px;
+}
+
+.savedInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.savedName {
+  font-size: 0.82rem;
+  font-weight: 900;
+  color: #402934;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.savedDate {
+  font-size: 0.68rem;
+  color: #b07e8e;
+}
+
+.savedActions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
 .content {
   flex: 1;
   display: flex;
