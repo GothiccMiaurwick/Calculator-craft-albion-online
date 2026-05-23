@@ -14,7 +14,7 @@
 
 .modal {
   background:
-    radial-gradient(circle at top right, rgba(184, 242, 230, 0.34), transparent 32%),
+    radial-gradient(circle at top right, rgba(209, 249, 133, 0.34), transparent 32%),
     #fff7fa;
   border: 1px solid rgba(255, 133, 162, 0.42);
   border-radius: 40px;
@@ -124,7 +124,7 @@
 }
 
 .dropdownItem:hover {
-  background: rgba(184, 242, 230, 0.34);
+  background: rgba(209, 249, 133, 0.34);
   color: #402934;
 }
 
@@ -160,7 +160,7 @@
 }
 
 .pillActive {
-  background: linear-gradient(135deg, #fc97b7 0%, #ffe8f0 52%, #b8f2e6 100%);
+  background: linear-gradient(135deg, #fc97b7 0%, #ffe8f0 52%, #d1f985 100%);
   color: #402934;
   box-shadow: 0 4px 15px rgba(255, 133, 162, 0.28);
 }
@@ -210,7 +210,7 @@
 .focusIconWrap {
   width: 44px;
   height: 44px;
-  background: rgba(184, 242, 230, 0.44);
+  background: rgba(209, 249, 133, 0.44);
   border-radius: 12px;
   display: flex;
   justify-content: center;
@@ -257,7 +257,7 @@
 
 .toggleOn .toggleCircle {
   transform: translateX(20px);
-  background: #b8f2e6;
+  background: #d1f985;
 }
 
 /* ─ City Buttons ─ */
@@ -280,14 +280,14 @@
 }
 
 .cityBtnActive {
-  background: rgba(184, 242, 230, 0.34);
+  background: rgba(209, 249, 133, 0.34);
   color: #402934;
-  border: 1px solid rgba(184, 242, 230, 0.72);
+  border: 1px solid rgba(209, 249, 133, 0.72);
 }
 
 /* ─ Submit Button ─ */
 .submitBtn {
-  background: linear-gradient(135deg, #fc97b7 0%, #ffe8f0 52%, #b8f2e6 100%);
+  background: linear-gradient(135deg, #fc97b7 0%, #ffe8f0 52%, #d1f985 100%);
   border: none;
   border-radius: 16px;
   padding: 24px 0;

@@ -2,7 +2,7 @@
   min-height: 100%;
   padding: 30px 32px 52px;
   background:
-    radial-gradient(circle at top right, rgba(184, 242, 230, 0.38), transparent 26%),
+    radial-gradient(circle at top right, rgba(209, 249, 133, 0.38), transparent 26%),
     radial-gradient(circle at bottom left, rgba(255, 133, 162, 0.22), transparent 30%),
     linear-gradient(0deg, #fff7fa 0%, #ffe8f0 100%);
   display: flex;
@@ -27,8 +27,8 @@
   margin-bottom: 10px;
   padding: 5px 10px;
   border-radius: 999px;
-  background: rgba(184, 242, 230, 0.5);
-  border: 1px solid rgba(184, 242, 230, 0.75);
+  background: rgba(209, 249, 133, 0.5);
+  border: 1px solid rgba(209, 249, 133, 0.75);
   color: #4f7b1f;
   font-size: 0.68rem;
   font-weight: 950;
@@ -176,7 +176,7 @@
   width: fit-content;
   padding: 12px 16px;
   border-radius: 14px;
-  background: rgba(184, 242, 230, 0.36);
+  background: rgba(209, 249, 133, 0.36);
   color: #402934;
   font-weight: 950;
   letter-spacing: 0.6px;
@@ -233,8 +233,8 @@
   align-items: center;
   gap: 10px;
   border-radius: 12px;
-  background: rgba(184, 242, 230, 0.3);
-  border: 1px solid rgba(184, 242, 230, 0.72);
+  background: rgba(209, 249, 133, 0.3);
+  border: 1px solid rgba(209, 249, 133, 0.72);
   color: #5f6e35;
   padding: 12px 14px;
   font-weight: 800;

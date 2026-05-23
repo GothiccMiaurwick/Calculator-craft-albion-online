@@ -32,8 +32,8 @@
   font-size: 0.7rem;
   font-weight: 700;
   color: #4f7b1f;
-  background: rgba(184, 242, 230, 0.42);
-  border: 1px solid rgba(184, 242, 230, 0.72);
+  background: rgba(209, 249, 133, 0.42);
+  border: 1px solid rgba(209, 249, 133, 0.72);
   padding: 3px 10px;
   border-radius: 999px;
   letter-spacing: 1px;
@@ -43,7 +43,7 @@
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #b8f2e6;
+  background: #d1f985;
   animation: pulse 2s infinite;
 }
 
@@ -63,7 +63,7 @@
 }
 
 .logoWrap {
-  background: radial-gradient(circle, rgba(184, 242, 230, 0.55) 0%, rgba(255, 232, 240, 0.42) 58%, transparent 72%);
+  background: radial-gradient(circle, rgba(209, 249, 133, 0.55) 0%, rgba(255, 232, 240, 0.42) 58%, transparent 72%);
   padding: 2rem;
   border-radius: 50%;
 }
@@ -77,7 +77,7 @@
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: 36px repeat(2, 1fr);
   gap: 8px;
-  background: linear-gradient(145deg, #fc97b7 0%, #ffe8f0 56%, #b8f2e6 100%);
+  background: linear-gradient(145deg, #fc97b7 0%, #ffe8f0 56%, #d1f985 100%);
   border: 2px solid rgba(255, 133, 162, 0.5);
   box-shadow: 0 22px 44px rgba(255, 133, 162, 0.28);
   animation: float 3s ease-in-out infinite;
@@ -111,7 +111,7 @@
 }
 
 .calcKeyAccent {
-  background: #b8f2e6;
+  background: #d1f985;
 }
 
 @keyframes float {
@@ -123,7 +123,7 @@
   font-size: 2.5rem;
   font-weight: 900;
   font-style: italic;
-  background: linear-gradient(90deg, #fc97b7, #b8f2e6);
+  background: linear-gradient(90deg, #fc97b7, #d1f985);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -133,7 +133,7 @@
 .divider {
   width: 160px;
   height: 2px;
-  background: linear-gradient(90deg, transparent, rgba(255, 133, 162, 0.62), rgba(184, 242, 230, 0.72), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255, 133, 162, 0.62), rgba(209, 249, 133, 0.72), transparent);
   border-radius: 999px;
 }
 
@@ -160,7 +160,7 @@
 
 .btnPrimary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 0 36px rgba(184, 242, 230, 0.42);
+  box-shadow: 0 0 36px rgba(209, 249, 133, 0.42);
 }
 
 .btnSecondary {
