@@ -5,8 +5,8 @@
   --surface-3: #fff8fc;
   --active-cat: #ffccdd;
   --primary: #ff85a2;
-  --cyan: #d4a77a;
-  --gradient: linear-gradient(135deg, #ff85a2 0%, #ffe8f0 48%, #d4a77a 100%);
+  --cyan: #b8f2e6;
+  --gradient: linear-gradient(135deg, #ff85a2 0%, #ffe8f0 48%, #b8f2e6 100%);
   --text: #3d2c3d;
   --text-muted: #8a6b7a;
   --text-dim: #b895a3;
@@ -14,7 +14,7 @@
   --orange: #c4903a;
   --red: #e0557a;
   --green: #5fb85a;
-  --focus-ring: 0 0 0 3px rgba(212, 167, 122, 0.7), 0 0 0 5px rgba(255, 133, 162, 0.35);
+  --focus-ring: 0 0 0 2px rgba(255, 133, 162, 0.25);
   --sidebar-w: 270px;
 }
 
@@ -23,10 +23,10 @@
 html, body {
   background: var(--bg);
   background-image: 
-    radial-gradient(circle at 20% 20%, rgba(212, 167, 122, 0.2), transparent 40%),
+    radial-gradient(circle at 20% 20%, rgba(184, 242, 230, 0.2), transparent 40%),
     radial-gradient(circle at 80% 80%, rgba(255, 133, 162, 0.1), transparent 40%),
-    repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(212, 167, 122, 0.04) 40px, rgba(212, 167, 122, 0.04) 41px),
-    repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(212, 167, 122, 0.04) 40px, rgba(212, 167, 122, 0.04) 41px);
+    repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(184, 242, 230, 0.04) 40px, rgba(184, 242, 230, 0.04) 41px),
+    repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(184, 242, 230, 0.04) 40px, rgba(184, 242, 230, 0.04) 41px);
   color: var(--text);
   font-family: 'Nunito', ui-sans-serif, system-ui, sans-serif;
   font-size: 14px;
@@ -49,6 +49,17 @@ textarea:focus-visible,
 a:focus-visible {
   outline: none;
   box-shadow: var(--focus-ring);
+}
+
+input:focus-visible,
+textarea:focus-visible {
+  color: #26634a !important;
+}
+
+input:focus-visible::selection,
+textarea:focus-visible::selection {
+  background: #26634a;
+  color: #fff;
 }
 
 #__next {

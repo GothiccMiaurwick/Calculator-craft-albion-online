@@ -103,7 +103,7 @@
 .tabActive {
   background: var(--cyan);
   color: #1f4030;
-  box-shadow: 0 4px 14px rgba(212, 167, 122, 0.45);
+  box-shadow: 0 4px 14px rgba(184, 242, 230, 0.45);
 }
 
 .searchWrap {
@@ -355,8 +355,8 @@
 }
 
 .itemRowActive {
-  color: #5c3d1e !important;
-  background: rgba(212, 167, 122, 0.32) !important;
+  color: #26634a !important;
+  background: rgba(184, 242, 230, 0.32) !important;
 }
 
 .footer {
@@ -368,7 +368,7 @@
 }
 
 .footerBtnMain {
-  background: linear-gradient(135deg, #d4a77a 0%, #ffe8f0 100%);
+  background: linear-gradient(135deg, #b8f2e6 0%, #ffe8f0 100%);
   color: #3d2c3d;
   border: none;
   border-radius: 16px;
