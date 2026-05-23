@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   title: "Mochi Craft",
   description: "Advanced crafting and market calculator for Albion Online",
   icons: {
-    icon: "/iconPage.png",
+    icon: "/iconPage3.png",
   },
 };
 
