@@ -5,7 +5,7 @@ import type { CSSProperties, ReactNode } from 'react';
 import styles from './page.module.css';
 
 import { SPECS_DATA } from '@/lib/specsData';
-import { Sword, CircleUser, Layers, Wind, Shield, ShoppingBag, Shirt, Book } from 'lucide-react';
+import { SwordIcon, HelmetIcon, ChestIcon, BootIcon, ShieldIcon, BagIcon, ShirtIcon, BookIcon } from '@/components/Icons';
 import { getItemImageUrl } from '@/lib/items';
 import { useApp } from '@/lib/AppContext';
 import type { ResourceRow } from '@/lib/AppContext';
@@ -13,14 +13,14 @@ import { ARTIFACT_BASE_DATA } from '@/lib/artifacts';
 import { getArtifactCategoryName, getArtifactNameByBaseId, getDisplayLocale, getItemNameByBaseId, getJournalDisplayName, getJournalWorkerName, getResourceLabel, translateLooseUiLabel } from '@/lib/i18n';
 
 const ICON_MAP: Record<string, ReactNode> = {
-  Sword: <Sword size={22} />,
-  CircleUser: <CircleUser size={22} />,
-  Layers: <Layers size={22} />,
-  Wind: <Wind size={22} />,
-  Shield: <Shield size={22} />,
-  ShoppingBag: <ShoppingBag size={22} />,
-  Shirt: <Shirt size={22} />,
-  Book: <Book size={20} />
+  Sword: <SwordIcon size={22} />,
+  CircleUser: <HelmetIcon size={22} />,
+  Layers: <ChestIcon size={22} />,
+  Wind: <BootIcon size={22} />,
+  Shield: <ShieldIcon size={22} />,
+  ShoppingBag: <BagIcon size={22} />,
+  Shirt: <ShirtIcon size={22} />,
+  Book: <BookIcon size={20} />
 };
 
 const RESOURCE_IMG_MAP: Record<string, string> = {
