@@ -14,14 +14,14 @@
 
 .modal {
   background:
-    radial-gradient(circle at top right, rgba(209, 249, 133, 0.34), transparent 32%),
+    radial-gradient(circle at top right, rgba(184, 242, 230, 0.34), transparent 32%),
     #fff7fa;
-  border: 1px solid rgba(252, 151, 183, 0.42);
+  border: 1px solid rgba(255, 133, 162, 0.42);
   border-radius: 40px;
   width: 100%;
   max-width: 520px;
   padding: 40px;
-  box-shadow: 0 24px 56px rgba(252, 151, 183, 0.22);
+  box-shadow: 0 24px 56px rgba(255, 133, 162, 0.22);
   display: flex;
   flex-direction: column;
   gap: 24px;
@@ -73,8 +73,8 @@
 
 .selectBtn {
   width: 100%;
-  background: rgba(255, 225, 231, 0.72);
-  border: 1px solid rgba(252, 151, 183, 0.32);
+  background: rgba(255, 232, 240, 0.72);
+  border: 1px solid rgba(255, 133, 162, 0.32);
   border-radius: 12px;
   padding: 16px 20px;
   display: flex;
@@ -85,7 +85,7 @@
 }
 
 .selectBtn:hover {
-  border-color: rgba(252, 151, 183, 0.58);
+  border-color: rgba(255, 133, 162, 0.58);
 }
 
 .selectedText {
@@ -106,12 +106,12 @@
   left: 0;
   width: 100%;
   background: #fff7fa;
-  border: 1px solid rgba(252, 151, 183, 0.34);
+  border: 1px solid rgba(255, 133, 162, 0.34);
   border-radius: 12px;
   max-height: 240px;
   overflow-y: auto;
   z-index: 10;
-  box-shadow: 0 16px 36px rgba(252, 151, 183, 0.2);
+  box-shadow: 0 16px 36px rgba(255, 133, 162, 0.2);
 }
 
 .dropdownItem {
@@ -124,7 +124,7 @@
 }
 
 .dropdownItem:hover {
-  background: rgba(209, 249, 133, 0.34);
+  background: rgba(184, 242, 230, 0.34);
   color: #402934;
 }
 
@@ -148,7 +148,7 @@
 
 .pill {
   flex: 1;
-  background: rgba(255, 225, 231, 0.74);
+  background: rgba(255, 232, 240, 0.74);
   border: none;
   border-radius: 8px;
   padding: 12px 0;
@@ -160,14 +160,14 @@
 }
 
 .pillActive {
-  background: linear-gradient(135deg, #fc97b7 0%, #ffe1e7 52%, #d1f985 100%);
+  background: linear-gradient(135deg, #fc97b7 0%, #ffe8f0 52%, #b8f2e6 100%);
   color: #402934;
-  box-shadow: 0 4px 15px rgba(252, 151, 183, 0.28);
+  box-shadow: 0 4px 15px rgba(255, 133, 162, 0.28);
 }
 
 /* ─ Inputs ─ */
 .inputWrap {
-  background: rgba(255, 225, 231, 0.72);
+  background: rgba(255, 232, 240, 0.72);
   border-radius: 12px;
   display: flex;
   align-items: center;
@@ -192,8 +192,8 @@
 
 /* ─ Focus Card ─ */
 .focusCard {
-  background: rgba(255, 225, 231, 0.66);
-  border: 1px solid rgba(252, 151, 183, 0.32);
+  background: rgba(255, 232, 240, 0.66);
+  border: 1px solid rgba(255, 133, 162, 0.32);
   border-radius: 20px;
   padding: 20px;
   display: flex;
@@ -210,7 +210,7 @@
 .focusIconWrap {
   width: 44px;
   height: 44px;
-  background: rgba(209, 249, 133, 0.44);
+  background: rgba(184, 242, 230, 0.44);
   border-radius: 12px;
   display: flex;
   justify-content: center;
@@ -235,7 +235,7 @@
 .toggle {
   width: 44px;
   height: 24px;
-  background: rgba(255, 249, 251, 0.9);
+  background: rgba(255, 248, 252, 0.9);
   border-radius: 20px;
   padding: 4px;
   cursor: pointer;
@@ -257,7 +257,7 @@
 
 .toggleOn .toggleCircle {
   transform: translateX(20px);
-  background: #d1f985;
+  background: #b8f2e6;
 }
 
 /* ─ City Buttons ─ */
@@ -268,7 +268,7 @@
 
 .cityBtn {
   flex: 1;
-  background: rgba(255, 225, 231, 0.72);
+  background: rgba(255, 232, 240, 0.72);
   border: none;
   border-radius: 12px;
   padding: 18px 0;
@@ -280,14 +280,14 @@
 }
 
 .cityBtnActive {
-  background: rgba(209, 249, 133, 0.34);
+  background: rgba(184, 242, 230, 0.34);
   color: #402934;
-  border: 1px solid rgba(209, 249, 133, 0.72);
+  border: 1px solid rgba(184, 242, 230, 0.72);
 }
 
 /* ─ Submit Button ─ */
 .submitBtn {
-  background: linear-gradient(135deg, #fc97b7 0%, #ffe1e7 52%, #d1f985 100%);
+  background: linear-gradient(135deg, #fc97b7 0%, #ffe8f0 52%, #b8f2e6 100%);
   border: none;
   border-radius: 16px;
   padding: 24px 0;

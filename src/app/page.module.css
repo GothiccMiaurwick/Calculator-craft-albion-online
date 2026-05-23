@@ -32,8 +32,8 @@
   font-size: 0.7rem;
   font-weight: 700;
   color: #4f7b1f;
-  background: rgba(209, 249, 133, 0.42);
-  border: 1px solid rgba(209, 249, 133, 0.72);
+  background: rgba(184, 242, 230, 0.42);
+  border: 1px solid rgba(184, 242, 230, 0.72);
   padding: 3px 10px;
   border-radius: 999px;
   letter-spacing: 1px;
@@ -43,7 +43,7 @@
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #d1f985;
+  background: #b8f2e6;
   animation: pulse 2s infinite;
 }
 
@@ -63,7 +63,7 @@
 }
 
 .logoWrap {
-  background: radial-gradient(circle, rgba(209, 249, 133, 0.55) 0%, rgba(255, 225, 231, 0.42) 58%, transparent 72%);
+  background: radial-gradient(circle, rgba(184, 242, 230, 0.55) 0%, rgba(255, 232, 240, 0.42) 58%, transparent 72%);
   padding: 2rem;
   border-radius: 50%;
 }
@@ -77,16 +77,16 @@
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: 36px repeat(2, 1fr);
   gap: 8px;
-  background: linear-gradient(145deg, #fc97b7 0%, #ffe1e7 56%, #d1f985 100%);
-  border: 2px solid rgba(252, 151, 183, 0.5);
-  box-shadow: 0 22px 44px rgba(252, 151, 183, 0.28);
+  background: linear-gradient(145deg, #fc97b7 0%, #ffe8f0 56%, #b8f2e6 100%);
+  border: 2px solid rgba(255, 133, 162, 0.5);
+  box-shadow: 0 22px 44px rgba(255, 133, 162, 0.28);
   animation: float 3s ease-in-out infinite;
 }
 
 .calcScreen {
   grid-column: 1 / -1;
   border-radius: 10px;
-  background: rgba(255, 249, 251, 0.78);
+  background: rgba(255, 248, 252, 0.78);
   border: 1px solid rgba(64, 41, 52, 0.12);
   position: relative;
 }
@@ -106,12 +106,12 @@
 .calcKey,
 .calcKeyAccent {
   border-radius: 8px;
-  background: rgba(255, 249, 251, 0.8);
+  background: rgba(255, 248, 252, 0.8);
   border: 1px solid rgba(64, 41, 52, 0.1);
 }
 
 .calcKeyAccent {
-  background: #d1f985;
+  background: #b8f2e6;
 }
 
 @keyframes float {
@@ -123,7 +123,7 @@
   font-size: 2.5rem;
   font-weight: 900;
   font-style: italic;
-  background: linear-gradient(90deg, #fc97b7, #d1f985);
+  background: linear-gradient(90deg, #fc97b7, #b8f2e6);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -133,7 +133,7 @@
 .divider {
   width: 160px;
   height: 2px;
-  background: linear-gradient(90deg, transparent, rgba(252, 151, 183, 0.62), rgba(209, 249, 133, 0.72), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255, 133, 162, 0.62), rgba(184, 242, 230, 0.72), transparent);
   border-radius: 999px;
 }
 
@@ -154,13 +154,13 @@
   font-weight: 900;
   letter-spacing: 2px;
   cursor: pointer;
-  box-shadow: 0 0 24px rgba(252, 151, 183, 0.28);
+  box-shadow: 0 0 24px rgba(255, 133, 162, 0.28);
   transition: transform 0.15s, box-shadow 0.2s;
 }
 
 .btnPrimary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 0 36px rgba(209, 249, 133, 0.42);
+  box-shadow: 0 0 36px rgba(184, 242, 230, 0.42);
 }
 
 .btnSecondary {
@@ -178,8 +178,8 @@
 
 .btnSecondary:hover {
   color: var(--text);
-  border-color: rgba(252, 151, 183, 0.58);
-  background: rgba(255, 225, 231, 0.54);
+  border-color: rgba(255, 133, 162, 0.58);
+  background: rgba(255, 232, 240, 0.54);
 }
 
 .tagline {

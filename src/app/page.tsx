@@ -42,7 +42,7 @@ export default function Home() {
             <span className={styles.calcKeyAccent} />
           </div>
         </div>
-        <h1 className={styles.logoTitle}>Albion Printer</h1>
+        <h1 className={styles.logoTitle}>Mochi Craft</h1>
         <div className={styles.divider} />
         <div className={styles.btnRow}>
           <button className={styles.btnPrimary} onClick={() => setCurrentView('calculator')}>{t(locale, 'calculator')}</button>
@@ -50,7 +50,7 @@ export default function Home() {
           <button className={styles.btnSecondary} onClick={() => setCurrentView('enchanter')}>{t(locale, 'enchanter')}</button>
           <button className={styles.btnSecondary} onClick={() => setCurrentView('cooking')}>{t(locale, 'cooking')}</button>
         </div>
-        <p className={styles.tagline}>&quot;ALBION&apos;S BEST MONEYMAKER TOOL&quot;</p>
+        <p className={styles.tagline}>&quot;crafted with love &lt;3&quot;</p>
       </div>
     </div>
   );

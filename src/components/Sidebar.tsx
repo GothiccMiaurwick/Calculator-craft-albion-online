@@ -166,11 +166,13 @@ export default function Sidebar() {
     <aside className={styles.sidebar}>
       <div className={styles.brand}>
         <div className={styles.brandIcon}>
-          <Hammer size={28} strokeWidth={3} fill="currentColor" />
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill="currentColor" />
+          </svg>
         </div>
         <div className={styles.brandText}>
-          <span className={styles.brandName}>ALBION PRINTER</span>
-          <span className={styles.brandVersion}>V1.17</span>
+          <span className={styles.brandName}>MOCHI CRAFT</span>
+          <span className={styles.brandVersion}>✦ BETA ✦</span>
         </div>
         <button
           className={styles.headerAction}

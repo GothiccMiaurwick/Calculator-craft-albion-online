@@ -1,16 +1,16 @@
 import type { Metadata } from "next";
-import { JetBrains_Mono } from "next/font/google";
+import { Nunito } from "next/font/google";
 import "./globals.css";
 import Sidebar from "@/components/Sidebar";
 import { AppProvider } from "@/lib/AppContext";
 
-const jetbrains = JetBrains_Mono({ 
+const nunito = Nunito({ 
   subsets: ["latin"],
-  variable: '--font-jetbrains',
+  variable: '--font-nunito',
 });
 
 export const metadata: Metadata = {
-  title: "Albion Market Pro",
+  title: "Mochi Craft",
   description: "Advanced crafting and market calculator for Albion Online",
   icons: {
     icon: "/icon.svg",
@@ -24,7 +24,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={jetbrains.className}>
+      <body className={nunito.className}>
         <AppProvider>
           <div className="app-layout">
             <Sidebar />

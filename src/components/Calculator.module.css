@@ -89,7 +89,7 @@
 .addPlanBtn:hover { opacity: 0.85; }
 
 .addPlanSaved {
-  background: #d1f985 !important;
+  background: #b8f2e6 !important;
   color: #402934 !important;
   pointer-events: none;
 }
@@ -135,7 +135,7 @@
   padding: 0 8px;
   border: 1px solid var(--border);
   border-radius: 6px;
-  background: rgba(255, 249, 251, 0.7);
+  background: rgba(255, 248, 252, 0.7);
   color: var(--text-muted);
   font-size: 0.75rem;
   font-weight: 800;
@@ -146,7 +146,7 @@
   justify-content: center;
 }
 
-.pill:hover { color: var(--text); border-color: rgba(252, 151, 183, 0.52); }
+.pill:hover { color: var(--text); border-color: rgba(255, 133, 162, 0.52); }
 
 .pillActive {
   background: var(--cyan);
@@ -157,7 +157,7 @@
 
 /* ─── Card ────────────────────────────────── */
 .card {
-  background: rgba(255, 249, 251, 0.78);
+  background: rgba(255, 248, 252, 0.78);
   border: 1px solid var(--border);
   border-radius: 20px;
   padding: 24px;
@@ -206,14 +206,14 @@
 .matBlockArtifact {
   border-left: 3px solid var(--cyan);
   padding-left: 0.75rem;
-  background: rgba(255, 225, 231, 0.56);
+  background: rgba(255, 232, 240, 0.56);
   border-radius: 12px;
 }
 
 .artifactHint {
   font-size: 0.65rem;
   color: #4f6518;
-  background: rgba(209, 249, 133, 0.26);
+  background: rgba(184, 242, 230, 0.26);
   padding: 2px 6px;
   border-radius: 4px;
   margin-left: 8px;
@@ -250,7 +250,7 @@
   align-items: center;
   gap: 10px;
   border: 1px solid var(--border);
-  background: linear-gradient(180deg, rgba(255, 249, 251, 0.92), rgba(255, 225, 231, 0.72));
+  background: linear-gradient(180deg, rgba(255, 248, 252, 0.92), rgba(255, 232, 240, 0.72));
   color: var(--text-muted);
   border-radius: 8px;
   padding: 8px 12px;
@@ -264,15 +264,15 @@
 
 .marketToggle:hover {
   color: var(--text);
-  border-color: rgba(252, 151, 183, 0.62);
-  box-shadow: 0 10px 22px rgba(252, 151, 183, 0.18);
+  border-color: rgba(255, 133, 162, 0.62);
+  box-shadow: 0 10px 22px rgba(255, 133, 162, 0.18);
 }
 
 .marketToggleActive {
   color: #26331b;
-  background: linear-gradient(135deg, #d1f985 0%, #ffe1e7 100%);
-  border-color: rgba(209, 249, 133, 0.78);
-  box-shadow: 0 8px 20px rgba(209, 249, 133, 0.24);
+  background: linear-gradient(135deg, #b8f2e6 0%, #ffe8f0 100%);
+  border-color: rgba(184, 242, 230, 0.78);
+  box-shadow: 0 8px 20px rgba(184, 242, 230, 0.24);
 }
 
 .marketToggleDot {
@@ -286,8 +286,8 @@
 
 /* ─── Material Inputs (Cards) ─────────────────────── */
 .matBlock {
-  background: linear-gradient(135deg, rgba(255, 225, 231, 0.98) 0%, rgba(255, 247, 250, 0.96) 62%, rgba(209, 249, 133, 0.26) 100%);
-  border: 1px solid rgba(252, 151, 183, 0.46);
+  background: linear-gradient(135deg, rgba(255, 232, 240, 0.98) 0%, rgba(255, 248, 252, 0.96) 62%, rgba(184, 242, 230, 0.26) 100%);
+  border: 1px solid rgba(255, 133, 162, 0.46);
   border-radius: 12px;
   padding: 16px 20px;
   margin-bottom: 8px;
@@ -301,9 +301,9 @@
 }
 
 .matBlock:hover {
-  border-color: rgba(252, 151, 183, 0.72);
-  background: linear-gradient(135deg, rgba(252, 151, 183, 0.26) 0%, rgba(255, 225, 231, 0.96) 54%, rgba(209, 249, 133, 0.32) 100%);
-  box-shadow: 0 12px 26px rgba(252, 151, 183, 0.18);
+  border-color: rgba(255, 133, 162, 0.72);
+  background: linear-gradient(135deg, rgba(255, 133, 162, 0.26) 0%, rgba(255, 232, 240, 0.96) 54%, rgba(184, 242, 230, 0.32) 100%);
+  box-shadow: 0 12px 26px rgba(255, 133, 162, 0.18);
 }
 
 .matLabel {
@@ -320,9 +320,9 @@
 }
 
 .matBadge {
-  background: rgba(209, 249, 133, 0.68);
+  background: rgba(184, 242, 230, 0.68);
   color: #4f6518;
-  border: 1px solid rgba(209, 249, 133, 0.92);
+  border: 1px solid rgba(184, 242, 230, 0.92);
   padding: 2px 10px;
   border-radius: 6px;
   font-size: 0.55rem;
@@ -346,20 +346,20 @@
 }
 
 .matBlock:focus-within {
-  border-color: rgba(209, 249, 133, 0.95);
-  box-shadow: 0 12px 28px rgba(209, 249, 133, 0.2), 0 0 0 1px rgba(209, 249, 133, 0.42);
+  border-color: rgba(184, 242, 230, 0.95);
+  box-shadow: 0 12px 28px rgba(184, 242, 230, 0.2), 0 0 0 1px rgba(184, 242, 230, 0.42);
 }
 
 .matInput:focus,
 .matInput:focus-visible {
-  background: rgba(209, 249, 133, 0.26);
-  border-color: rgba(209, 249, 133, 0.94);
-  box-shadow: inset 0 0 0 1px rgba(255, 249, 251, 0.7);
+  background: rgba(184, 242, 230, 0.26);
+  border-color: rgba(184, 242, 230, 0.94);
+  box-shadow: inset 0 0 0 1px rgba(255, 248, 252, 0.7);
   color: #4f6518 !important;
 }
 
 .matInput::selection {
-  background: rgba(209, 249, 133, 0.72);
+  background: rgba(184, 242, 230, 0.72);
   color: #26331b;
 }
 
@@ -376,7 +376,7 @@
   padding: 10px 6px;
   border: 1px solid var(--border);
   border-radius: 8px;
-  background: rgba(255, 249, 251, 0.62);
+  background: rgba(255, 248, 252, 0.62);
   color: var(--text-muted);
   font-size: 0.7rem;
   font-weight: 700;
@@ -438,7 +438,7 @@
   padding: 8px 16px;
   border: 1px solid var(--border);
   border-radius: 999px;
-  background: rgba(255, 249, 251, 0.62);
+  background: rgba(255, 248, 252, 0.62);
   color: var(--text-muted);
   font-size: 0.7rem;
   font-weight: 700;
@@ -447,7 +447,7 @@
 }
 
 .focusBtn:hover {
-  border-color: rgba(252, 151, 183, 0.62);
+  border-color: rgba(255, 133, 162, 0.62);
   color: var(--text);
 }
 
@@ -455,14 +455,14 @@
   background: var(--gradient);
   color: #402934;
   border-color: transparent;
-  box-shadow: 0 0 14px rgba(252, 151, 183, 0.24);
+  box-shadow: 0 0 14px rgba(255, 133, 162, 0.24);
 }
 
 .slider {
   -webkit-appearance: none;
   width: 100%;
   height: 6px;
-  background: linear-gradient(90deg, rgba(252, 151, 183, 0.42), rgba(255, 225, 231, 0.9), rgba(209, 249, 133, 0.6));
+  background: linear-gradient(90deg, rgba(255, 133, 162, 0.42), rgba(255, 232, 240, 0.9), rgba(184, 242, 230, 0.6));
   border-radius: 999px;
   outline: none;
   margin: 10px 0;
@@ -474,17 +474,17 @@
   appearance: none;
   width: 20px;
   height: 20px;
-  background: radial-gradient(circle at 35% 35%, #d1f985, #fc97b7);
+  background: radial-gradient(circle at 35% 35%, #b8f2e6, #fc97b7);
   border-radius: 50%;
   cursor: grab;
-  box-shadow: 0 0 12px rgba(252, 151, 183, 0.42), 0 2px 6px rgba(127, 90, 103, 0.24);
+  box-shadow: 0 0 12px rgba(255, 133, 162, 0.42), 0 2px 6px rgba(127, 90, 103, 0.24);
   transition: transform 0.15s ease, box-shadow 0.15s ease;
-  border: 2px solid rgba(255, 247, 250, 0.96);
+  border: 2px solid rgba(255, 248, 252, 0.96);
 }
 
 .slider::-webkit-slider-thumb:hover {
   transform: scale(1.25);
-  box-shadow: 0 0 20px rgba(252, 151, 183, 0.52), 0 2px 8px rgba(127, 90, 103, 0.24);
+  box-shadow: 0 0 20px rgba(255, 133, 162, 0.52), 0 2px 8px rgba(127, 90, 103, 0.24);
 }
 
 .slider:active::-webkit-slider-thumb {
@@ -498,7 +498,7 @@
   background: #fc97b7;
   border-radius: 50%;
   cursor: pointer;
-  box-shadow: 0 0 10px rgba(252, 151, 183, 0.4);
+  box-shadow: 0 0 10px rgba(255, 133, 162, 0.4);
   border: 2px solid #fff7fa;
 }
 
@@ -513,7 +513,7 @@
   border: 1px solid var(--border);
   border-radius: 14px;
   padding: 14px;
-  background: rgba(255, 249, 251, 0.48);
+  background: rgba(255, 248, 252, 0.48);
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -539,7 +539,7 @@
   padding: 0 10px;
   border: 1px solid var(--border);
   border-radius: 8px;
-  background: rgba(255, 249, 251, 0.62);
+  background: rgba(255, 248, 252, 0.62);
   color: var(--text-muted);
   font-size: 0.64rem;
   font-weight: 900;
@@ -550,14 +550,14 @@
 
 .miniPill:hover {
   color: var(--text);
-  border-color: rgba(252, 151, 183, 0.62);
+  border-color: rgba(255, 133, 162, 0.62);
 }
 
 .miniPillActive {
   background: var(--gradient);
   color: #402934;
   border-color: transparent;
-  box-shadow: 0 8px 18px rgba(252, 151, 183, 0.2);
+  box-shadow: 0 8px 18px rgba(255, 133, 162, 0.2);
 }
 
 /* ─── Best/No result ─────────────────────── */
@@ -574,7 +574,7 @@
 
 .bestResult {
   padding: 12px;
-  background: rgba(209, 249, 133, 0.32);
+  background: rgba(184, 242, 230, 0.32);
   border-radius: 8px;
   font-size: 0.8rem;
 }
@@ -588,7 +588,7 @@
 }
 
 .statCard {
-  background: linear-gradient(0deg, rgba(255, 225, 231, 0.9) 0%, rgba(255, 249, 251, 0.96) 100%);
+  background: linear-gradient(0deg, rgba(255, 232, 240, 0.9) 0%, rgba(255, 248, 252, 0.96) 100%);
   border: 1px solid var(--border);
   padding: 24px;
   border-radius: 16px;
@@ -599,7 +599,7 @@
   transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.35s ease;
   overflow: hidden;
   position: relative;
-  box-shadow: 0 18px 36px rgba(252, 151, 183, 0.16);
+  box-shadow: 0 18px 36px rgba(255, 133, 162, 0.16);
 }
 
 /* Subtle dark gradient overlay — fades out downward so item image pops */
@@ -607,7 +607,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(252, 151, 183, 0.12) 0%, transparent 46%);
+  background: linear-gradient(180deg, rgba(255, 133, 162, 0.12) 0%, transparent 46%);
   pointer-events: none;
   border-radius: inherit;
   z-index: 0;
@@ -621,7 +621,7 @@
 
 .statCard:hover {
   transform: translateY(-3px) scale(1.015);
-  box-shadow: 0 24px 46px rgba(252, 151, 183, 0.22);
+  box-shadow: 0 24px 46px rgba(255, 133, 162, 0.22);
 }
 
 /* --- Image Section (Top) --- */
@@ -631,7 +631,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: radial-gradient(circle at 50% 50%, rgba(209, 249, 133, 0.42) 0%, rgba(255, 225, 231, 0.22) 48%, transparent 72%);
+  background: radial-gradient(circle at 50% 50%, rgba(184, 242, 230, 0.42) 0%, rgba(255, 232, 240, 0.22) 48%, transparent 72%);
   position: relative;
 }
 
@@ -639,7 +639,7 @@
   width: 150px;
   height: 150px;
   object-fit: contain;
-  filter: drop-shadow(0 0 20px rgba(252, 151, 183, 0.24));
+  filter: drop-shadow(0 0 20px rgba(255, 133, 162, 0.24));
 }
 
 .tierOverlay {
@@ -648,7 +648,7 @@
   left: 0;
   font-size: 1rem;
   font-weight: 950;
-  background: rgba(255, 225, 231, 0.86);
+  background: rgba(255, 232, 240, 0.86);
   border: 1px solid var(--border);
   color: var(--text);
   padding: 4px 10px;
@@ -710,7 +710,7 @@
 
 .statDivider {
   height: 1px;
-  background: rgba(255, 225, 231, 0.7);
+  background: rgba(255, 232, 240, 0.7);
   margin: 4px 0;
   width: 100%;
 }
@@ -719,7 +719,7 @@
   width: calc(100% - 8px);
   margin: 16px auto 0 auto;
   height: 3px;
-  background: rgba(255, 249, 251, 0.54);
+  background: rgba(255, 248, 252, 0.54);
   border-radius: 99px;
   overflow: hidden;
   position: relative;
@@ -741,21 +741,21 @@
 .marginGreen { 
   background-image: linear-gradient(
     90deg, 
-    #d1f985 0%, 
+    #b8f2e6 0%, 
     #fc97b7 50%, 
-    #d1f985 100%
+    #b8f2e6 100%
   );
-  box-shadow: 0 0 15px rgba(209, 249, 133, 0.42);
+  box-shadow: 0 0 15px rgba(184, 242, 230, 0.42);
 }
 
 .marginRed { 
   background-image: linear-gradient(
     90deg, 
     #fc97b7 0%, 
-    #ffe1e7 50%, 
+    #ffe8f0 50%, 
     #fc97b7 100%
   );
-  box-shadow: 0 0 15px rgba(252, 151, 183, 0.42);
+  box-shadow: 0 0 15px rgba(255, 133, 162, 0.42);
 }
 
 /* --- Optimizer Sections --- */
@@ -767,7 +767,7 @@
 }
 
 .optCard {
-  background: rgba(255, 249, 251, 0.78);
+  background: rgba(255, 248, 252, 0.78);
   border: 1px solid rgba(16, 16, 16, 0.05);
   border-radius: 20px;
   overflow: hidden;
@@ -776,8 +776,8 @@
 
 .optCard:hover {
   transform: translateY(-4px) scale(1.02);
-  box-shadow: 0 15px 35px rgba(252, 151, 183, 0.16);
-  border-color: rgba(252, 151, 183, 0.38);
+  box-shadow: 0 15px 35px rgba(255, 133, 162, 0.16);
+  border-color: rgba(255, 133, 162, 0.38);
 }
 
 .optHeader {
@@ -817,7 +817,7 @@
 }
 
 .optBadge {
-  background: rgba(255, 225, 231, 0.7);
+  background: rgba(255, 232, 240, 0.7);
   border: 1px solid var(--border);
   padding: 4px 10px;
   border-radius: 8px;
@@ -846,7 +846,7 @@
 }
 
 .resList::-webkit-scrollbar-thumb {
-  background: rgba(252, 151, 183, 0.48);
+  background: rgba(255, 133, 162, 0.48);
   border-radius: 2px;
 }
 
@@ -855,13 +855,13 @@
   justify-content: space-between;
   align-items: center;
   padding: 12px 20px;
-  border-bottom: 1px solid rgba(252, 151, 183, 0.18);
+  border-bottom: 1px solid rgba(255, 133, 162, 0.18);
   cursor: pointer;
   transition: background 0.2s ease;
 }
 
 .resRow:hover {
-  background: rgba(255, 225, 231, 0.42);
+  background: rgba(255, 232, 240, 0.42);
 }
 
 .resRow:last-child {
@@ -878,7 +878,7 @@
   width: 32px;
   height: 32px;
   object-fit: contain;
-  background: rgba(255, 225, 231, 0.62);
+  background: rgba(255, 232, 240, 0.62);
   border-radius: 4px;
 }
 
@@ -954,7 +954,7 @@
   display: flex;
   align-items: center;
   gap: 24px;
-  background: rgba(255, 225, 231, 0.46);
+  background: rgba(255, 232, 240, 0.46);
   border-top: 1px solid var(--border);
 }
 
@@ -964,7 +964,7 @@
 }
 
 .optSliderValue {
-  background: rgba(209, 249, 133, 0.62);
+  background: rgba(184, 242, 230, 0.62);
   color: #402934;
   padding: 4px 10px;
   border-radius: 8px;
