@@ -56,7 +56,7 @@ export function getRequiredPurchaseQuantity(
   const returnedQuantity = rawQuantity * returnRatio;
   const firstCraftBuffer = Math.ceil(Number(perCraftQuantity || 0) * returnRatio);
 
-  return Math.min(rawQuantity, Math.round(rawQuantity - returnedQuantity) + firstCraftBuffer);
+  return Math.min(rawQuantity, Math.ceil(rawQuantity - returnedQuantity) + firstCraftBuffer);
 }
 
 // NOTE: This function is kept for display purposes in materialBreakdown only.
@@ -173,13 +173,12 @@ export function calculateCrafting(input: CalcInput): CalcResult {
   const inversion = Math.round(rawTotalCost - returnValue);
 
   // STEP 3: Net revenue after tax
-  // taxAmount is rounded to whole silver (Albion uses integer silver)
   const totalRevenue = Number(salePrice) * Number(itemQuantity);
-  const taxAmount = Math.round(totalRevenue * (Number(taxRate) / 100));
+  const taxAmount = totalRevenue * (Number(taxRate) / 100);
   const netRevenue = totalRevenue - taxAmount;
 
-  // STEP 4: Net profit = netRevenue - inversion
-  const gananciaNeta = netRevenue - inversion;
+  // STEP 4: Net profit = netRevenue - inversion (rounded once to avoid double-rounding)
+  const gananciaNeta = Math.round(netRevenue - inversion);
 
   // STEP 5: Margin = profit / inversion * 100
   const margenGanancia = inversion > 0 ? (gananciaNeta / inversion) * 100 : 0;
@@ -189,7 +188,7 @@ export function calculateCrafting(input: CalcInput): CalcResult {
     returnValue:     Number(returnValue.toFixed(2)),
     taxAmount:       Number(taxAmount.toFixed(2)),
     inversion:       inversion,
-    gananciaNeta:    Number(gananciaNeta.toFixed(2)),
+    gananciaNeta:    gananciaNeta,
     margenGanancia:  Number(margenGanancia.toFixed(1)),
   };
 }

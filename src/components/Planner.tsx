@@ -39,26 +39,26 @@ import AddCraftModal from './AddCraftModal';
 import styles from './Planner.module.css';
 
 const EXTRA_COSTS_KEY = 'planner_extra_costs';
-const MATERIAL_WEIGHTS: Record<number, number> = { 4: 0.5, 5: 0.7, 6: 1.1, 7: 1.7, 8: 2.8 };
-const JOURNAL_WEIGHTS: Record<number, number> = { 4: 0.34, 5: 0.51, 6: 0.76, 7: 1.14, 8: 1.71 };
+const MATERIAL_WEIGHTS: Record<number, number> = { 4: 0.51, 5: 0.76, 6: 1.14, 7: 1.71, 8: 2.6 };
+const JOURNAL_WEIGHTS: Record<number, number> = { 4: 0.34, 5: 0.51, 6: 0.76, 7: 1.14, 8: 1.7 };
 const ARTIFACT_WEIGHT = 2.0;
 const SHARD_WEIGHT = 0.1;
 
 const MOUNTS = [
-  { name: 'Armored Horse', capacity: 325, itemId: 'T8_MOUNT_ARMORED_HORSE' },
-  { name: 'Gallant Horse', capacity: 494, itemId: 'UNIQUE_MOUNT_GIANT_HORSE_ADC' },
-  { name: 'Moose', capacity: 815, itemId: 'T6_MOUNT_GIANTSTAG_MOOSE' },
-  { name: 'Spectral Direboar', capacity: 2130, itemId: 'UNIQUE_MOUNT_UNDEAD_DIREBOAR_ADC' },
-  { name: 'Elite Wild Boar', capacity: 3185, itemId: 'T8_MOUNT_DIREBOAR_FW_LYMHURST_ELITE' },
-  { name: 'Elite Bighorn Ram', capacity: 3200, itemId: 'T8_MOUNT_RAM_FW_MARTLOCK_ELITE' },
-  { name: 'Elite Winter Bear', capacity: 4250, itemId: 'T8_MOUNT_DIREBEAR_FW_FORTSTERLING_ELITE' },
-  { name: "Elder's Transport Ox", capacity: 5000, itemId: 'T8_MOUNT_OX' },
+  { name: 'Armored Horse', capacity: 0, itemId: 'T8_MOUNT_ARMORED_HORSE' },
+  { name: 'Gallant Horse', capacity: 156, itemId: 'UNIQUE_MOUNT_GIANT_HORSE_ADC' },
+  { name: 'Moose', capacity: 374, itemId: 'T6_MOUNT_GIANTSTAG_MOOSE' },
+  { name: 'Spectral Direboar', capacity: 1204, itemId: 'UNIQUE_MOUNT_UNDEAD_DIREBOAR_ADC' },
+  { name: 'Elite Wild Boar', capacity: 1582, itemId: 'T8_MOUNT_DIREBOAR_FW_LYMHURST_ELITE' },
+  { name: 'Elite Bighorn Ram', capacity: 1994, itemId: 'T8_MOUNT_RAM_FW_MARTLOCK_ELITE' },
+  { name: 'Elite Winter Bear', capacity: 2704, itemId: 'T8_MOUNT_DIREBEAR_FW_FORTSTERLING_ELITE' },
+  { name: "Elder's Transport Ox", capacity: 4116, itemId: 'T8_MOUNT_OX' },
 ];
 const BAG_OPTIONS = [
   { name: 'No bag', bonus: 0, itemId: '' },
-  { name: 'T6 Bag', bonus: 432, itemId: 'T6_BAG' },
-  { name: 'T7 Bag', bonus: 664, itemId: 'T7_BAG' },
-  { name: 'T8 Bag', bonus: 1038, itemId: 'T8_BAG' },
+  { name: 'T6 Bag', bonus: 249, itemId: 'T6_BAG' },
+  { name: 'T7 Bag', bonus: 300, itemId: 'T7_BAG' },
+  { name: 'T8 Bag', bonus: 361, itemId: 'T8_BAG' },
 ];
 const FOOD_OPTIONS = [
   { name: 'No food', bonus: 0, itemId: '' },
@@ -259,6 +259,9 @@ export default function Planner() {
   const [craftFameBonus, setCraftFameBonus] = useState(1);
   const [showCraftFame, setShowCraftFame] = useState(false);
   const [showWeight, setShowWeight] = useState(false);
+  const [showMountDropdown, setShowMountDropdown] = useState(false);
+  const [showBagDropdown, setShowBagDropdown] = useState(false);
+  const [showFoodDropdown, setShowFoodDropdown] = useState(false);
   const planificadorRef = useRef<HTMLElement | null>(null);
   const materialesRef = useRef<HTMLElement | null>(null);
   const resumenRef = useRef<HTMLElement | null>(null);
@@ -269,14 +272,13 @@ export default function Planner() {
   // 1. Sync global resource prices into each planner item's snapshot
   useEffect(() => {
     plannerItems.forEach((item) => {
-      const snapshot = Array.isArray(item.materialsSnapshot) ? item.materialsSnapshot : [];
-      const materials = snapshot.length > 0 ? snapshot : getFallbackRecipe(item.item.id);
+      const materials = getFallbackRecipe(item.item.id);
 
       const materialPricesSnapshot: Record<string, number> = {};
       let hasChanges = false;
 
       materials.forEach((mat) => {
-        const currentPrice = resolvePrice(mat.id, resources, artifactPrices);
+        const currentPrice = resolvePrice(mat.id, resources, artifactPrices, {}, allMarketPrices);
         const snapshotPrice = item.materialPricesSnapshot?.[mat.id] ?? 0;
 
         materialPricesSnapshot[mat.id] = currentPrice;
@@ -293,7 +295,7 @@ export default function Planner() {
         });
       }
     });
-  }, [plannerItems, updatePlannerItem, resources, artifactPrices]);
+  }, [plannerItems, updatePlannerItem, resources, artifactPrices, allMarketPrices]);
 
   // 2. Fetch missing market prices for special ingredients if needed
   useEffect(() => {
@@ -302,10 +304,10 @@ export default function Planner() {
         const snapshot = Array.isArray(item.materialsSnapshot) ? item.materialsSnapshot : [];
         const materials = snapshot.length > 0 ? snapshot : getFallbackRecipe(item.item.id);
 
-        const specialMats = materials.filter(m => !m.id.includes('ARTEFACT') && !m.id.includes('METALBAR') && !m.id.includes('LEATHER') && !m.id.includes('PLANKS') && !m.id.includes('FIBER') && !m.id.includes('CLOTH'));
-        if (specialMats.length === 0) continue;
+        const marketPricedMats = materials.filter(m => isArtifactLikeMaterial(m.id) || (!m.id.includes('METALBAR') && !m.id.includes('LEATHER') && !m.id.includes('PLANKS') && !m.id.includes('FIBER') && !m.id.includes('CLOTH')));
+        if (marketPricedMats.length === 0) continue;
 
-        const missingIds = specialMats.map(m => m.id).filter(id => (item.materialPricesSnapshot?.[id] ?? 0) === 0);
+        const missingIds = marketPricedMats.map(m => m.id).filter(id => (item.materialPricesSnapshot?.[id] ?? 0) === 0);
         if (missingIds.length === 0) continue;
 
         try {
@@ -358,9 +360,9 @@ export default function Planner() {
 
   const plannerRows = useMemo(() => {
     return plannerItems.map((pi) => {
-      const snapshot = Array.isArray(pi.materialsSnapshot) ? pi.materialsSnapshot : [];
-      const materials = snapshot.length > 0 ? snapshot : getFallbackRecipe(pi.item.id);
+      const materials = getFallbackRecipe(pi.item.id);
       const priceSnapshot = pi.materialPricesSnapshot || {};
+      const plannerMarketPrices = { ...priceSnapshot, ...allMarketPrices };
       const salePrice = allManualSellPrices[pi.item.id] ?? pi.salePriceSnapshot;
       
       const calc = calculateCrafting({
@@ -368,7 +370,7 @@ export default function Planner() {
         resources,
         artifactPrices,
         priceOverrides: itemOverrides[pi.item.id] || {},
-        marketPrices: allMarketPrices,
+        marketPrices: plannerMarketPrices,
         salePrice,
         returnRate: pi.returnRate,
         taxRate: calculatorPreferences.tax, // Use global preference
@@ -376,7 +378,7 @@ export default function Planner() {
       });
 
       const materialBreakdown = materials.map((mat) => {
-        const unitPrice = resolvePrice(mat.id, resources, artifactPrices, itemOverrides[pi.item.id] || {}, allMarketPrices);
+        const unitPrice = resolvePrice(mat.id, resources, artifactPrices, itemOverrides[pi.item.id] || {}, plannerMarketPrices);
         const totalQty = getRequiredPurchaseQuantity(
           mat.quantity,
           pi.quantity,
@@ -420,7 +422,7 @@ export default function Planner() {
         totalFocus: pi.useFocus ? getAdjustedFocusCost(pi.item, pi.tier, pi.enchant, specs) * pi.quantity : 0,
       };
     });
-  }, [plannerItems, resources, artifactPrices, specs, calculatorPreferences.tax]);
+  }, [plannerItems, resources, artifactPrices, specs, calculatorPreferences.tax, allManualSellPrices, itemOverrides, allMarketPrices]);
 
   const activeRows = plannerRows.filter(row => !row.isDone);
 
@@ -550,14 +552,13 @@ export default function Planner() {
     };
   }, [activeRows, journals, calculatorPreferences.tax]);
 
-  // Use real material investment per row (includes first-craft buffer)
-  const totalItemRealInversion = activeRows.reduce((sum, row) => sum + row.realInversion, 0);
+  const totalItemInvestment = activeRows.reduce((sum, row) => sum + row.realInversion, 0);
 
   // Item-only theoretical net profit (matches the 1,728,793 target)
   const itemOnlyNetProfit = activeRows.reduce((sum, row) => sum + row.calc.gananciaNeta, 0);
 
-  // Total investment (Materials Real + Journals + Extra Costs)
-  const totalExtraInvestment = totalItemRealInversion + journalSummary.buyTotal + extraCosts;
+  const totalPlannerInvestment = totalItemInvestment + journalSummary.buyTotal;
+  const totalExtraInvestment = totalPlannerInvestment + extraCosts;
 
   const totalFocus = activeRows.reduce((sum, row) => sum + row.totalFocus, 0);
 
@@ -567,14 +568,13 @@ export default function Planner() {
   // Total Sale Value (Albion Printer formula): Total Profit + Total Investment
   const totalSaleValue = totalNetProfit + totalExtraInvestment;
 
-  // ROI based on Item Profit vs Item REAL Investment (matches 50.1%)
-  const roi = totalItemRealInversion > 0 ? (itemOnlyNetProfit / totalItemRealInversion) * 100 : 0;
+  const roi = totalItemInvestment > 0 ? (itemOnlyNetProfit / totalItemInvestment) * 100 : 0;
 
   const rawMaterialWeight = activeRows.reduce((sum, row) => {
     return sum + row.materialBreakdown.reduce((innerSum, mat) => {
       if (isArtifactMaterial(mat.id) || isSpecialIngredientMaterial(mat.id)) return innerSum;
       const weight = getWeightForMaterial(mat.id);
-      return innerSum + (mat.quantity * row.quantity) * weight; // RAW weight
+      return innerSum + mat.totalQty * weight;
     }, 0);
   }, 0);
 
@@ -582,14 +582,14 @@ export default function Planner() {
     return sum + row.materialBreakdown.reduce((innerSum, mat) => {
       if (isArtifactMaterial(mat.id) || isSpecialIngredientMaterial(mat.id)) {
         const weight = getWeightForMaterial(mat.id);
-        return innerSum + (mat.quantity * row.quantity) * weight; // RAW weight
+        return innerSum + mat.totalQty * weight;
       }
       return innerSum;
     }, 0);
   }, 0);
 
   const journalWeight = journalSummary.details.reduce((sum, journal) => {
-    return sum + journal.buyQuantity * (JOURNAL_WEIGHTS[journal.tier] ?? 0.1);
+    return sum + journal.fullQuantity * (JOURNAL_WEIGHTS[journal.tier] ?? 0.1);
   }, 0);
 
   const transportWeight = rawMaterialWeight + rawArtifactWeight + journalWeight;
@@ -806,7 +806,7 @@ export default function Planner() {
               <div className={`${styles.sumIconWrap} ${styles.sumIconCyan}`}><Wallet size={20} /></div>
               <div className={styles.sumDetails}>
                 <span className={styles.sumLabel}>{t(locale, 'investment')}</span>
-                <span className={styles.sumValue}>{formatExactValue(totalItemRealInversion, localeCode)}</span>
+                <span className={styles.sumValue}>{formatExactValue(totalItemInvestment, localeCode)}</span>
               </div>
             </div>
             <div className={styles.sumCard}>
@@ -1007,86 +1007,136 @@ export default function Planner() {
             </div>
             {showWeight && (
               <div className={styles.transportPanel}>
-                <div className={styles.transportLayout}>
-                  <div className={styles.transportDataSide}>
-                    <div className={styles.weightGridCompact}>
-                      <div className={styles.weightCard}>
-                        <span>MATERIALS</span>
-                        <strong>{rawMaterialWeight.toLocaleString(localeCode, { maximumFractionDigits: 1 })} KG</strong>
-                      </div>
-                      <div className={styles.weightCard}>
-                        <span>ARTIFACTS</span>
-                        <strong>{rawArtifactWeight.toLocaleString(localeCode, { maximumFractionDigits: 1 })} KG</strong>
-                      </div>
-                      <div className={styles.weightCard}>
-                        <span>JOURNALS</span>
-                        <strong>{journalWeight.toLocaleString(localeCode, { maximumFractionDigits: 1 })} KG</strong>
-                      </div>
-                      <div className={`${styles.weightCard} ${styles.weightCardTotal}`}>
-                        <span>TOTAL WEIGHT</span>
-                        <strong>{transportWeight.toLocaleString(localeCode, { maximumFractionDigits: 1 })} KG</strong>
-                      </div>
+                <div className={styles.weightCards}>
+                  <div className={`${styles.sumCard} ${styles.weightSumCard}`}>
+                    <div className={`${styles.sumIconWrap} ${styles.sumIconCyan}`}><Boxes size={22} /></div>
+                    <div className={styles.sumDetails}>
+                      <span className={styles.sumLabel}>MATERIALS</span>
+                      <span className={styles.sumValue}>{rawMaterialWeight.toLocaleString(localeCode, { maximumFractionDigits: 1 })} KG</span>
                     </div>
-
-                    <div className={styles.transportControlsCompact}>
-                      <div className={styles.controlGroup}>
-                        <label>MOUNT</label>
-                        <select value={selectedMountIndex} onChange={(e) => setSelectedMountIndex(Number(e.target.value))}>
-                          {MOUNTS.map((mount, index) => (
-                            <option key={mount.name} value={index}>{mount.name}</option>
-                          ))}
-                        </select>
-                      </div>
-                      <div className={styles.controlGroup}>
-                        <label>BAG</label>
-                        <select value={selectedBagIndex} onChange={(e) => setSelectedBagIndex(Number(e.target.value))}>
-                          {BAG_OPTIONS.map((bag, index) => (
-                            <option key={bag.name} value={index}>{bag.name}</option>
-                          ))}
-                        </select>
-                      </div>
-                      <div className={styles.controlGroup}>
-                        <label>FOOD</label>
-                        <select value={selectedFoodIndex} onChange={(e) => setSelectedFoodIndex(Number(e.target.value))}>
-                          {FOOD_OPTIONS.map((food, index) => (
-                            <option key={food.name} value={index}>{food.name}</option>
-                          ))}
-                        </select>
-                      </div>
+                  </div>
+                  <div className={`${styles.sumCard} ${styles.weightSumCard}`}>
+                    <div className={`${styles.sumIconWrap} ${styles.sumIconPurple}`}><Star size={22} /></div>
+                    <div className={styles.sumDetails}>
+                      <span className={styles.sumLabel}>ARTIFACTS</span>
+                      <span className={styles.sumValue}>{rawArtifactWeight.toLocaleString(localeCode, { maximumFractionDigits: 1 })} KG</span>
                     </div>
+                  </div>
+                  <div className={`${styles.sumCard} ${styles.weightSumCard}`}>
+                    <div className={`${styles.sumIconWrap} ${styles.sumIconGreen}`}><Book size={22} /></div>
+                    <div className={styles.sumDetails}>
+                      <span className={styles.sumLabel}>JOURNALS</span>
+                      <span className={styles.sumValue}>{journalWeight.toLocaleString(localeCode, { maximumFractionDigits: 1 })} KG</span>
+                    </div>
+                  </div>
+                  <div className={`${styles.sumCard} ${styles.weightSumCard} ${styles.weightSumTotal}`}>
+                    <div className={`${styles.sumIconWrap} ${styles.weightSumTotalIcon}`}><Weight size={22} /></div>
+                    <div className={styles.sumDetails}>
+                      <span className={styles.sumLabel}>TOTAL</span>
+                      <span className={styles.sumValue}>{transportWeight.toLocaleString(localeCode, { maximumFractionDigits: 1 })} KG</span>
+                    </div>
+                  </div>
+                </div>
 
-                    <div className={styles.mountResultCompact}>
-                      <div className={styles.mountResultText}>
+                <div className={styles.transportControls}>
+                  <div className={styles.controlGroup}>
+                    <label>MOUNT</label>
+                    <div className={styles.customSelect} onClick={() => setShowMountDropdown(!showMountDropdown)}>
+                      <div className={styles.customSelectInner}>
+                        {selectedMount.itemId && <img src={getItemImageUrl(selectedMount.itemId)} className={styles.selectImg} alt="" />}
                         <span>{selectedMount.name}</span>
-                        <div className={styles.weightProgressContainer}>
-                          <strong>{transportWeight.toLocaleString(localeCode, { maximumFractionDigits: 1 })} / {transportCapacity.toLocaleString(localeCode, { maximumFractionDigits: 0 })} KG</strong>
-                          <div className={styles.progressBar}>
-                            <div className={styles.progressFill} style={{ width: `${weightPercent}%` }}></div>
-                          </div>
-                        </div>
                       </div>
+                      <ChevronDown size={14} />
+                      {showMountDropdown && (
+                        <div className={styles.selectDropdown}>
+                          {MOUNTS.map((mount, index) => (
+                            <div key={mount.name} className={`${styles.selectOption} ${index === selectedMountIndex ? styles.selectOptionActive : ''}`} onClick={(e) => { e.stopPropagation(); setSelectedMountIndex(index); setShowMountDropdown(false); }}>
+                              <img src={getItemImageUrl(mount.itemId)} className={styles.optionImg} alt="" />
+                              <div className={styles.optionMeta}>
+                                <span className={styles.optionName}>{mount.name}</span>
+                                <span className={styles.optionSub}>{mount.capacity.toLocaleString(localeCode)} kg</span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <div className={styles.controlGroup}>
+                    <label>BAG</label>
+                    <div className={styles.customSelect} onClick={() => setShowBagDropdown(!showBagDropdown)}>
+                      <div className={styles.customSelectInner}>
+                        {selectedBag.itemId ? <img src={getItemImageUrl(selectedBag.itemId)} className={styles.selectImg} alt="" /> : <div className={styles.selectImgPlaceholder} />}
+                        <span>{selectedBag.name}</span>
+                      </div>
+                      <ChevronDown size={14} />
+                      {showBagDropdown && (
+                        <div className={styles.selectDropdown}>
+                          {BAG_OPTIONS.map((bag, index) => (
+                            <div key={bag.name} className={`${styles.selectOption} ${index === selectedBagIndex ? styles.selectOptionActive : ''}`} onClick={(e) => { e.stopPropagation(); setSelectedBagIndex(index); setShowBagDropdown(false); }}>
+                              {bag.itemId ? <img src={getItemImageUrl(bag.itemId)} className={styles.optionImg} alt="" /> : <div className={styles.optionImgPlaceholder} />}
+                              <div className={styles.optionMeta}>
+                                <span className={styles.optionName}>{bag.name}</span>
+                                <span className={styles.optionSub}>{bag.bonus > 0 ? `+${bag.bonus.toLocaleString(localeCode)} kg` : '-'}</span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <div className={styles.controlGroup}>
+                    <label>FOOD</label>
+                    <div className={styles.customSelect} onClick={() => setShowFoodDropdown(!showFoodDropdown)}>
+                      <div className={styles.customSelectInner}>
+                        {selectedFood.itemId ? <img src={getItemImageUrl(selectedFood.itemId)} className={styles.selectImg} alt="" /> : <div className={styles.selectImgPlaceholder} />}
+                        <span>{selectedFood.name}</span>
+                      </div>
+                      <ChevronDown size={14} />
+                      {showFoodDropdown && (
+                        <div className={styles.selectDropdown}>
+                          {FOOD_OPTIONS.map((food, index) => (
+                            <div key={food.name} className={`${styles.selectOption} ${index === selectedFoodIndex ? styles.selectOptionActive : ''}`} onClick={(e) => { e.stopPropagation(); setSelectedFoodIndex(index); setShowFoodDropdown(false); }}>
+                              {food.itemId ? <img src={getItemImageUrl(food.itemId)} className={styles.optionImg} alt="" /> : <div className={styles.optionImgPlaceholder} />}
+                              <div className={styles.optionMeta}>
+                                <span className={styles.optionName}>{food.name}</span>
+                                <span className={styles.optionSub}>{food.bonus > 0 ? `+${(food.bonus * 100).toLocaleString(localeCode)}%` : '-'}</span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                <div className={styles.mountResultCompact}>
+                  <div className={styles.mountResultText}>
+                    <div className={styles.mountResultHeader}>
+                      <span>{selectedMount.name}</span>
                       <div className={styles.tripsBadge}>
                         {transportTrips || 0} {locale === 'es' ? 'VIAJES' : 'TRIPS'}
                       </div>
                     </div>
+                    <div className={styles.weightProgressContainer}>
+                      <div className={styles.mountWeightLabel}>
+                        {transportWeight.toLocaleString(localeCode, { maximumFractionDigits: 1 })} KG / {transportCapacity.toLocaleString(localeCode, { maximumFractionDigits: 0 })} KG
+                      </div>
+                      <div className={styles.progressBar}>
+                        <div className={styles.progressFill} style={{ width: `${weightPercent}%` }}></div>
+                      </div>
+                    </div>
                   </div>
-
-                  <div className={styles.transportImageSide}>
-                    <div className={styles.squareImageContainer}>
-                      <img src={getItemImageUrl(selectedMount.itemId)} className={styles.squareImg} alt="" />
-                    </div>
-                    <div className={styles.squareImageRow}>
-                      {selectedBag.itemId && (
-                        <div className={styles.squareImageContainerSmall}>
-                          <img src={getItemImageUrl(selectedBag.itemId)} className={styles.squareImg} alt="" />
-                        </div>
-                      )}
-                      {selectedFood.itemId && (
-                        <div className={styles.squareImageContainerSmall}>
-                          <img src={getItemImageUrl(selectedFood.itemId)} className={styles.squareImg} alt="" />
-                        </div>
-                      )}
-                    </div>
+                  <div className={styles.mountImages}>
+                    {selectedMount.itemId && (
+                      <div className={styles.mountImgWrap}><img src={getItemImageUrl(selectedMount.itemId)} className={styles.squareImg} alt="" /></div>
+                    )}
+                    {selectedBag.itemId && (
+                      <div className={styles.bagImgWrap}><img src={getItemImageUrl(selectedBag.itemId)} className={styles.squareImg} alt="" /></div>
+                    )}
+                    {selectedFood.itemId && (
+                      <div className={styles.foodImgWrap}><img src={getItemImageUrl(selectedFood.itemId)} className={styles.squareImg} alt="" /></div>
+                    )}
                   </div>
                 </div>
               </div>

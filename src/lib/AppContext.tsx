@@ -65,6 +65,8 @@ export interface ArtifactPrice {
   price: number;
 }
 
+const MARKET_PRICES_KEY = 'albion_market_prices_v2';
+
 const STORAGE_KEYS = {
   planner: 'planner_items',
   resources: 'manual_resources_v2_albion_printer_match',
@@ -328,6 +330,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       ...readStoredValue(STORAGE_KEYS.calculatorPrefs, INITIAL_CALCULATOR_PREFERENCES),
     });
     setSidebarCollapsed(readStoredValue(STORAGE_KEYS.sidebarCollapsed, false));
+    setAllMarketPrices(readStoredValue(MARKET_PRICES_KEY, {}));
     
     const manualData = readStoredValue('albion_calculator_manual_data_v2_albion_printer_match', { overrides: {}, sellPrices: {} });
     setItemOverrides(manualData.overrides || {});
@@ -378,6 +381,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       sellPrices: allManualSellPrices
     }));
   }, [hasHydratedStorage, itemOverrides, allManualSellPrices]);
+
+  useEffect(() => {
+    if (!hasHydratedStorage) return;
+    localStorage.setItem(MARKET_PRICES_KEY, JSON.stringify(allMarketPrices));
+  }, [hasHydratedStorage, allMarketPrices]);
 
   const addPlannerItem = useCallback((item: Omit<PlannerItem, 'id'>) => {
     const newItem = { ...item, id: Math.random().toString(36).slice(2, 11) };

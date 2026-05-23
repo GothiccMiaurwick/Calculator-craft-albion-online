@@ -677,32 +677,155 @@
   background: rgba(252, 151, 183, 0.1);
 }
 
-.transportLayout {
+.weightCards {
   display: grid;
-  grid-template-columns: 1fr 200px;
-  gap: 24px;
-}
-
-.transportDataSide {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-}
-
-.weightGridCompact {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 12px;
+  margin-bottom: 16px;
 }
 
-.weightCardTotal {
+.weightSumCard {
+  padding: 14px 16px !important;
+  gap: 12px !important;
+}
+
+.weightSumCard .sumValue {
+  font-size: 1rem;
+}
+
+.weightSumTotal {
   background: linear-gradient(135deg, rgba(209, 249, 133, 0.34), rgba(255, 225, 231, 0.72)) !important;
 }
 
-.transportControlsCompact {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
+.weightSumTotalIcon {
+  background: rgba(209, 249, 133, 0.46) !important;
+  color: #4f7b1f !important;
+}
+
+.customSelect {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 249, 251, 0.95);
+  border: 1px solid rgba(252, 151, 183, 0.28);
+  border-radius: 10px;
+  padding: 7px 10px;
+  cursor: pointer;
+  user-select: none;
+  transition: border-color 0.15s ease;
+}
+
+.customSelect:hover {
+  border-color: rgba(252, 151, 183, 0.5);
+}
+
+.customSelectInner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.customSelectInner span {
+  font-size: 0.72rem;
+  font-weight: 900;
+  color: #402934;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.selectImg {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.selectImgPlaceholder,
+.optionImgPlaceholder {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  border-radius: 6px;
+  background: rgba(255, 225, 231, 0.5);
+}
+
+.selectDropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: rgba(255, 249, 251, 0.98);
+  border: 1px solid rgba(252, 151, 183, 0.28);
+  border-radius: 12px;
+  box-shadow: 0 16px 36px rgba(252, 151, 183, 0.2);
+  padding: 6px;
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.selectDropdown::-webkit-scrollbar {
+  width: 4px;
+}
+
+.selectDropdown::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.selectDropdown::-webkit-scrollbar-thumb {
+  background: rgba(252, 151, 183, 0.3);
+  border-radius: 999px;
+}
+
+.selectOption {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.selectOption:hover {
+  background: rgba(252, 151, 183, 0.12);
+}
+
+.selectOptionActive {
+  background: rgba(209, 249, 133, 0.34) !important;
+}
+
+.optionImg {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.optionMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.optionName {
+  font-size: 0.7rem;
+  font-weight: 900;
+  color: #402934;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.optionSub {
+  font-size: 0.6rem;
+  font-weight: 800;
+  color: #7f5a67;
 }
 
 .controlGroup {
@@ -718,21 +841,10 @@
   letter-spacing: 0.8px;
 }
 
-.controlGroup select {
-  background: rgba(255, 249, 251, 0.95);
-  border: 1px solid rgba(252, 151, 183, 0.28);
-  border-radius: 10px;
-  padding: 8px 10px;
-  color: #402934;
-  font-size: 0.75rem;
-  font-weight: 900;
-  outline: none;
-}
-
 .mountResultCompact {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 16px;
   padding: 14px 18px;
   border-radius: 16px;
   border: 1px solid rgba(209, 249, 133, 0.72);
@@ -742,15 +854,32 @@
 .mountResultText {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 6px;
   flex: 1;
+}
+
+.mountResultHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.mountResultHeader span {
+  font-size: 0.85rem;
+  font-weight: 950;
+  color: #402934;
+}
+
+.mountWeightLabel {
+  font-size: 0.78rem;
+  font-weight: 900;
+  color: #4f7b1f;
 }
 
 .weightProgressContainer {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  margin-top: 4px;
 }
 
 .progressBar {
@@ -768,44 +897,17 @@
   transition: width 0.3s ease;
 }
 
-.mountResultText span {
-  font-size: 0.75rem;
-  font-weight: 900;
-  color: #402934;
-}
-
-.mountResultText strong {
-  font-size: 0.85rem;
-  font-weight: 950;
-  color: #4f7b1f;
-}
-
-.transportImageSide {
+.mountImages {
   display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.squareImageContainer {
-  width: 100%;
-  aspect-ratio: 1/1;
-  background: rgba(255, 249, 251, 0.95);
-  border: 1px solid rgba(252, 151, 183, 0.28);
-  border-radius: 16px;
-  display: flex;
+  gap: 8px;
   align-items: center;
-  justify-content: center;
-  overflow: hidden;
 }
 
-.squareImageRow {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-
-.squareImageContainerSmall {
-  aspect-ratio: 1/1;
+.mountImgWrap,
+.bagImgWrap,
+.foodImgWrap {
+  width: 48px;
+  height: 48px;
   background: rgba(255, 249, 251, 0.95);
   border: 1px solid rgba(252, 151, 183, 0.28);
   border-radius: 12px;
@@ -815,29 +917,42 @@
   overflow: hidden;
 }
 
+.bagImgWrap,
+.foodImgWrap {
+  width: 38px;
+  height: 38px;
+}
+
 .squareImg {
-  width: 90%;
-  height: 90%;
+  width: 80%;
+  height: 80%;
   object-fit: contain;
 }
 
+.tripsBadge {
+  background: rgba(252, 151, 183, 0.2);
+  border: 1px solid rgba(252, 151, 183, 0.34);
+  border-radius: 999px;
+  padding: 5px 12px;
+  color: #7f2f50;
+  font-size: 0.68rem;
+  font-weight: 950;
+  letter-spacing: 0.8px;
+  white-space: nowrap;
+}
+
 @media (max-width: 900px) {
-  .transportLayout {
-    grid-template-columns: 1fr;
+  .weightCards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .transportImageSide {
-    order: -1;
-    flex-direction: row;
+  .mountResultCompact {
+    flex-direction: column;
     align-items: stretch;
   }
 
-  .squareImageContainer {
-    width: 120px;
-  }
-
-  .squareImageRow {
-    flex: 1;
+  .mountImages {
+    justify-content: center;
   }
 }
 

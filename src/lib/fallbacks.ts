@@ -85,6 +85,10 @@ const SHAPESHIFTER_SPECIALS: Record<string, string> = {
 
 const RESOURCE_RECIPE_OVERRIDES: Record<string, Array<{ resource: ResourceType; quantity: number }>> = {
   MAIN_HAMMER: [{ resource: 'lingote', quantity: 24 }],
+  MAIN_CARVINGSWORD: [
+    { resource: 'lingote', quantity: 20 },
+    { resource: 'cuero', quantity: 12 },
+  ],
 
   '2H_BOW': [{ resource: 'tablas', quantity: 32 }],
   '2H_WARBOW': [{ resource: 'tablas', quantity: 32 }],
@@ -295,6 +299,11 @@ const RESOURCE_RECIPE_OVERRIDES: Record<string, Array<{ resource: ResourceType; 
   ],
 };
 
+// Non-faction artifact items that need explicit artifact injection
+const ARTIFACT_ITEM_MAP: Record<string, string> = {
+  MAIN_CARVINGSWORD: 'ARTEFACT_MAIN_CARVINGSWORD',
+};
+
 /**
  * Gets a fallback recipe for any item ID using dynamic hybrid logic.
  */
@@ -410,6 +419,15 @@ export function getFallbackRecipe(normalizedId: string): FallbackMaterial[] {
       });
       break;
     }
+  }
+
+  // Non-faction artifact items
+  const artifactItemId = ARTIFACT_ITEM_MAP[baseId];
+  if (artifactItemId) {
+    materials.push({
+      id: normalizeId(`T${tier}_${artifactItemId}${enchantSuffix}`),
+      quantity: 1,
+    });
   }
 
   return materials;
