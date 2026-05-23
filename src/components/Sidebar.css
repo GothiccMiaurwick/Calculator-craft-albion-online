@@ -167,7 +167,7 @@
   color: white;
 }
 
-/* ─── Items list ─── */
+/* â”€â”€â”€ Items list â”€â”€â”€ */
 .item-list {
   list-style: none;
   padding: 0;
@@ -194,7 +194,7 @@
 
 .item-list-entry.item-active {
   color: var(--primary);
-  background: rgba(209, 249, 133, 0.34);
+  background: rgba(var(--cyan-rgb), 0.34);
 }
 
 .item-list-icon {

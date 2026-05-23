@@ -36,7 +36,7 @@
 }
 
 .logoWrap {
-  background: radial-gradient(circle, rgba(209, 249, 133, 0.55) 0%, rgba(255, 232, 240, 0.42) 58%, transparent 72%);
+  background: radial-gradient(circle, rgba(var(--cyan-rgb), 0.55) 0%, rgba(var(--surface-rgb), 0.42) 58%, transparent 72%);
   padding: 2rem;
   border-radius: 50%;
 }
@@ -56,7 +56,7 @@
 .divider {
   width: 160px;
   height: 2px;
-  background: linear-gradient(90deg, transparent, rgba(255, 133, 162, 0.62), rgba(209, 249, 133, 0.72), transparent);
+  background: linear-gradient(90deg, transparent, rgba(var(--primary-rgb), 0.62), rgba(var(--cyan-rgb), 0.72), transparent);
   border-radius: 999px;
 }
 
@@ -72,12 +72,12 @@
   background: var(--gradient);
   border: none;
   border-radius: 10px;
-  color: #402934;
+  color: var(--text);
   font-size: 0.9rem;
   font-weight: 900;
   letter-spacing: 2px;
   cursor: pointer;
-  box-shadow: 0 0 24px rgba(255, 133, 162, 0.28);
+  box-shadow: 0 0 24px rgba(var(--primary-rgb), 0.28);
   transition: transform 0.15s, box-shadow 0.2s;
   display: inline-flex;
   align-items: center;
@@ -86,7 +86,7 @@
 
 .btnPrimary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 0 36px rgba(209, 249, 133, 0.42);
+  box-shadow: 0 0 36px rgba(var(--cyan-rgb), 0.42);
 }
 
 .btnSecondary {
@@ -107,8 +107,8 @@
 
 .btnSecondary:hover {
   color: var(--text);
-  border-color: rgba(255, 133, 162, 0.58);
-  background: rgba(255, 232, 240, 0.54);
+  border-color: rgba(var(--primary-rgb), 0.58);
+  background: rgba(var(--surface-rgb), 0.54);
 }
 
 .tagline {

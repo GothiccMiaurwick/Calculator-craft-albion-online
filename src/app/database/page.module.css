@@ -6,7 +6,7 @@
   padding-bottom: 60px;
 }
 
-/* ── Header ── */
+/* â”€â”€ Header â”€â”€ */
 .header {
   display: flex;
   align-items: flex-start;
@@ -29,7 +29,7 @@
   line-height: 1.5;
 }
 
-/* ── Tabs ── */
+/* â”€â”€ Tabs â”€â”€ */
 .tabGroup {
   display: flex;
   background: var(--surface);
@@ -60,7 +60,7 @@
   color: var(--text);
 }
 
-/* ── Table (shared) ── */
+/* â”€â”€ Table (shared) â”€â”€ */
 .tableWrap {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -116,14 +116,14 @@
 
 .tdArtifactInfo {
   padding: 12px 16px;
-  background: rgba(255, 249, 251, 0.42);
+  background: rgba(var(--surface-3-rgb), 0.42);
 }
 
 .artifactRoundImg {
   width: 42px;
   height: 42px;
-  background: rgba(255, 249, 251, 0.72);
-  border: 1px solid rgba(252, 151, 183, 0.28);
+  background: rgba(var(--surface-3-rgb), 0.72);
+  border: 1px solid rgba(var(--primary-rgb), 0.28);
   padding: 2px;
   flex-shrink: 0;
 }
@@ -164,7 +164,7 @@
 
 .priceInput::placeholder { color: var(--text-dim); }
 
-/* ── Journals ── */
+/* â”€â”€ Journals â”€â”€ */
 .journalList {
   display: flex;
   flex-direction: column;
@@ -211,7 +211,7 @@
   margin-top: 2px;
 }
 
-/* ── Specs ── */
+/* â”€â”€ Specs â”€â”€ */
 .specsContainer {
   display: flex;
   flex-direction: column;
@@ -247,8 +247,8 @@
   gap: 8px;
   margin: 0 0 1.5rem;
   padding: 10px;
-  background: rgba(255, 225, 231, 0.74);
-  border: 1px solid rgba(252, 151, 183, 0.32);
+  background: rgba(var(--surface-rgb), 0.74);
+  border: 1px solid rgba(var(--primary-rgb), 0.32);
   border-radius: 14px;
 }
 
@@ -258,8 +258,8 @@
   gap: 12px;
   width: 100%;
   text-align: left;
-  background: rgba(255, 249, 251, 0.86);
-  border: 1px solid rgba(252, 151, 183, 0.24);
+  background: rgba(var(--surface-3-rgb), 0.86);
+  border: 1px solid rgba(var(--primary-rgb), 0.24);
   border-radius: 12px;
   padding: 10px 12px;
   color: var(--text);
@@ -268,8 +268,8 @@
 }
 
 .autocompleteItem:hover {
-  background: rgba(209, 249, 133, 0.34);
-  border-color: rgba(252, 151, 183, 0.44);
+  background: rgba(var(--cyan-rgb), 0.34);
+  border-color: rgba(var(--primary-rgb), 0.44);
   transform: translateY(-1px);
 }
 
@@ -303,8 +303,8 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  background: rgba(209, 249, 133, 0.28);
-  border: 1px solid rgba(252, 151, 183, 0.3);
+  background: rgba(var(--cyan-rgb), 0.28);
+  border: 1px solid rgba(var(--primary-rgb), 0.3);
   border-radius: 8px;
   padding: 14px 16px;
   color: var(--text-muted);
@@ -368,7 +368,7 @@
 }
 
 .specsSubCardCollapsed:hover {
-  background: rgba(255, 225, 231, 0.36);
+  background: rgba(var(--surface-rgb), 0.36);
 }
 
 .specsSubHeader {
@@ -399,8 +399,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: rgba(255, 225, 231, 0.82);
-  border: 1px solid rgba(252, 151, 183, 0.34);
+  background: rgba(var(--surface-rgb), 0.82);
+  border: 1px solid rgba(var(--primary-rgb), 0.34);
   border-radius: 8px;
   padding: 8px 14px;
   margin-bottom: 12px;
@@ -417,7 +417,7 @@
 }
 
 .specsItemMain::before {
-  content: '●';
+  content: 'â—';
   font-size: 0.6rem;
 }
 
@@ -444,7 +444,7 @@
 }
 
 .specsInput {
-  background: rgba(255, 249, 251, 0.95);
+  background: rgba(var(--surface-3-rgb), 0.95);
   border: 1px solid var(--border);
   border-radius: 6px;
   color: var(--text);
@@ -460,8 +460,8 @@
 .specsInput:focus { border-color: var(--primary); }
 
 .specsInputMain {
-  background: rgba(255, 249, 251, 0.95);
-  border: 1px solid rgba(252, 151, 183, 0.5);
+  background: rgba(var(--surface-3-rgb), 0.95);
+  border: 1px solid rgba(var(--primary-rgb), 0.5);
   border-radius: 6px;
   color: var(--text);
   font-size: 0.8rem;
@@ -483,7 +483,7 @@
 }
 
 .specsLvl { color: var(--text-dim); }
-.specsLvlMain { color: #fc97b7; }
+.specsLvlMain { color: var(--primary); }
 
 @media (max-width: 768px) {
   .page {
