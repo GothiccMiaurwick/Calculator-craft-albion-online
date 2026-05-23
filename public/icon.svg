@@ -1,17 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
   <rect width="128" height="128" rx="28" fill="#FFF7FA"/>
-  <!-- Y2K Star outer -->
-  <path d="M64 8L80 48l44 4-34 28 12 44-38-24-38 24 12-44L4 52l44-4Z" fill="#FC97B7" stroke="#402934" stroke-width="4" stroke-linejoin="round"/>
-  <!-- Inner star cutout -->
-  <path d="M64 28L74 54l30 2-23 19 8 30-25-16-25 16 8-30-23-19 30-2Z" fill="#FFF7FA" stroke="#D1F985" stroke-width="3" stroke-linejoin="round"/>
-  <!-- Y2K accent lines -->
-  <line x1="24" y1="18" x2="40" y2="34" stroke="#D1F985" stroke-width="5" stroke-linecap="round"/>
-  <line x1="104" y1="18" x2="88" y2="34" stroke="#D1F985" stroke-width="5" stroke-linecap="round"/>
-  <line x1="18" y1="110" x2="38" y2="94" stroke="#D1F985" stroke-width="5" stroke-linecap="round"/>
-  <line x1="110" y1="110" x2="90" y2="94" stroke="#D1F985" stroke-width="5" stroke-linecap="round"/>
-  <!-- Sparkle dots -->
-  <circle cx="24" cy="12" r="4" fill="#FC97B7"/>
-  <circle cx="104" cy="12" r="4" fill="#FC97B7"/>
-  <circle cx="10" cy="104" r="4" fill="#FC97B7"/>
-  <circle cx="118" cy="104" r="4" fill="#FC97B7"/>
+  <!-- Y2K 4-point sparkle -->
+  <path d="M64 2 C72 44 78 50 84 56 C100 72 126 64 126 64 C126 64 100 72 84 88 C78 94 72 100 64 126 C56 100 50 94 44 88 C28 72 2 64 2 64 C2 64 28 72 44 56 C50 50 56 44 64 2 Z"
+        fill="#FC97B7" stroke="#402934" stroke-width="5" stroke-linejoin="round"/>
+  <!-- Lime accent diamond center -->
+  <polygon points="64,52 76,64 64,76 52,64" fill="#D1F985"/>
 </svg>
