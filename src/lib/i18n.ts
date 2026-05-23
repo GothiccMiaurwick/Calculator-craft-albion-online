@@ -21,6 +21,10 @@ type TranslationKey =
   | 'navigationMode'
   | 'compactSidebar'
   | 'expandedSidebar'
+  | 'theme'
+  | 'mochi'
+  | 'midnight'
+  | 'matcha'
   | 'chooseItemToCraft'
   | 'pleaseSelectItemToCraft'
   | 'synced'
@@ -115,6 +119,10 @@ const UI_TEXT: Record<Locale, Record<TranslationKey, string>> = {
     navigationMode: 'BARRA LATERAL',
     compactSidebar: 'COMPACTA',
     expandedSidebar: 'EXPANDIDA',
+    theme: 'TEMA',
+    mochi: 'Mochi',
+    midnight: 'Oscuro',
+    matcha: 'Matcha',
     chooseItemToCraft: 'ELIGE UN ITEM PARA CRAFTEAR',
     pleaseSelectItemToCraft: 'SELECCIONA UN ITEM PARA CRAFTEAR',
     synced: 'SYNCED',
@@ -208,6 +216,10 @@ const UI_TEXT: Record<Locale, Record<TranslationKey, string>> = {
     navigationMode: 'SIDEBAR MODE',
     compactSidebar: 'COMPACT',
     expandedSidebar: 'EXPANDED',
+    theme: 'THEME',
+    mochi: 'Mochi',
+    midnight: 'Midnight',
+    matcha: 'Matcha',
     chooseItemToCraft: 'CHOOSE AN ITEM TO CRAFT',
     pleaseSelectItemToCraft: 'PLEASE SELECT AN ITEM TO CRAFT',
     synced: 'SYNCED',

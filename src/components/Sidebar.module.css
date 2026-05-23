@@ -473,6 +473,60 @@
   color: #402934;
 }
 
+.themeRow {
+  display: flex;
+  gap: 8px;
+}
+
+.themeBtn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 232, 240, 0.72);
+  border: 2px solid transparent;
+  border-radius: 12px;
+  color: var(--text-muted);
+  padding: 10px 6px;
+  font-size: 0.6rem;
+  font-weight: 900;
+  letter-spacing: 0.6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.themeBtn:hover {
+  border-color: var(--border);
+  color: var(--text);
+}
+
+.themeBtnActive {
+  border-color: var(--primary);
+  color: var(--text);
+  background: var(--surface);
+}
+
+.themeSwatch {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid rgba(64, 41, 52, 0.15);
+  display: block;
+}
+
+.themeSwatch[data-theme="mochi"] {
+  background: linear-gradient(135deg, #fc97b7, #d1f985);
+}
+
+.themeSwatch[data-theme="midnight"] {
+  background: linear-gradient(135deg, #b794f4, #63b3ed);
+}
+
+.themeSwatch[data-theme="matcha"] {
+  background: linear-gradient(135deg, #a8c686, #c9a87c);
+}
+
 @media (max-width: 768px) {
   .sidebar {
     position: fixed;

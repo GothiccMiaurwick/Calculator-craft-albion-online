@@ -257,6 +257,8 @@ interface AppContextType {
   setCalculatorPreferences: React.Dispatch<React.SetStateAction<CalculatorPreferences>>;
   sidebarCollapsed: boolean;
   setSidebarCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
+  theme: string;
+  setTheme: React.Dispatch<React.SetStateAction<string>>;
   itemOverrides: Record<string, Record<string, number>>;
   setItemOverrides: React.Dispatch<React.SetStateAction<Record<string, Record<string, number>>>>;
   allManualSellPrices: Record<string, number>;
@@ -293,6 +295,8 @@ const AppContext = createContext<AppContextType>({
   setCalculatorPreferences: () => INITIAL_CALCULATOR_PREFERENCES,
   sidebarCollapsed: false,
   setSidebarCollapsed: () => false,
+  theme: 'mochi',
+  setTheme: () => {},
   itemOverrides: {},
   setItemOverrides: () => {},
   allManualSellPrices: {},
@@ -315,6 +319,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [specs, setSpecs] = useState<Record<string, number>>({});
   const [calculatorPreferences, setCalculatorPreferences] = useState<CalculatorPreferences>(INITIAL_CALCULATOR_PREFERENCES);
   const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(false);
+  const [theme, setTheme] = useState<string>('mochi');
   const [itemOverrides, setItemOverrides] = useState<Record<string, Record<string, number>>>({});
   const [allManualSellPrices, setAllManualSellPrices] = useState<Record<string, number>>({});
   const [allMarketPrices, setAllMarketPrices] = useState<Record<string, number>>({});
@@ -332,6 +337,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       ...readStoredValue(STORAGE_KEYS.calculatorPrefs, INITIAL_CALCULATOR_PREFERENCES),
     });
     setSidebarCollapsed(readStoredValue(STORAGE_KEYS.sidebarCollapsed, false));
+    setTheme(readStoredValue('theme', 'mochi'));
     setAllMarketPrices(readStoredValue(MARKET_PRICES_KEY, {}));
     
     const manualData = readStoredValue('albion_calculator_manual_data_v2_albion_printer_match', { overrides: {}, sellPrices: {} });
@@ -375,6 +381,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     if (!hasHydratedStorage) return;
     localStorage.setItem(STORAGE_KEYS.sidebarCollapsed, JSON.stringify(sidebarCollapsed));
   }, [hasHydratedStorage, sidebarCollapsed]);
+
+  useEffect(() => {
+    if (!hasHydratedStorage) return;
+    localStorage.setItem('theme', theme);
+  }, [hasHydratedStorage, theme]);
 
   useEffect(() => {
     if (!hasHydratedStorage) return;
@@ -436,6 +447,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       specs, setSpecs,
       calculatorPreferences, setCalculatorPreferences,
       sidebarCollapsed, setSidebarCollapsed,
+      theme, setTheme,
       itemOverrides, setItemOverrides,
       allManualSellPrices, setAllManualSellPrices,
       allMarketPrices, setAllMarketPrices,

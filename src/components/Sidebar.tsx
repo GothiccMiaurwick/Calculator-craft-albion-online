@@ -52,6 +52,8 @@ export default function Sidebar() {
     setCalculatorPreferences,
     sidebarCollapsed,
     setSidebarCollapsed,
+    theme,
+    setTheme,
   } = useApp();
   const router = useRouter();
   const [expandedCat, setExpandedCat] = useState<string | null>(null);
@@ -333,6 +335,24 @@ export default function Sidebar() {
                 >
                   {t(locale, 'english')}
                 </button>
+              </div>
+            </div>
+
+            <div className={styles.settingsBlock}>
+              <div className={styles.settingsLabel}>
+                <span>{t(locale, 'theme')}</span>
+              </div>
+              <div className={styles.themeRow}>
+                {(['mochi', 'midnight', 'matcha'] as const).map((tName) => (
+                  <button
+                    key={tName}
+                    className={`${styles.themeBtn} ${theme === tName ? styles.themeBtnActive : ''}`}
+                    onClick={() => setTheme(tName)}
+                  >
+                    <span className={styles.themeSwatch} data-theme={tName} />
+                    {t(locale, tName)}
+                  </button>
+                ))}
               </div>
             </div>
 

@@ -1,4 +1,10 @@
 :root {
+  --sidebar-w: 270px;
+}
+
+/* ═══════════ Theme: Mochi (default) ═══════════ */
+:root,
+.theme-mochi {
   --bg: #fff7fa;
   --surface: #ffe1e7;
   --surface-2: #ffd3df;
@@ -14,8 +20,62 @@
   --orange: #a06f11;
   --red: #db476d;
   --green: #4f8f38;
+  --green-dim: #26634a;
   --focus-ring: 0 0 0 3px rgba(209, 249, 133, 0.72), 0 0 0 5px rgba(252, 151, 183, 0.42);
-  --sidebar-w: 270px;
+  --bg-glow: rgba(209, 249, 133, 0.28);
+  --bg-top: #fff7fa;
+  --bg-bottom: #ffe1e7;
+  --line-color: rgba(252, 151, 183, 0.04);
+}
+
+/* ═══════════ Theme: Midnight ═══════════ */
+.theme-midnight {
+  --bg: #1a1520;
+  --surface: #2a2430;
+  --surface-2: #3a3042;
+  --surface-3: #221c28;
+  --active-cat: #3a3042;
+  --primary: #b794f4;
+  --cyan: #63b3ed;
+  --gradient: linear-gradient(135deg, #b794f4 0%, #2a2430 48%, #63b3ed 100%);
+  --text: #e8e0f0;
+  --text-muted: #a898b8;
+  --text-dim: #786888;
+  --border: rgba(183, 148, 244, 0.3);
+  --orange: #d69e2e;
+  --red: #fc8181;
+  --green: #68d391;
+  --green-dim: #4a9b6a;
+  --focus-ring: 0 0 0 3px rgba(99, 179, 237, 0.5), 0 0 0 5px rgba(183, 148, 244, 0.3);
+  --bg-glow: rgba(99, 179, 237, 0.15);
+  --bg-top: #1a1520;
+  --bg-bottom: #2a2430;
+  --line-color: rgba(183, 148, 244, 0.04);
+}
+
+/* ═══════════ Theme: Matcha ═══════════ */
+.theme-matcha {
+  --bg: #f5f7e8;
+  --surface: #e8edd4;
+  --surface-2: #dde3c4;
+  --surface-3: #fbfcf5;
+  --active-cat: #dde3c4;
+  --primary: #a8c686;
+  --cyan: #c9a87c;
+  --gradient: linear-gradient(135deg, #a8c686 0%, #e8edd4 48%, #c9a87c 100%);
+  --text: #3a4030;
+  --text-muted: #7a8068;
+  --text-dim: #9aa088;
+  --border: rgba(168, 198, 134, 0.38);
+  --orange: #b8862a;
+  --red: #c46a6a;
+  --green: #6b9e5a;
+  --green-dim: #4f7a42;
+  --focus-ring: 0 0 0 3px rgba(201, 168, 124, 0.5), 0 0 0 5px rgba(168, 198, 134, 0.3);
+  --bg-glow: rgba(201, 168, 124, 0.2);
+  --bg-top: #f5f7e8;
+  --bg-bottom: #e8edd4;
+  --line-color: rgba(168, 198, 134, 0.04);
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -23,8 +83,8 @@
 html, body {
   background: var(--bg);
   background-image: 
-    radial-gradient(circle at top right, rgba(209, 249, 133, 0.28), transparent 30%),
-    linear-gradient(0deg, #fff7fa 0%, #ffe1e7 100%);
+    radial-gradient(circle at top right, var(--bg-glow), transparent 30%),
+    linear-gradient(0deg, var(--bg-top) 0%, var(--bg-bottom) 100%);
   color: var(--text);
   font-family: 'Nunito', ui-sans-serif, system-ui, sans-serif;
   font-size: 14px;
@@ -51,12 +111,12 @@ a:focus-visible {
 
 input:focus-visible,
 textarea:focus-visible {
-  color: #4f8f38 !important;
+  color: var(--green-dim) !important;
 }
 
 input:focus-visible::selection,
 textarea:focus-visible::selection {
-  background: #4f8f38;
+  background: var(--green-dim);
   color: #fff;
 }
 

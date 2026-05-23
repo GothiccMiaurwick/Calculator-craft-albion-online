@@ -3,6 +3,7 @@ import { Nunito } from "next/font/google";
 import "./globals.css";
 import Sidebar from "@/components/Sidebar";
 import { AppProvider } from "@/lib/AppContext";
+import ThemeClient from "@/components/ThemeClient";
 
 const nunito = Nunito({ 
   subsets: ["latin"],
@@ -23,18 +24,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="theme-mochi">
       <head>
         <link rel="icon" href="/iconPageNoFond.png" type="image/png" />
       </head>
       <body className={nunito.className}>
         <AppProvider>
-          <div className="app-layout">
+          <ThemeClient>
             <Sidebar />
             <main className="main-content">
               {children}
             </main>
-          </div>
+          </ThemeClient>
         </AppProvider>
       </body>
     </html>
