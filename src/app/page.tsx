@@ -35,7 +35,7 @@ export default function Home() {
 
       <div className={styles.hero}>
         <div className={styles.logoWrap}>
-          <img src="/iconPage2.png" className={styles.starIcon} alt="" aria-hidden="true" />
+          <img src="/iconPageNoFond.png" className={styles.starIcon} alt="" aria-hidden="true" />
         </div>
         <h1 className={styles.logoTitle}>Mochi Craft</h1>
         <div className={styles.divider} />
