@@ -31,14 +31,12 @@ export default function Home() {
           <span className={styles.homeIcon}>⌂</span>
           <span className={styles.topTitle}>{t(locale, 'pleaseSelectItemToCraft')}</span>
         </div>
-        <span className={styles.synced}><span className={styles.dot} /> {t(locale, 'synced')}</span>
       </div>
 
       <div className={styles.hero}>
         <div className={styles.logoWrap}>
           <img src="/iconPageNoFond.png" className={styles.starIcon} alt="" aria-hidden="true" />
         </div>
-        <h1 className={styles.logoTitle}>Mochi Craft</h1>
         <div className={styles.divider} />
         <div className={styles.btnRow}>
           <button className={styles.btnPrimary} onClick={() => setCurrentView('calculator')}><CalcIcon size={18} /> {t(locale, 'calculator')}</button>

@@ -43,10 +43,10 @@ export function SwordIcon({ size = 20, className }: Props) {
 export function HelmetIcon({ size = 20, className }: Props) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <path d="M12 2a9 9 0 0 1 9 9v3" />
-      <path d="M3 14v-3a9 9 0 0 1 9-9" />
-      <path d="M3 14h18v2a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4z" />
-      <circle cx="12" cy="14" r="2" />
+      <path d="M4 14a8 8 0 0 1 16 0v2H4z" />
+      <path d="M8 16v-2a4 4 0 0 1 8 0v2" />
+      <rect x="6" y="16" width="12" height="4" rx="1" />
+      <circle cx="12" cy="13" r="1.5" />
     </svg>
   );
 }
@@ -54,11 +54,11 @@ export function HelmetIcon({ size = 20, className }: Props) {
 export function ChestIcon({ size = 20, className }: Props) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <path d="M4 6h16v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z" />
-      <path d="M4 10h16" />
+      <path d="M5 8h14v10a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2z" />
+      <path d="M5 8L7 4h10l2 4" />
       <path d="M8 14h2" />
       <path d="M14 14h2" />
-      <path d="M12 6v2" />
+      <path d="M12 8v2" />
     </svg>
   );
 }
@@ -66,11 +66,11 @@ export function ChestIcon({ size = 20, className }: Props) {
 export function BootIcon({ size = 20, className }: Props) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <path d="M4 20h16l-1-6H5z" />
-      <path d="M5 14L3 8h5l2 6" />
-      <path d="M19 14l2-6h-5l-2 6" />
-      <path d="M12 8v6" />
-      <circle cx="12" cy="20" r="1.5" />
+      <path d="M6 20h12l-1-6H7z" />
+      <path d="M7 14L5 9h4l1 5" />
+      <path d="M17 14l2-5h-4l-1 5" />
+      <path d="M12 9v5" />
+      <rect x="9" y="19" width="6" height="2" rx="1" />
     </svg>
   );
 }

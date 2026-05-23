@@ -25,33 +25,6 @@
   letter-spacing: 1px;
 }
 
-.synced {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 0.7rem;
-  font-weight: 700;
-  color: #4f7b1f;
-  background: rgba(209, 249, 133, 0.42);
-  border: 1px solid rgba(209, 249, 133, 0.72);
-  padding: 3px 10px;
-  border-radius: 999px;
-  letter-spacing: 1px;
-}
-
-.dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #d1f985;
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0%,100% { opacity:1; }
-  50% { opacity:0.4; }
-}
-
 .hero {
   flex: 1;
   display: flex;
@@ -78,17 +51,6 @@
 @keyframes float {
   0%,100% { transform: translateY(0); }
   50% { transform: translateY(-10px); }
-}
-
-.logoTitle {
-  font-size: 2.5rem;
-  font-weight: 900;
-  font-style: italic;
-  background: linear-gradient(90deg, #fc97b7, #d1f985);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  letter-spacing: 1px;
 }
 
 .divider {
@@ -184,11 +146,6 @@
   .starIcon {
     width: 90px;
     height: 90px;
-  }
-
-  .logoTitle {
-    font-size: 1.9rem;
-    text-align: center;
   }
 
   .btnRow {

@@ -189,13 +189,13 @@ export default function Sidebar() {
           className={`${styles.tab} ${currentView === 'calculator' ? styles.tabActive : ''}`}
           onClick={() => navigateTo('calculator')}
         >
-          <CalcIcon size={18} /> {t(locale, 'calculator')}
+          {t(locale, 'calculator')}
         </button>
         <button
           className={`${styles.tab} ${currentView === 'planner' ? styles.tabActive : ''}`}
           onClick={() => navigateTo('planner')}
         >
-          <TallerIcon size={18} /> {t(locale, 'taller')}
+          {t(locale, 'taller')}
           </button>
         </div>
 
