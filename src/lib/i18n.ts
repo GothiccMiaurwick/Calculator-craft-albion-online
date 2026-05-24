@@ -98,6 +98,10 @@ type TranslationKey =
   | 'fullJournals'
   | 'partialJournal'
   | 'journalsToBuy'
+  | 'searchItem'
+  | 'welcomeMessage'
+  | 'recentPlans'
+  | 'noRecentPlans'
   | 'selectItemPlaceholder';
 
 const UI_TEXT: Record<Locale, Record<TranslationKey, string>> = {
@@ -196,6 +200,10 @@ const UI_TEXT: Record<Locale, Record<TranslationKey, string>> = {
     fullJournals: 'COMPLETOS',
     partialJournal: 'PARCIAL',
     journalsToBuy: 'VACIOS A COMPRAR',
+    searchItem: 'Buscar objetos...',
+    welcomeMessage: 'Seleccioná un objeto del menú lateral o buscá arriba para calcular crafting',
+    recentPlans: 'Planes recientes',
+    noRecentPlans: 'Todavía no hay planes guardados',
     selectItemPlaceholder: 'SELECCIONAR ITEM...',
   },
   en: {
@@ -293,6 +301,10 @@ const UI_TEXT: Record<Locale, Record<TranslationKey, string>> = {
     fullJournals: 'FULL',
     partialJournal: 'PARTIAL',
     journalsToBuy: 'EMPTIES TO BUY',
+    searchItem: 'Search items...',
+    welcomeMessage: 'Select an item from the sidebar or search above to start calculating',
+    recentPlans: 'Recent plans',
+    noRecentPlans: 'No saved plans yet',
     selectItemPlaceholder: 'SELECT ITEM...',
   },
 };
