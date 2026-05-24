@@ -7,7 +7,7 @@ import { CATEGORIES, TreeItem } from '@/lib/items';
 import Calculator from '@/components/Calculator';
 import Planner from '@/components/Planner';
 import SpecialtyTools from '@/components/SpecialtyTools';
-import { CalcIcon, FlameIcon, SparkleIcon, ChefIcon, SearchIcon, CloseIcon } from '@/components/Icons';
+import { CalcIcon, FlameIcon, SparkleIcon, ChefIcon, SearchIcon, CloseIcon, MochiCupLogo } from '@/components/Icons';
 import styles from './page.module.css';
 
 const SAVED_TALLERES_KEY = 'saved_talleres';
@@ -111,7 +111,7 @@ export default function Home() {
     <div className={styles.welcome}>
       <div className={styles.hero}>
         <div className={styles.logoWrap}>
-          <img src="/iconPageNoFond.png" className={styles.starIcon} alt="" aria-hidden="true" />
+          <MochiCupLogo size={140} />
         </div>
 
         <div className={styles.searchWrap}>
