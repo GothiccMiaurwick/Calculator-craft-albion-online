@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   title: "Mochi Craft",
   description: "Advanced crafting and market calculator for Albion Online",
   icons: {
-    icon: [{ url: "/iconPageNoFond.png", type: "image/png" }],
+    icon: [{ url: "/iconPageGreatHammer.png", type: "image/png" }],
   },
 };
 
@@ -26,7 +26,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="theme-mochi">
       <head>
-        <link rel="icon" href="/iconPageNoFond.png" type="image/png" />
+        <link rel="icon" href="/iconPageGreatHammer.png" type="image/png" />
       </head>
       <body className={nunito.className}>
         <AppProvider>
