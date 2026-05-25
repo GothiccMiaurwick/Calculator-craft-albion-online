@@ -25,11 +25,17 @@
   justify-content: center;
 }
 
-.starIcon {
+.heroImg {
   width: 120px;
   height: 120px;
   display: block;
+  object-fit: contain;
   animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
 }
 
 /* ─── Search ─── */
@@ -311,6 +317,11 @@
 
   .logoWrap {
     padding: 1rem 1.8rem;
+  }
+
+  .heroImg {
+    width: 90px;
+    height: 90px;
   }
 
   .searchWrap {
