@@ -53,10 +53,8 @@ export function getRequiredPurchaseQuantity(
   if (!returnEligible || rawQuantity <= 0) return rawQuantity;
 
   const returnRatio = Math.max(0, Number(returnRate || 0)) / 100;
-  const returnedQuantity = rawQuantity * returnRatio;
-  const firstCraftBuffer = Math.ceil(Number(perCraftQuantity || 0) * returnRatio);
-
-  return Math.min(rawQuantity, Math.ceil(rawQuantity - returnedQuantity) + firstCraftBuffer);
+  // First craft uses full materials; subsequent crafts benefit from returns
+  return rawQuantity - Math.floor((rawQuantity - Number(perCraftQuantity || 0)) * returnRatio);
 }
 
 // NOTE: This function is kept for display purposes in materialBreakdown only.
