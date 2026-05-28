@@ -31,8 +31,26 @@ export default function AddCraftModal({
   initialMaterialPricesSnapshot,
   onAdded,
 }: AddCraftModalProps) {
-  const { addPlannerItem, selectedTreeItem, calculatorPreferences, resources, artifactPrices } = useApp();
+  const { addPlannerItem, selectedTreeItem, selectedItem: contextItem, calculatorPreferences, resources, artifactPrices } = useApp();
   const locale = calculatorPreferences.locale;
+
+  function deriveDefaultTier(): number {
+    if (initialTier !== undefined) return initialTier;
+    if (contextItem) {
+      const m = contextItem.id.match(/T(\d)/);
+      if (m) return parseInt(m[1], 10);
+    }
+    return 4;
+  }
+
+  function deriveDefaultEnchant(): number {
+    if (initialEnchant !== undefined) return initialEnchant;
+    if (contextItem) {
+      const m = contextItem.id.match(/@(\d)/);
+      if (m) return parseInt(m[1], 10);
+    }
+    return 0;
+  }
 
   const allItems: TreeItem[] = useMemo(
     () => CATEGORIES.flatMap(cat => cat.subcategories.flatMap(sub => sub.items)),
@@ -40,8 +58,8 @@ export default function AddCraftModal({
   );
 
   const [selectedItem, setSelectedItem] = useState<TreeItem | null>(initialTreeItem ?? selectedTreeItem);
-  const [tier, setTier] = useState(initialTier ?? 4);
-  const [enchant, setEnchant] = useState(initialEnchant ?? 0);
+  const [tier, setTier] = useState(deriveDefaultTier());
+  const [enchant, setEnchant] = useState(deriveDefaultEnchant());
   const [quantityInput, setQuantityInput] = useState('');
   const [returnRate, setReturnRate] = useState(calculatorPreferences.returnRate);
   const [useFocus, setUseFocus] = useState(calculatorPreferences.useFocus);
