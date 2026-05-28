@@ -409,7 +409,7 @@ export function getFallbackRecipe(normalizedId: string): FallbackMaterial[] {
   for (const faction of FACTIONS) {
     if (baseId.includes(faction)) {
       // The artifact DB and renderer use the full item base id, not a generic type/faction pair.
-      const artifactId = normalizeId(`T${tier}_ARTEFACT_${baseId}${enchantSuffix}`);
+      const artifactId = normalizeId(`T${tier}_ARTEFACT_${baseId}`);
       materials.push({
         id: artifactId,
         quantity: 1
@@ -422,7 +422,7 @@ export function getFallbackRecipe(normalizedId: string): FallbackMaterial[] {
   const artifactItemId = ARTIFACT_ITEM_MAP[baseId];
   if (artifactItemId) {
     materials.push({
-      id: normalizeId(`T${tier}_${artifactItemId}${enchantSuffix}`),
+      id: normalizeId(`T${tier}_${artifactItemId}`),
       quantity: 1,
     });
   }
