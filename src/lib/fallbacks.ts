@@ -67,9 +67,6 @@ const KEYWORD_MAP: Record<string, string> = {
   TWINBLADES: 'SWORD',
   RAPIER: 'SWORD',
   GLOVE: 'WARGLOVES',
-  SHOES: 'CLOTH',
-  HEAD: 'CLOTH',
-  ARMOR: 'CLOTH',
 };
 
 const FACTIONS = ['KEEPER', 'MORGANA', 'UNDEAD', 'HELL', 'FEY', 'AVALON', 'CRYSTAL'];
