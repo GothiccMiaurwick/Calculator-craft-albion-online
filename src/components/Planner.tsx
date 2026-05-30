@@ -19,6 +19,7 @@ import {
   ChevronUp,
   Save,
   FolderOpen,
+  Eraser,
 } from 'lucide-react';
 import { useApp, PlannerItem } from '@/lib/AppContext';
 import { fetchPrices } from '@/lib/api';
@@ -267,6 +268,31 @@ export default function Planner() {
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [showLoadModal, setShowLoadModal] = useState(false);
   const [saveName, setSaveName] = useState('');
+  const [markedItems, setMarkedItems] = useState<Record<string, true>>({});
+  const [animItems, setAnimItems] = useState<Record<string, true>>({});
+  const toggleMarked = (id: string) => {
+    const isNowMarked = !markedItems[id];
+    setMarkedItems(prev => {
+      const next = { ...prev };
+      if (next[id]) delete next[id];
+      else next[id] = true;
+      return next;
+    });
+    if (isNowMarked) {
+      setAnimItems(prev => ({ ...prev, [id]: true }));
+      setTimeout(() => {
+        setAnimItems(prev => {
+          const next = { ...prev };
+          delete next[id];
+          return next;
+        });
+      }, 600);
+    }
+  };
+  const STAR_DIRS = [
+    [-18, 50], [22, 60], [-30, 40], [15, 55], [5, 70]
+  ];
+  const STAR_DURS = [1.6, 2.2, 1.9, 2.5, 1.8];
   const planificadorRef = useRef<HTMLElement | null>(null);
   const materialesRef = useRef<HTMLElement | null>(null);
   const resumenRef = useRef<HTMLElement | null>(null);
@@ -480,41 +506,77 @@ export default function Planner() {
   const activeRows = plannerRows.filter(row => !row.isDone);
 
   const materialTotals = useMemo(() => {
-    const totals: Record<string, { 
-      id: string; 
-      quantity: number; 
-      label: string; 
-      tier: number; 
-      enchant: number; 
-      tierLabel: string; 
-      isEligible: boolean 
+    type GroupKey = string;
+    const groups: Record<GroupKey, {
+      id: string;
+      returnRate: number;
+      isEligible: boolean;
+      sumPcQty: number;
+      sumReducible: number;
+      tier: number;
+      enchant: number;
+      tierLabel: string;
+      label: string;
     }> = {};
 
     activeRows.forEach((row) => {
       row.materialBreakdown.forEach((mat) => {
+        const perCraft = mat.quantity;
+        const itemQty = row.quantity;
+        const key = `${mat.id}:${row.returnRate}`;
         const tierInfo = getTierInfo(mat.id);
-        if (!totals[mat.id]) {
-          totals[mat.id] = {
+        if (!groups[key]) {
+          groups[key] = {
             id: mat.id,
-            quantity: 0,
-            label: getPlannerMaterialLabel(mat.id, locale),
+            returnRate: row.returnRate,
+            isEligible: isReturnEligibleMaterial(mat.id),
+            sumPcQty: 0,
+            sumReducible: 0,
             tier: tierInfo.tier,
             enchant: tierInfo.enchant,
             tierLabel: tierInfo.label,
-            isEligible: isReturnEligibleMaterial(mat.id),
+            label: getPlannerMaterialLabel(mat.id, locale),
           };
         }
-        totals[mat.id].quantity += mat.totalQty;
+        groups[key].sumPcQty += perCraft * itemQty;
+        groups[key].sumReducible += perCraft * (itemQty - 1);
       });
     });
 
-    return Object.values(totals)
-      .map((entry) => {
-        return {
-          ...entry,
-          buyQty: Math.ceil(entry.quantity),
+    const totals: Record<string, {
+      id: string;
+      quantity: number;
+      label: string;
+      tier: number;
+      enchant: number;
+      tierLabel: string;
+      isEligible: boolean;
+    }> = {};
+
+    for (const group of Object.values(groups)) {
+      const totalQty = group.isEligible && group.returnRate > 0
+        ? group.sumPcQty - Math.floor(group.sumReducible * (group.returnRate / 100))
+        : group.sumPcQty;
+
+      if (!totals[group.id]) {
+        totals[group.id] = {
+          id: group.id,
+          quantity: 0,
+          label: group.label,
+          tier: group.tier,
+          enchant: group.enchant,
+          tierLabel: group.tierLabel,
+          isEligible: group.isEligible,
         };
-      })
+      }
+      totals[group.id].quantity += totalQty;
+    }
+
+    return Object.values(totals)
+      .map((entry) => ({
+        ...entry,
+        buyQty: Math.ceil(entry.quantity),
+      }))
       .sort((a, b) => b.tier - a.tier || b.enchant - a.enchant || a.label.localeCompare(b.label));
   }, [activeRows, locale]);
 
@@ -706,6 +768,9 @@ export default function Planner() {
           <button className={styles.iconBtn} onClick={() => setShowLoadModal(true)} title={locale === 'es' ? 'CARGAR TALLER' : 'LOAD WORKSHOP'}>
             <FolderOpen size={16} />
           </button>
+          <button className={styles.iconBtn} onClick={clearPlannerItems} title={locale === 'es' ? 'LIMPIAR TALLER' : 'CLEAR WORKSHOP'}>
+            <Eraser size={16} />
+          </button>
         </div>
         <div className={styles.content}>
           <div className={styles.emptyState}>
@@ -822,6 +887,9 @@ export default function Planner() {
           </button>
           <button className={styles.iconBtn} onClick={() => setShowLoadModal(true)} title={locale === 'es' ? 'CARGAR TALLER' : 'LOAD WORKSHOP'}>
             <FolderOpen size={16} />
+          </button>
+          <button className={styles.iconBtn} onClick={clearPlannerItems} title={locale === 'es' ? 'LIMPIAR TALLER' : 'CLEAR WORKSHOP'}>
+            <Eraser size={16} />
           </button>
         </div>
       </div>
@@ -971,7 +1039,13 @@ export default function Planner() {
                     {group.items.map((mat) => (
                       <div key={mat.id} className={styles.groupRow}>
                         <div className={styles.groupInfo}>
-                          <img src={getItemImageUrl(getMaterialImageId(mat.id))} className={styles.groupImg} alt="" />
+                          <div className={styles.imgWrap} onClick={() => toggleMarked(mat.id)}>
+                            <img src={getItemImageUrl(getMaterialImageId(mat.id))} className={`${styles.groupImg} ${markedItems[mat.id] ? styles.imgDim : ''}`} alt="" />
+                            {markedItems[mat.id] && <div className={styles.markOverlay} />}
+                            {animItems[mat.id] && STAR_DIRS.map(([dx, dy], i) => (
+                      <span key={i} className={styles.starPart} style={{ '--dx': `${dx}px`, '--dy': `${dy}px`, animationDelay: `${i * 150 + Math.random() * 100}ms`, animationDuration: `${STAR_DURS[i]}s` } as any}><svg width="14" height="14" viewBox="0 0 24 24" fill="#ffd700"><path d="M12 2l1.5 5.5L17 3l-2 6.5 6-1.5-5.5 3L18 14l-6-1-1 6-1-6-6 1 4.5-3.5L3 8l6 1.5L7 3l3.5 4.5z"/></svg></span>
+                            ))}
+                          </div>
                           <div className={styles.groupMeta}>
                             <span className={styles.groupName}>{mat.label}</span>
                             <span className={styles.groupTier}>{mat.tierLabel}</span>
@@ -994,7 +1068,13 @@ export default function Planner() {
             <div className={styles.artifactGrid}>
               {groupedMaterials.artefactos.length > 0 ? groupedMaterials.artefactos.map((mat) => (
                 <div key={mat.id} className={styles.artifactCard}>
-                  <img src={getItemImageUrl(getMaterialImageId(mat.id))} className={styles.artifactImg} alt="" />
+                  <div className={styles.imgWrap} onClick={() => toggleMarked(mat.id)}>
+                    <img src={getItemImageUrl(getMaterialImageId(mat.id))} className={`${styles.artifactImg} ${markedItems[mat.id] ? styles.imgDim : ''}`} alt="" />
+                    {markedItems[mat.id] && <div className={styles.markOverlay} />}
+                    {animItems[mat.id] && STAR_DIRS.map(([dx, dy], i) => (
+                      <span key={i} className={styles.starPart} style={{ '--dx': `${dx}px`, '--dy': `${dy}px`, animationDelay: `${i * 150 + Math.random() * 100}ms`, animationDuration: `${STAR_DURS[i]}s` } as any}><svg width="14" height="14" viewBox="0 0 24 24" fill="#ffd700"><path d="M12 2l1.5 5.5L17 3l-2 6.5 6-1.5-5.5 3L18 14l-6-1-1 6-1-6-6 1 4.5-3.5L3 8l6 1.5L7 3l3.5 4.5z"/></svg></span>
+                    ))}
+                  </div>
                   <div className={styles.artifactInfo}>
                     <span className={styles.artifactName}>{mat.label}</span>
                     <span className={styles.artifactTier}>({mat.tierLabel})</span>
@@ -1015,7 +1095,13 @@ export default function Planner() {
             <div className={styles.artifactGrid}>
               {groupedMaterials.especiales.length > 0 ? groupedMaterials.especiales.map((mat) => (
                 <div key={mat.id} className={styles.artifactCard}>
-                  <img src={getItemImageUrl(getMaterialImageId(mat.id))} className={styles.artifactImg} alt="" />
+                  <div className={styles.imgWrap} onClick={() => toggleMarked(mat.id)}>
+                    <img src={getItemImageUrl(getMaterialImageId(mat.id))} className={`${styles.artifactImg} ${markedItems[mat.id] ? styles.imgDim : ''}`} alt="" />
+                    {markedItems[mat.id] && <div className={styles.markOverlay} />}
+                    {animItems[mat.id] && STAR_DIRS.map(([dx, dy], i) => (
+                      <span key={i} className={styles.starPart} style={{ '--dx': `${dx}px`, '--dy': `${dy}px`, animationDelay: `${i * 150 + Math.random() * 100}ms`, animationDuration: `${STAR_DURS[i]}s` } as any}><svg width="14" height="14" viewBox="0 0 24 24" fill="#ffd700"><path d="M12 2l1.5 5.5L17 3l-2 6.5 6-1.5-5.5 3L18 14l-6-1-1 6-1-6-6 1 4.5-3.5L3 8l6 1.5L7 3l3.5 4.5z"/></svg></span>
+                    ))}
+                  </div>
                   <div className={styles.artifactInfo}>
                     <span className={styles.artifactName}>{mat.label}</span>
                     <span className={styles.artifactTier}>({mat.tierLabel})</span>
@@ -1036,7 +1122,13 @@ export default function Planner() {
             <div className={styles.artifactGrid}>
               {journalSummary.details.length > 0 ? journalSummary.details.map((journal) => (
                 <div key={journal.id} className={styles.artifactCard}>
-                  <img src={getItemImageUrl(getJournalImageId(journal.type, journal.tier))} className={styles.artifactImg} alt="" />
+                  <div className={styles.imgWrap} onClick={() => toggleMarked(journal.id)}>
+                    <img src={getItemImageUrl(getJournalImageId(journal.type, journal.tier))} className={`${styles.artifactImg} ${markedItems[journal.id] ? styles.imgDim : ''}`} alt="" />
+                    {markedItems[journal.id] && <div className={styles.markOverlay} />}
+                    {animItems[journal.id] && STAR_DIRS.map(([dx, dy], i) => (
+                      <span key={i} className={styles.starPart} style={{ '--dx': `${dx}px`, '--dy': `${dy}px`, animationDelay: `${i * 150 + Math.random() * 100}ms`, animationDuration: `${STAR_DURS[i]}s` } as any}><svg width="14" height="14" viewBox="0 0 24 24" fill="#ffd700"><path d="M12 2l1.5 5.5L17 3l-2 6.5 6-1.5-5.5 3L18 14l-6-1-1 6-1-6-6 1 4.5-3.5L3 8l6 1.5L7 3l3.5 4.5z"/></svg></span>
+                    ))}
+                  </div>
                   <div className={styles.artifactInfo}>
                     <span className={styles.artifactName}>{getJournalDisplayName('', journal.type, locale)}</span>
                     <span className={styles.artifactTier}>(T{journal.tier})</span>

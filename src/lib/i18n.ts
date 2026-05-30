@@ -375,10 +375,187 @@ const SPECIAL_MATERIAL_NAMES: Record<string, { es: string; en: string }> = {
 };
 
 const ARTIFACT_NAME_OVERRIDES_EN: Record<string, string> = {
+  // === PLATE ARMOR ===
+  HEAD_PLATE_UNDEAD: 'Ancient Padding',
+  HEAD_PLATE_HELL: 'Demonic Scraps',
+  HEAD_PLATE_KEEPER: 'Carved Skull Padding',
+  HEAD_PLATE_FEY: 'Veilweaver Mandibles',
+  HEAD_PLATE_AVALON: 'Exalted Visor',
+  ARMOR_PLATE_UNDEAD: 'Ancient Chain Rings',
+  ARMOR_PLATE_HELL: 'Demonic Plates',
+  ARMOR_PLATE_KEEPER: 'Preserved Animal Fur',
+  ARMOR_PLATE_FEY: 'Veilweaver Carapace',
+  ARMOR_PLATE_AVALON: 'Exalted Plating',
+  SHOES_PLATE_UNDEAD: 'Ancient Bindings',
+  SHOES_PLATE_HELL: 'Demonic Filling',
+  SHOES_PLATE_KEEPER: 'Inscribed Bindings',
+  SHOES_PLATE_FEY: 'Veilweaver Claws',
+  SHOES_PLATE_AVALON: 'Exalted Greave',
+
+  // === LEATHER ARMOR ===
+  HEAD_LEATHER_MORGANA: 'Imbued Visor',
+  HEAD_LEATHER_HELL: 'Demonhide Padding',
+  HEAD_LEATHER_UNDEAD: 'Ghastly Visor',
+  HEAD_LEATHER_FEY: 'Augured Padding',
+  HEAD_LEATHER_AVALON: 'Augured Padding',
+  ARMOR_LEATHER_MORGANA: 'Imbued Leather Folds',
+  ARMOR_LEATHER_HELL: 'Demonhide Leather',
+  ARMOR_LEATHER_UNDEAD: 'Ghastly Leather',
+  ARMOR_LEATHER_FEY: 'Untarnished Griffin Feathers',
+  ARMOR_LEATHER_AVALON: 'Augured Sash',
+  SHOES_LEATHER_MORGANA: 'Imbued Soles',
+  SHOES_LEATHER_HELL: 'Demonhide Bindings',
+  SHOES_LEATHER_UNDEAD: 'Ghastly Bindings',
+  SHOES_LEATHER_FEY: 'Griffin Underfur',
+  SHOES_LEATHER_AVALON: 'Augured Fasteners',
+
+  // === CLOTH ARMOR ===
+  HEAD_CLOTH_KEEPER: 'Druidic Preserved Beak',
+  HEAD_CLOTH_HELL: 'Infernal Cloth Visor',
+  HEAD_CLOTH_MORGANA: 'Alluring Padding',
+  HEAD_CLOTH_FEY: 'Intact Fey Fibula',
+  HEAD_CLOTH_AVALON: 'Sanctified Mask',
   ARMOR_CLOTH_KEEPER: 'Druidic Feathers',
+  ARMOR_CLOTH_HELL: 'Infernal Cloth Folds',
+  ARMOR_CLOTH_MORGANA: 'Alluring Amulet',
+  ARMOR_CLOTH_FEY: 'Fey Dorsal Wing',
+  ARMOR_CLOTH_AVALON: 'Sanctified Belt',
+
+  // === SWORDS ===
+  MAIN_SCIMITAR_MORGANA: 'Bloodforged Blade',
+  '2H_CLEAVER_HELL': 'Demonic Blade',
+  '2H_DUALSCIMITAR_UNDEAD': 'Immortal Shard',
+  '2H_CLAYMORE_AVALON': 'Hand of Fate',
+  MAIN_SWORD_CRYSTAL: 'Edged Crystal',
+
+  // === AXES ===
+  '2H_HALBERD_MORGANA': 'Morgana Halberd Head',
+  '2H_SCYTHE_HELL': 'Infernal Scythe Head',
+  '2H_DUALAXE_KEEPER': 'Ursine Guardian Remains',
+  '2H_AXE_AVALON': 'Mighty Head',
+  '2H_SCYTHE_CRYSTAL': 'Soul Crystal',
+
+  // === MACES ===
+  MAIN_ROCKMACE_KEEPER: 'Runed Rock',
+  MAIN_MACE_HELL: 'Demonic Mace Head',
+  '2H_MACE_MORGANA': 'Morgana Mace Head',
+  '2H_DUALMACE_AVALON': 'Avalonian Gear',
+  MAIN_MACE_CRYSTAL: 'Crystalized Mace',
+
+  // === HAMMERS ===
+  '2H_HAMMER_UNDEAD': 'Ancient Hammer Head',
+  '2H_DUALHAMMER_HELL': 'Hellish Hammer Heads',
+  '2H_RAM_KEEPER': 'Keeper Ram Head',
+  '2H_HAMMER_AVALON': 'Avalonian Fist',
+  '2H_HAMMER_CRYSTAL': 'Thunder Crystal',
+
+  // === WAR GLOVES ===
+  '2H_KNUCKLES_KEEPER': 'Ursine Claws',
+  '2H_KNUCKLES_HELL': 'Hellfire Fists',
+  '2H_KNUCKLES_MORGANA': 'Cursed Raven Claw',
+  '2H_KNUCKLES_AVALON': 'Fists of Avalon',
+  '2H_KNUCKLES_CRYSTAL': 'Force Crystal',
+
+  // === CROSSBOWS ===
+  '2H_REPEATINGCROSSBOW_UNDEAD': 'Lost Crossbow Mechanism',
+  '2H_DUALCROSSBOW_HELL': 'Hellish Bolts',
+  '2H_CROSSBOWLARGE_MORGANA': 'Alluring Bolts',
+  '2H_CROSSBOW_CANNON_AVALON': 'Avalonian Core',
+  '2H_DUALCROSSBOW_CRYSTAL': 'Arclight Crystal',
+
+  // === BOWS ===
+  '2H_LONGBOW_UNDEAD': 'Guardian Arrowhead',
+  '2H_BOW_HELL': 'Demonic Arrowheads',
+  '2H_BOW_KEEPER': 'Carved Bone',
+  '2H_BOW_AVALON': 'Avalonian Fiber',
+  '2H_BOW_CRYSTAL': 'Windborne Crystal',
+
+  // === DAGGERS ===
+  MAIN_RAPIER_MORGANA: 'Unstable Blade',
+  MAIN_DAGGER_HELL: 'Demonic Fang',
+  '2H_DUALSICKLE_UNDEAD': 'Ghastly Blades',
+  '2H_DAGGER_KATAR_AVALON': 'Bloodstained Antiquities',
+  '2H_DAGGERPAIR_CRYSTAL': 'Death-Touched Crystal',
+
+  // === SPEARS ===
+  MAIN_SPEAR_KEEPER: 'Keeper Spearhead',
+  '2H_HARPOON_HELL': 'Infernal Harpoon Tip',
+  '2H_TRIDENT_UNDEAD': 'Cursed Barbs',
+  MAIN_SPEAR_LANCE_AVALON: 'Ruined Ancestral Vamplates',
+  '2H_GLAIVE_CRYSTAL': 'Rift Crystal',
+
+  // === QUARTERSTAVES ===
+  '2H_COMBATSTAFF_MORGANA': 'Reinforced Morgana Pole',
+  '2H_TWINSCYTHE_HELL': 'Hellish Sicklehead Pair',
+  '2H_ROCKSTAFF_KEEPER': 'Preserved Rocks',
+  '2H_QUARTERSTAFF_AVALON': 'Timeworn Walking Staves',
+  '2H_DOUBLEBLADEDSTAFF_CRYSTAL': 'Mirage Crystal',
+
+  // === SHAPESHIFTER ===
+  '2H_SHAPESHIFTER_HELL': 'Hellfire Imp Remnant',
+  '2H_SHAPESHIFTER_KEEPER': 'Infernal Creature Heart',
+  '2H_SHAPESHIFTER_MORGANA': 'Terrene Rune',
+  '2H_SHAPESHIFTER_AVALON': 'Invoked Light',
+  '2H_SHAPESHIFTER_CRYSTAL': 'Shapeshifter Crystal',
+
+  // === NATURE STAVES ===
   MAIN_NATURESTAFF_KEEPER: 'Druidic Seed',
-  HEAD_CLOTH_KEEPER: 'Druidic Cowl Artifact',
-  SHOES_CLOTH_KEEPER: 'Druid Sandals Artifact',
+  '2H_NATURESTAFF_HELL': 'Corrupted Sap',
+  '2H_NATURESTAFF_KEEPER': 'Morgana Roots',
+  MAIN_NATURESTAFF_AVALON: 'Ironroot Core',
+  MAIN_NATURESTAFF_CRYSTAL: 'Nature Crystal',
+
+  // === FIRE STAVES ===
+  MAIN_FIRESTAFF_KEEPER: 'Fire Heart',
+  '2H_FIRESTAFF_HELL': 'Burning Orb',
+  '2H_INFERNOSTAFF_MORGANA': 'Morgana Flames',
+  '2H_FIRE_RINGPAIR_AVALON': 'Avalonian Scroll',
+  MAIN_FIRESTAFF_CRYSTAL: 'Fire Crystal',
+
+  // === HOLY STAVES ===
+  MAIN_HOLYSTAFF_MORGANA: 'Sanctified Symbol',
+  '2H_HOLYSTAFF_HELL': 'Fallen Relic',
+  '2H_HOLYSTAFF_UNDEAD': 'Immortal Hallows',
+  MAIN_HOLYSTAFF_AVALON: 'Divine Invoker',
+  '2H_HOLYSTAFF_CRYSTAL': 'Holy Crystal',
+
+  // === ARCANE STAVES ===
+  MAIN_ARCANESTAFF_UNDEAD: 'Lost Arcane Crystal',
+  '2H_ARCANESTAFF_HELL': 'Occult Orb',
+  '2H_ENIGMATICORB_MORGANA': 'Possessed Catalyst',
+  '2H_ARCANE_RINGPAIR_AVALON': 'Harmonic Ring',
+  '2H_ARCANESTAFF_CRYSTAL': 'Arcane Crystal',
+
+  // === FROST STAVES ===
+  MAIN_FROSTSTAFF_KEEPER: 'Keeper Frost',
+  '2H_ICEGAUNTLETS_HELL': 'Icicle Orb',
+  '2H_ICECRYSTAL_UNDEAD': 'Cursed Frozen Crystal',
+  MAIN_FROSTSTAFF_AVALON: 'Frozen Grip',
+  '2H_FROSTSTAFF_CRYSTAL': 'Icy Crystal',
+
+  // === CURSED STAVES ===
+  MAIN_CURSEDSTAFF_UNDEAD: 'Cursed Frozen Crystal',
+  '2H_SKULLORB_HELL': 'Cursed Jawbone',
+  '2H_CURSEDSTAFF_MORGANA': 'Bloodforged Catalyst',
+  MAIN_CURSEDSTAFF_AVALON: 'Shadow Invoker',
+  MAIN_CURSEDSTAFF_CRYSTAL: 'Cursed Crystal',
+
+  // === OFF-HANDS ===
+  OFF_TOWERSHIELD_UNDEAD: 'Sarcophagus',
+  OFF_SHIELD_HELL: 'Caitiff Shield',
+  OFF_SPIKEDSHIELD_MORGANA: 'Facebreaker',
+  OFF_SHIELD_AVALON: 'Astral Aegis',
+  OFF_SHIELD_CRYSTAL: 'Crystal Shield',
+  OFF_HORN_KEEPER: 'Runed Horn',
+  OFF_JESTERCANE_HELL: 'Hellish Handle',
+  OFF_LAMP_UNDEAD: 'Cryptcandle',
+  OFF_TALISMAN_AVALON: 'Avalonian Talisman',
+  OFF_TORCH_CRYSTAL: 'Blueflame Crystal',
+  OFF_ORB_MORGANA: 'Eyes of Morgana',
+  OFF_DEMONSKULL_HELL: 'Demonic Skull',
+  OFF_TOTEM_KEEPER: 'Keeper Totem',
+  OFF_CENSER_AVALON: 'Avalonian Censer',
+  OFF_TOME_CRYSTAL: 'Crystal Tome',
 };
 
 const SERVER_LABELS: Record<Server, Record<Locale, string>> = {

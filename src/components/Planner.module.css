@@ -722,6 +722,64 @@
   z-index: 2;
 }
 
+.imgWrap {
+  position: relative;
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  cursor: pointer;
+}
+
+.imgDim {
+  filter: brightness(0.5);
+}
+
+.markOverlay {
+  position: absolute;
+  inset: 0;
+  border-radius: 10px;
+  background: rgba(var(--bg-rgb), 0.15);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.starPart {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 5;
+  animation-name: starFall;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  animation-fill-mode: forwards;
+}
+
+.starPart svg {
+  filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.7)) drop-shadow(0 0 12px rgba(255, 215, 0, 0.3));
+}
+
+@keyframes starFall {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) translate(0, 0) scale(0.5) rotate(0deg);
+  }
+  15% {
+    opacity: 1;
+    transform: translate(-50%, -50%) translate(calc(var(--dx) * 0.3), calc(var(--dy) * 0.2)) scale(1.2) rotate(30deg);
+  }
+  50% {
+    opacity: 0.8;
+    transform: translate(-50%, -50%) translate(calc(var(--dx) * 0.7), calc(var(--dy) * 0.55)) scale(1) rotate(100deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) translate(calc(var(--dx) * 1.1), calc(var(--dy) * 1)) scale(0.3) rotate(200deg);
+  }
+}
+
 .groupMeta {
   display: flex;
   flex-direction: column;

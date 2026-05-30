@@ -61,7 +61,7 @@ export function getJournalType(item: AlbionItem): CraftJournalType {
 
   if (item.category === 'armas') {
     if (['igneos', 'sagrados', 'arcanos', 'hielo', 'malditos'].includes(sub)) return 'IMBUER';
-    if (['arcos', 'ballestas', 'dagas', 'lanzas', 'naturales', 'varas'].includes(sub)) return 'FLETCHER';
+    if (['arcos', 'dagas', 'lanzas', 'naturales', 'varas'].includes(sub)) return 'FLETCHER';
     return 'BLACKSMITH';
   }
 
