@@ -2,11 +2,9 @@
 
 export type Server = 'west' | 'east' | 'europe';
 
-export interface Material {
+interface Material {
   id: string;
-  name: string;
   quantity: number;
-  isArtifact?: boolean;
 }
 
 export interface AlbionItem {

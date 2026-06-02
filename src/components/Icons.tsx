@@ -16,18 +16,6 @@ export function CalcIcon({ size = 20, className }: Props) {
   );
 }
 
-export function TallerIcon({ size = 20, className }: Props) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <path d="M14 2v4a2 2 0 0 0 2 2h4" />
-      <path d="M4 22V6a2 2 0 0 1 2-2h8l6 6v12" />
-      <path d="M8 12h2" />
-      <path d="M8 16h6" />
-      <path d="M16 12h2" />
-    </svg>
-  );
-}
-
 export function SwordIcon({ size = 20, className }: Props) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
@@ -167,16 +155,6 @@ export function CloseIcon({ size = 13, className }: Props) {
   );
 }
 
-export function ChevronIcon({ size = 16, className, dir = 'down' }: Props & { dir?: 'up' | 'down' | 'left' | 'right' }) {
-  const rotate = dir === 'up' ? '180' : dir === 'left' ? '90' : dir === 'right' ? '-90' : '0';
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={className}
-         style={{ transform: `rotate(${rotate}deg)` }}>
-      <polyline points="6 9 12 15 18 9" />
-    </svg>
-  );
-}
-
 export function PanelIcon({ size = 18, className, side = 'left' }: Props & { side?: 'left' | 'right' }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
@@ -217,28 +195,6 @@ export function BookIcon({ size = 20, className }: Props) {
       <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
       <line x1="8" y1="7" x2="16" y2="7" />
       <line x1="8" y1="11" x2="14" y2="11" />
-    </svg>
-  );
-}
-
-export function MochiCupLogo({ size = 120, className }: Props) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 120 160" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <path d="M35 35 Q60 12 85 35" />
-      <rect x="32" y="32" width="56" height="10" rx="5" />
-      <path d="M35 42 L26 130 Q26 138 34 138 L86 138 Q94 138 94 130 L85 42" />
-      <line x1="72" y1="10" x2="66" y2="55" />
-      <circle cx="68" cy="14" r="3.5" fill="currentColor" stroke="none" />
-      <rect x="28" y="74" width="64" height="34" rx="6" />
-      <text x="60" y="96" textAnchor="middle" fontSize="20" fontWeight="900" fill="currentColor" stroke="none">M</text>
-      <circle cx="42" cy="120" r="4" opacity="0.55" fill="currentColor" stroke="none" />
-      <circle cx="52" cy="124" r="4" opacity="0.55" fill="currentColor" stroke="none" />
-      <circle cx="62" cy="119" r="4" opacity="0.55" fill="currentColor" stroke="none" />
-      <circle cx="72" cy="123" r="4" opacity="0.55" fill="currentColor" stroke="none" />
-      <circle cx="47" cy="128" r="3.5" opacity="0.55" fill="currentColor" stroke="none" />
-      <circle cx="67" cy="128" r="3.5" opacity="0.55" fill="currentColor" stroke="none" />
-      <circle cx="57" cy="126" r="3" opacity="0.55" fill="currentColor" stroke="none" />
-      <path d="M34 52 Q60 58 86 52" strokeDasharray="3 3" opacity="0.35" />
     </svg>
   );
 }

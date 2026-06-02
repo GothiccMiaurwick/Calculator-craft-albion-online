@@ -1,6 +1,7 @@
 'use client';
 
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import { nanoid } from 'nanoid';
 import { AlbionItem, TreeItem, Server } from '@/lib/items';
 import { getFallbackRecipe } from '@/lib/fallbacks';
 import type { Locale } from '@/lib/i18n';
@@ -28,9 +29,9 @@ export interface PlannerItem {
   isDone: boolean;
 }
 
-export type QualityPriceMap = Record<number, number>;
+type QualityPriceMap = Record<number, number>;
 
-export interface CalculatorPreferences {
+interface CalculatorPreferences {
   tax: number;
   usePremium: boolean;
   returnRate: number;
@@ -54,16 +55,8 @@ export type ResourceRow = {
   cuero: number;
 };
 
-export type JournalRow = { tier: string; buy: number; sell: number };
-export type JournalType = { name: string; subtitle: string; icon: string; rows: JournalRow[] };
-
-export interface ArtifactPrice {
-  id: string;
-  name: string;
-  tier: number;
-  category: string;
-  price: number;
-}
+type JournalRow = { tier: string; buy: number; sell: number };
+type JournalType = { name: string; subtitle: string; icon: string; rows: JournalRow[] };
 
 const MARKET_PRICES_KEY = 'albion_market_prices_v2';
 
@@ -401,7 +394,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   }, [hasHydratedStorage, allMarketPrices]);
 
   const addPlannerItem = useCallback((item: Omit<PlannerItem, 'id'>) => {
-    const newItem = { ...item, id: Math.random().toString(36).slice(2, 11) };
+    const newItem = { ...item, id: nanoid() };
     setPlannerItems(prev => [...prev, newItem]);
   }, []);
 

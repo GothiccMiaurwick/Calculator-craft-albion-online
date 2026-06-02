@@ -7,8 +7,6 @@ import { CATEGORIES, TreeItem, Subcategory } from '@/lib/items';
 import { AppView, useApp } from '@/lib/AppContext';
 import { getCategoryName, getSubcategoryName, getTreeItemName, t } from '@/lib/i18n';
 import {
-  CalcIcon,
-  TallerIcon,
   SwordIcon,
   HelmetIcon,
   ChestIcon,

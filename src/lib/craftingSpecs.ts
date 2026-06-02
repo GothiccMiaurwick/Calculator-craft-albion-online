@@ -61,7 +61,7 @@ function buildSpecNodeMap() {
   return map;
 }
 
-export function getBaseFocusCost(tier: number, enchant: number) {
+function getBaseFocusCost(tier: number, enchant: number) {
   return 500 * Math.pow(1.5, tier - 4) * Math.pow(1.2, enchant);
 }
 
@@ -125,7 +125,7 @@ function getBestOfRollsDistribution(rolls: number): number[] {
   });
 }
 
-export function getExpectedQualityDistribution(item: AlbionItem, specs: Record<string, number>) {
+function getExpectedQualityDistribution(item: AlbionItem, specs: Record<string, number>) {
   const { totalQualityBonus } = getCraftingSpecBonus(item, specs);
   const totalRolls = 1 + totalQualityBonus / 100;
   const wholeRolls = Math.max(1, Math.floor(totalRolls));

@@ -7,16 +7,14 @@ const BASE_URLS: Record<Server, string> = {
   europe: 'https://europe.albion-online-data.com',
 };
 
-export interface MarketPrice {
+interface MarketPrice {
   item_id: string;
   city: string;
   quality: number;
   sell_price_min: number;
   sell_price_min_date: string;
-  sell_price_max: number;
   buy_price_max: number;
   buy_price_max_date: string;
-  buy_price_min: number;
 }
 
 export async function fetchPrices(
@@ -42,15 +40,6 @@ export function formatSilver(value: number): string {
   return value.toString();
 }
 
-export function timeAgo(dateStr: string): string {
-  if (!dateStr) return '—';
-  const date = new Date(dateStr);
-  const now = new Date();
-  const diff = Math.floor((now.getTime() - date.getTime()) / 1000 / 60);
-  if (diff < 60) return `${diff}m ago`;
-  if (diff < 1440) return `${Math.floor(diff / 60)}h ago`;
-  return `${Math.floor(diff / 1440)}d ago`;
-}
 /**
  * Recursively searches for the first array containing objects with material identifiers.
  */

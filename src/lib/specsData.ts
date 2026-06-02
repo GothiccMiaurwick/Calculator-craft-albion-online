@@ -1,6 +1,6 @@
-export type SpecsItem = { name: string };
-export type SpecsSubcategory = { name: string; general: SpecsItem; items: SpecsItem[] };
-export type SpecsCategory = { name: string; icon: string; subcategories: SpecsSubcategory[] };
+type SpecsItem = { name: string };
+type SpecsSubcategory = { name: string; general: SpecsItem; items: SpecsItem[] };
+type SpecsCategory = { name: string; icon: string; subcategories: SpecsSubcategory[] };
 
 export const SPECS_DATA: SpecsCategory[] = [
   {

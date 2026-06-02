@@ -1033,11 +1033,6 @@ export function getJournalWorkerName(type: string, locale: Locale) {
   return JOURNAL_WORKER_LABELS[normalized]?.[locale] ?? (locale === 'es' ? type : titleCase(type));
 }
 
-export function getCraftJournalName(type: string, locale: Locale) {
-  const normalized = normalizeText(type);
-  return JOURNAL_NAME_LABELS[normalized]?.[locale] ?? `${titleCase(type)} Journal`;
-}
-
 export function getJournalDisplayName(name: string, subtitle: string, locale: Locale) {
   const normalized = normalizeText(subtitle);
   return JOURNAL_NAME_LABELS[normalized]?.[locale] ?? name;

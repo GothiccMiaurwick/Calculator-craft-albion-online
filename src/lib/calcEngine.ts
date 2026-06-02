@@ -20,7 +20,7 @@ export function getResourceField(normId: string): keyof Omit<ResourceRow, 'tier'
   return resourceKey ? RESOURCE_MAP[resourceKey] : undefined;
 }
 
-export function isLocalResourceMaterial(id: string) {
+function isLocalResourceMaterial(id: string) {
   const normId = normalizeId(id);
   if (isArtifactLikeMaterial(normId)) return false;
   return Boolean(getResourceField(normId));
@@ -55,21 +55,6 @@ export function getRequiredPurchaseQuantity(
   const returnRatio = Math.max(0, Number(returnRate || 0)) / 100;
   // First craft uses full materials; subsequent crafts benefit from returns
   return rawQuantity - Math.floor((rawQuantity - Number(perCraftQuantity || 0)) * returnRatio);
-}
-
-// NOTE: This function is kept for display purposes in materialBreakdown only.
-// The actual investment uses the Albion Printer method: Math.round(rawTotal * (1 - RR))
-function getNetInvestmentQuantity(
-  perCraftQuantity: number,
-  itemQuantity: number,
-  returnRate: number,
-  returnEligible: boolean
-) {
-  const rawQuantity = Number(perCraftQuantity || 0) * Number(itemQuantity || 0);
-  if (!returnEligible || rawQuantity <= 0) return rawQuantity;
-
-  const returnRatio = Math.max(0, Number(returnRate || 0)) / 100;
-  return rawQuantity * (1 - returnRatio);
 }
 
 export function resolvePrice(
@@ -108,12 +93,12 @@ export function resolvePrice(
   return 0;
 }
 
-export interface RawMaterial {
+interface RawMaterial {
   id:       string;
   quantity: number;
 }
 
-export interface CalcInput {
+interface CalcInput {
   materials:      RawMaterial[];
   resources:      ResourceRow[];
   artifactPrices: Record<string, number>;
@@ -125,13 +110,13 @@ export interface CalcInput {
   itemQuantity?:  number;   
 }
 
-export interface CalcResult {
+interface CalcResult {
   rawTotalCost:    number;   
   returnValue:     number;   
   taxAmount:       number;   
-  inversion:       number;   // Net Investment (Target: 171.456)
-  gananciaNeta:    number;   // Net Profit (Target: +62.294)
-  margenGanancia:  number;   // Net Margin (Target: 36.3%)
+  inversion:       number;   
+  gananciaNeta:    number;   
+  margenGanancia:  number;   
 }
 
 export function calculateCrafting(input: CalcInput): CalcResult {

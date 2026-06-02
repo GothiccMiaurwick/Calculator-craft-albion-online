@@ -1,4 +1,4 @@
-export interface ArtifactBase {
+interface ArtifactBase {
   id: string;      // Base ID, e.g. MAIN_SCIMITAR_MORGANA
   name: string;    // Display Name, e.g. Remanente de Morgana
   category: 'armas' | 'armaduras' | 'secundaria';

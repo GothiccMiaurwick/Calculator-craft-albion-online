@@ -38,7 +38,7 @@ import {
 import { getAdjustedFocusCost } from '@/lib/craftingSpecs';
 import { getFallbackRecipe } from '@/lib/fallbacks';
 import { getArtifactNameByBaseId, getDisplayLocale, getItemName, getJournalDisplayName, getJournalWorkerName, getMaterialName, t } from '@/lib/i18n';
-import { getCraftingFameForItem, getJournalCapacity, getJournalProgress, getJournalType } from '@/lib/journals';
+import { getJournalCapacity, getJournalProgress, getJournalType } from '@/lib/journals';
 import AddCraftModal from './AddCraftModal';
 import styles from './Planner.module.css';
 
@@ -134,13 +134,6 @@ function formatCompact(value: number, localeCode: string): string {
 
 function formatExactValue(value: number, localeCode: string): string {
   return Math.round(Math.abs(value)).toLocaleString(localeCode);
-}
-
-function formatUnroundedValue(value: number, localeCode: string): string {
-  return Math.abs(value).toLocaleString(localeCode, {
-    maximumFractionDigits: 20,
-    useGrouping: true,
-  });
 }
 
 function formatSignedExactValue(value: number, localeCode: string): string {

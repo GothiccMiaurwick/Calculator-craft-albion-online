@@ -1,6 +1,6 @@
 import type { AlbionItem } from '@/lib/items';
 
-export type CraftJournalType = 'BLACKSMITH' | 'IMBUER' | 'FLETCHER' | 'TINKER';
+type CraftJournalType = 'BLACKSMITH' | 'IMBUER' | 'FLETCHER' | 'TINKER';
 
 type FameClass = 'weapon2h' | 'weapon1h' | 'armor' | 'small';
 
