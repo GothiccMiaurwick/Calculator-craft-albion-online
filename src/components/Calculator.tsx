@@ -639,7 +639,6 @@ export default function Calculator() {
         <div className={styles.topLeft}>
           <span className={styles.homeIcon}>🏠</span>
           <span className={styles.breadcrumb}>{breadcrumb}</span>
-          <span className={styles.syncedBadge}><span className={styles.dot} /> {t(locale, 'synced')}</span>
         </div>
         <div className={styles.topRight}>
           <select

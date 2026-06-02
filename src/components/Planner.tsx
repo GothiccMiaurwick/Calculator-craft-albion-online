@@ -70,14 +70,6 @@ const FOOD_OPTIONS = [
   { name: 'Pork Pie', bonus: 0.3, itemId: 'T7_MEAL_PIE' },
   { name: 'Avalonian Pork Pie', bonus: 0.45, itemId: 'T7_MEAL_PIE_AVALON' },
 ];
-const CRAFT_FAME_BONUSES = [
-  { label: 'NONE', value: 1 },
-  { label: '+10%', value: 1.1 },
-  { label: '+15%', value: 1.15 },
-  { label: '+25%', value: 1.25 },
-  { label: '+30%', value: 1.3 },
-  { label: '+35%', value: 1.35 },
-];
 const JOURNAL_IMG_MAP: Record<string, string> = {
   BLACKSMITH: 'JOURNAL_WARRIOR',
   IMBUER: 'JOURNAL_MAGE',
@@ -254,8 +246,6 @@ export default function Planner() {
   const [selectedMountIndex, setSelectedMountIndex] = useState(2);
   const [selectedBagIndex, setSelectedBagIndex] = useState(3);
   const [selectedFoodIndex, setSelectedFoodIndex] = useState(1);
-  const [craftFameBonus, setCraftFameBonus] = useState(1);
-  const [showCraftFame, setShowCraftFame] = useState(false);
   const [showWeight, setShowWeight] = useState(false);
   const [showMountDropdown, setShowMountDropdown] = useState(false);
   const [showBagDropdown, setShowBagDropdown] = useState(false);
@@ -305,9 +295,6 @@ function getStarStyle(dx: number, dy: number, index: number): StarStyle {
   const materialesRef = useRef<HTMLElement | null>(null);
   const resumenRef = useRef<HTMLElement | null>(null);
 
-  // Toggle helpers to ensure clean interaction
-  const toggleCraftFame = () => setShowCraftFame(prev => !prev);
-
   const SAVED_TALLERES_KEY = 'saved_talleres';
 
   function getSavedTalleres() {
@@ -328,7 +315,6 @@ function getStarStyle(dx: number, dy: number, index: number): StarStyle {
         selectedMountIndex,
         selectedBagIndex,
         selectedFoodIndex,
-        craftFameBonus,
       },
     });
     localStorage.setItem(SAVED_TALLERES_KEY, JSON.stringify(talleres));
@@ -348,7 +334,6 @@ function getStarStyle(dx: number, dy: number, index: number): StarStyle {
     setSelectedMountIndex(d.selectedMountIndex);
     setSelectedBagIndex(d.selectedBagIndex);
     setSelectedFoodIndex(d.selectedFoodIndex);
-    setCraftFameBonus(d.craftFameBonus);
   }
 
   function deleteTaller(id: string) {
@@ -743,17 +728,6 @@ function getStarStyle(dx: number, dy: number, index: number): StarStyle {
     }
     return { lingote, cuero, tablas, tela, artefactos, especiales };
   }, [materialTotals]);
-
-  // Craft Fame rows per active planner item
-  const craftFameRows = activeRows.map((row) => ({
-    id: row.id,
-    item: row.item,
-    tier: row.tier,
-    enchant: row.enchant,
-    quantity: row.quantity,
-    totalFame: row.journalProgress.famePerItem * row.quantity * craftFameBonus,
-  }));
-  const totalCraftFame = craftFameRows.reduce((sum, r) => sum + r.totalFame, 0);
 
   // Black market rows
   const blackMarketRows = activeRows.filter((row) => row.blackMarket);
@@ -1175,52 +1149,6 @@ function getStarStyle(dx: number, dy: number, index: number): StarStyle {
               </div>
             ))}
             <p className={styles.note}>{t(locale, 'journalSessionNote')}</p>
-          </div>
-
-          <div className={styles.collapsibleSection}>
-            <div className={styles.sectionHeader} onClick={toggleCraftFame} style={{ cursor: 'pointer' }}>
-              <Star size={20} className={styles.sectionIcon} />
-              <span className={styles.sectionTitle}>CRAFT FAME</span>
-              <div className={styles.headerActions}>
-                <select
-                  className={styles.compactSelect}
-                  value={craftFameBonus}
-                  onClick={(e) => e.stopPropagation()}
-                  onChange={(e) => setCraftFameBonus(Number(e.target.value))}
-                >
-                  {CRAFT_FAME_BONUSES.map((bonus) => (
-                    <option key={bonus.label} value={bonus.value}>{bonus.label}</option>
-                  ))}
-                </select>
-                <div className={styles.toggleBtn}>
-                  {showCraftFame ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
-                </div>
-              </div>
-            </div>
-            {showCraftFame && (
-              <div className={styles.famePanel}>
-                <div className={styles.transportTotal}>
-                  <span>TOTAL FAME</span>
-                  <strong>{formatExactValue(totalCraftFame, localeCode)}</strong>
-                </div>
-                <div className={styles.fameList}>
-                  {craftFameRows.length > 0 ? craftFameRows.map((row) => (
-                    <div key={row.id} className={styles.fameRow}>
-                      <div className={styles.groupInfo}>
-                        <img src={getItemImageUrl(row.item.id)} className={styles.groupImg} alt="" />
-                        <div className={styles.groupMeta}>
-                          <span className={styles.groupName}>{getCraftDisplayName(row, locale)}</span>
-                          <span className={styles.groupTier}>{row.quantity.toLocaleString(localeCode)} craft(s)</span>
-                        </div>
-                      </div>
-                      <span className={styles.groupQty}>{formatExactValue(row.totalFame, localeCode)}</span>
-                    </div>
-                  )) : (
-                    <div className={styles.panelEmpty}>NO CRAFT FAME</div>
-                  )}
-                </div>
-              </div>
-            )}
           </div>
 
           <div className={styles.collapsibleSection}>

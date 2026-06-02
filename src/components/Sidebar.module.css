@@ -1,7 +1,6 @@
 .sidebar {
   width: var(--sidebar-w, 270px);
   background: var(--surface);
-  border-right: 1px solid var(--border);
   display: flex;
   flex-direction: column;
   height: 100vh;
@@ -12,7 +11,6 @@
 .sidebarCollapsed {
   width: 52px;
   background: var(--surface);
-  border-right: 1px solid var(--border);
   display: flex;
   align-items: flex-start;
   padding-top: 12px;
