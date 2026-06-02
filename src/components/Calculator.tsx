@@ -229,8 +229,8 @@ export default function Calculator() {
   const [minMargin, setMinMargin] = useState(30);
 
   // 16ms ≈ 1 frame — main card feels instant, heavy bestCrafts memo still batched.
-  const debouncedReturnRate = useDebounce(returnRate, 16);
-  const debouncedEfficiencyRr = useDebounce(efficiencyRr, 16);
+  const [debouncedReturnRate] = useDebounce(returnRate, 16);
+  const [debouncedEfficiencyRr] = useDebounce(efficiencyRr, 16);
 
   const { 
     itemOverrides, setItemOverrides,
