@@ -91,7 +91,7 @@ function getFameClass(item: AlbionItem): FameClass {
   return 'small';
 }
 
-export function getCraftingFameForItem(item: AlbionItem, tier: number, enchant: number) {
+function getCraftingFameForItem(item: AlbionItem, tier: number, enchant: number) {
   const tierTable = CRAFTING_FAME_TABLE[tier] ?? CRAFTING_FAME_TABLE[4];
   const enchantTable = tierTable[enchant] ?? tierTable[0];
   const fameClass = getFameClass(item);

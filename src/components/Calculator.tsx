@@ -250,7 +250,6 @@ export default function Calculator() {
     setResources, setArtifactPrices
   } = useApp();
   const [sellPrice, setSellPrice] = useState<number>(0);
-  const [loading, setLoading] = useState(false);
   const [saved, setSaved] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
 
@@ -316,8 +315,6 @@ export default function Calculator() {
 
   const fetchData = useCallback(async () => {
     if (!selectedItem || !selectedTreeItem) return;
-    
-    // NOT set global loading=true at the start to prevent blocking local price rendering
 
     try {
       const initialIds = getInitialMarketIds(selectedItem.id, tier, enchant);
@@ -1011,9 +1008,8 @@ export default function Calculator() {
                   <button 
                     className={styles.btnRecalcular} 
                     onClick={() => fetchData()}
-                    disabled={loading}
                   >
-                    {loading ? t(locale, 'loading') : t(locale, 'recalculate')}
+                    {t(locale, 'recalculate')}
                   </button>
                   <div className={styles.optBadge} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                     {t(locale, 'silverPerFocus')} <ChevronDown size={10} />
