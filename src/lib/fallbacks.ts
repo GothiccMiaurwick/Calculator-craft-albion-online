@@ -133,6 +133,14 @@ const RESOURCE_RECIPE_OVERRIDES: Record<string, Array<{ resource: ResourceType; 
     { resource: 'tablas', quantity: 12 },
     { resource: 'lingote', quantity: 20 },
   ],
+  '2H_HARPOON_HELL': [
+    { resource: 'tablas', quantity: 20 },
+    { resource: 'lingote', quantity: 12 },
+  ],
+  '2H_TRIDENT_UNDEAD': [
+    { resource: 'tablas', quantity: 20 },
+    { resource: 'lingote', quantity: 12 },
+  ],
 
   '2H_QUARTERSTAFF': [
     { resource: 'cuero', quantity: 20 },
@@ -258,6 +266,14 @@ const RESOURCE_RECIPE_OVERRIDES: Record<string, Array<{ resource: ResourceType; 
     { resource: 'lingote', quantity: 12 },
   ],
 
+  OFF_TOWERSHIELD_UNDEAD: [
+    { resource: 'lingote', quantity: 4 },
+    { resource: 'tablas', quantity: 4 },
+  ],
+  OFF_SPIKEDSHIELD_MORGANA: [
+    { resource: 'lingote', quantity: 4 },
+    { resource: 'tablas', quantity: 4 },
+  ],
   OFF_HORN_KEEPER: [
     { resource: 'tablas', quantity: 4 },
     { resource: 'tela', quantity: 4 },

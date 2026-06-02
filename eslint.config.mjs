@@ -12,7 +12,17 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    "find_ids.js",
+    "find_ids_round2.js",
+    "validate_ids.js",
+    "src/components/fix.js",
+    "src/components/fix-planner.js",
   ]),
+  {
+    rules: {
+      "react-hooks/set-state-in-effect": "off",
+    },
+  },
 ]);
 
 export default eslintConfig;

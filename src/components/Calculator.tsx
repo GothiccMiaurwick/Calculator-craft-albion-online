@@ -3,6 +3,7 @@
 import { useState, useCallback, useEffect, useRef, useMemo, memo } from 'react';
 import { useApp } from '@/lib/AppContext';
 import { TIERS, ENCHANTS, CITIES, SERVERS, getItemImageUrl, CATEGORIES, normalizeId } from '@/lib/items';
+import type { AlbionItem, Server } from '@/lib/items';
 import { fetchPrices, fetchItemMaterials } from '@/lib/api';
 import { calculateCrafting, isArtifactLikeMaterial, resolvePrice, getResourceField } from '@/lib/calcEngine';
 import { getAdjustedFocusCost, getCraftingSpecBonus, getExpectedSalePriceFromQualities, type QualityPriceMap } from '@/lib/craftingSpecs';
@@ -25,6 +26,20 @@ const formatNumber = (val: number, localeCode: string, decimals = 0) => {
 const round2 = (n: number) => Number(n.toFixed(2));
 
 type ReturnRateMode = 'city' | 'cityFocus' | 'hideout';
+
+interface BestCraftRow {
+  item: AlbionItem;
+  profit: number;
+  margin: number;
+  isValid: boolean;
+}
+
+interface EfficiencyRow {
+  item: AlbionItem;
+  efficiency: number;
+  profitDelta: number;
+  isValid: boolean;
+}
 
 const DAILY_BONUSES = [0, 10, 20];
 const HIDEOUT_QUALITIES = [1, 2, 3, 4, 5, 6];
@@ -141,13 +156,6 @@ const FormattedInput = memo(function FormattedInput({ value, onChange, className
   const [isFocused, setIsFocused] = useState(false);
   const [localValue, setLocalValue] = useState('');
 
-  // When value changes from parent (e.g. database change), update local if not focused
-  useEffect(() => {
-    if (!isFocused) {
-      setLocalValue(formatNumber(value, 'es-CO'));
-    }
-  }, [value, isFocused]);
-
   const handleFocus = () => {
     setIsFocused(true);
     // Show raw number without dots for editing
@@ -182,7 +190,7 @@ const FormattedInput = memo(function FormattedInput({ value, onChange, className
       type="text"
       className={className}
       style={style}
-      value={localValue}
+      value={isFocused ? localValue : formatNumber(value, 'es-CO')}
       onChange={handleChange}
       onFocus={handleFocus}
       onBlur={handleBlur}
@@ -533,7 +541,7 @@ export default function Calculator() {
           isValid: r.inversion > 0
         };
       })
-      .filter((a): a is any => a !== null && a.isValid)
+      .filter((a): a is BestCraftRow => a !== null && a.isValid)
       .filter(a => a.margin >= Number(minMargin))
       .sort((a, b) => b.profit - a.profit || b.margin - a.margin) || [];
   }, [selectedItem, resources, artifactPrices, itemOverrides, debouncedReturnRate, tier, enchant, allMarketPrices, allMarketQualityPrices, allManualSellPrices, tax, minMargin, specs]);
@@ -605,7 +613,7 @@ export default function Calculator() {
           isValid: rFocus.inversion > 0
         };
       })
-      .filter((a): a is any => a !== null && a.isValid)
+      .filter((a): a is EfficiencyRow => a !== null && a.isValid)
       // RANKING: Silver per Focus Desc
       .sort((a, b) => b.efficiency - a.efficiency) || [];
   }, [selectedItem, resources, artifactPrices, itemOverrides, debouncedEfficiencyRr, useFocus, tier, enchant, allMarketPrices, allMarketQualityPrices, allManualSellPrices, tax, specs]);
@@ -652,7 +660,7 @@ export default function Calculator() {
             value={server}
             onChange={(e) => {
               commitFocusedInput();
-              setServer(e.target.value as any);
+              setServer(e.target.value as Server);
             }}
           >
             {SERVERS.map((s) => <option key={s.id} value={s.id}>{getServerName(s.id, locale)}</option>)}

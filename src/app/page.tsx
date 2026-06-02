@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { useApp } from '@/lib/AppContext';
 import { getCategoryName, getSubcategoryName, getTreeItemName, t } from '@/lib/i18n';
 import { CATEGORIES, TreeItem } from '@/lib/items';
@@ -32,11 +32,7 @@ export default function Home() {
   const { selectedItem, currentView, setSelectedItem, setSelectedTreeItem, setCurrentView, setSidebarCollapsed, calculatorPreferences } = useApp();
   const locale = calculatorPreferences.locale;
   const [searchQuery, setSearchQuery] = useState('');
-  const [recentPlans, setRecentPlans] = useState<SavedTaller[]>([]);
-
-  useEffect(() => {
-    setRecentPlans(getSavedTalleres().toReversed().slice(0, 5));
-  }, []);
+  const [recentPlans] = useState<SavedTaller[]>(() => getSavedTalleres().toReversed().slice(0, 5));
 
   const searchableItems = useMemo(() => (
     CATEGORIES.flatMap((cat) =>
@@ -86,7 +82,7 @@ export default function Home() {
       const saved = JSON.parse(localStorage.getItem(SAVED_TALLERES_KEY) || '[]');
       const found = saved.find((t: SavedTaller) => t.id === plan.id);
       if (found) {
-        const { plannerItems, extraCosts, selectedMountIndex, selectedBagIndex, selectedFoodIndex, craftFameBonus } = found.data;
+        const { plannerItems } = found.data;
         if (plannerItems) {
           setCurrentView('planner');
         }

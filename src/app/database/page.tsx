@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import type { CSSProperties, ReactNode } from 'react';
 import styles from './page.module.css';
 
@@ -166,12 +166,6 @@ function PriceInput({ value, onChange, placeholder, className, style, localeCode
   const [localValue, setLocalValue] = useState('');
   const [isFocused, setIsFocused] = useState(false);
 
-  useEffect(() => {
-    if (!isFocused) {
-      setLocalValue(fmt(value, localeCode));
-    }
-  }, [value, isFocused, localeCode]);
-
   const handleFocus = () => {
     setIsFocused(true);
     setLocalValue(value === 0 ? '' : value.toString());
@@ -201,7 +195,7 @@ function PriceInput({ value, onChange, placeholder, className, style, localeCode
     <input
       className={className}
       style={style}
-      value={localValue}
+      value={isFocused ? localValue : fmt(value, localeCode)}
       onFocus={handleFocus}
       onBlur={handleBlur}
       onChange={handleChange}

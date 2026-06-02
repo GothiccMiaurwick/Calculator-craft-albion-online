@@ -1,5 +1,5 @@
 import { Server, normalizeId } from './items';
-import { getFallbackRecipe } from './fallbacks';
+import { getFallbackRecipe, type FallbackMaterial } from './fallbacks';
 
 const BASE_URLS: Record<Server, string> = {
   west: 'https://west.albion-online-data.com',
@@ -54,12 +54,29 @@ export function timeAgo(dateStr: string): string {
 /**
  * Recursively searches for the first array containing objects with material identifiers.
  */
-function findMaterialArray(obj: any): any[] | null {
+type ApiMaterialCandidate = {
+  count?: number | string;
+  amount?: number | string;
+} & (
+  | { itemTypeId: string; uniqueName?: string }
+  | { itemTypeId?: string; uniqueName: string }
+);
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return Boolean(value) && typeof value === 'object';
+}
+
+function isMaterialCandidate(value: unknown): value is ApiMaterialCandidate {
+  if (!isRecord(value)) return false;
+  return typeof value.itemTypeId === 'string' || typeof value.uniqueName === 'string';
+}
+
+function findMaterialArray(obj: unknown): ApiMaterialCandidate[] | null {
   if (!obj || typeof obj !== 'object') return null;
 
   // 1. If it's an array, check if it contains materials
   if (Array.isArray(obj)) {
-    if (obj.length > 0 && (obj[0].itemTypeId || obj[0].uniqueName)) {
+    if (obj.length > 0 && isMaterialCandidate(obj[0])) {
       return obj;
     }
     // Deep search in children
@@ -72,15 +89,16 @@ function findMaterialArray(obj: any): any[] | null {
   // 2. If it's an object, check keys and deep search values
   // Prioritize known keys
   const prioritizedKeys = ['craftresource', 'craftResourceList', 'craftingrequirements', 'craftingRequirements'];
+  const record = obj as Record<string, unknown>;
   for (const key of prioritizedKeys) {
-    const found = findMaterialArray(obj[key]);
+    const found = findMaterialArray(record[key]);
     if (found) return found;
   }
 
   // Generic deep search for other keys
-  for (const key in obj) {
+  for (const key in record) {
     if (prioritizedKeys.includes(key)) continue; // Already checked
-    const found = findMaterialArray(obj[key]);
+    const found = findMaterialArray(record[key]);
     if (found) return found;
   }
 
@@ -102,7 +120,7 @@ function contextualizeMaterialId(craftedItemId: string, materialId: string) {
 
 export async function fetchItemMaterials(itemId: string) {
   let fallbackUsed = false;
-  let materials: any[] | null = null;
+  let materials: FallbackMaterial[] | null = null;
   const canonicalMaterials = getFallbackRecipe(itemId);
   
   try {
@@ -117,20 +135,20 @@ export async function fetchItemMaterials(itemId: string) {
       console.log("API RESULT:", data);
 
       // EXHAUSTIVE EXTRACTION
-      materials = findMaterialArray(data);
+      const apiMaterials = findMaterialArray(data);
 
-      if (materials && Array.isArray(materials)) {
+      if (apiMaterials && Array.isArray(apiMaterials)) {
         // STRICT VALIDATION
-        materials = materials
-          .filter((m: any) => m && (m.itemTypeId || m.uniqueName))
-          .map((m: any) => {
-            const typeId = m.itemTypeId || m.uniqueName;
+        materials = apiMaterials
+          .filter(isMaterialCandidate)
+          .map((m) => {
+            const typeId = (m.itemTypeId || m.uniqueName)!;
             return {
               id: contextualizeMaterialId(itemId, typeId),
               quantity: Number(m.count) || Number(m.amount) || 1,
             };
           })
-          .filter((m: any) => m.id && m.quantity > 0);
+          .filter((m) => m.id && m.quantity > 0);
 
         if (materials.length === 0) materials = null;
       }

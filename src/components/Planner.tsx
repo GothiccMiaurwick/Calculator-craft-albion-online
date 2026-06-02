@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
+import type { CSSProperties } from 'react';
 import {
   Plus,
   Zap,
@@ -289,10 +290,23 @@ export default function Planner() {
       }, 600);
     }
   };
-  const STAR_DIRS = [
+const STAR_DIRS = [
     [-18, 50], [22, 60], [-30, 40], [15, 55], [5, 70]
   ];
-  const STAR_DURS = [1.6, 2.2, 1.9, 2.5, 1.8];
+const STAR_DURS = [1.6, 2.2, 1.9, 2.5, 1.8];
+type StarStyle = CSSProperties & {
+  '--dx': string;
+  '--dy': string;
+};
+
+function getStarStyle(dx: number, dy: number, index: number): StarStyle {
+  return {
+    '--dx': `${dx}px`,
+    '--dy': `${dy}px`,
+    animationDelay: `${index * 150 + Math.random() * 100}ms`,
+    animationDuration: `${STAR_DURS[index]}s`,
+  };
+}
   const planificadorRef = useRef<HTMLElement | null>(null);
   const materialesRef = useRef<HTMLElement | null>(null);
   const resumenRef = useRef<HTMLElement | null>(null);
@@ -1043,7 +1057,7 @@ export default function Planner() {
                             <img src={getItemImageUrl(getMaterialImageId(mat.id))} className={`${styles.groupImg} ${markedItems[mat.id] ? styles.imgDim : ''}`} alt="" />
                             {markedItems[mat.id] && <div className={styles.markOverlay} />}
                             {animItems[mat.id] && STAR_DIRS.map(([dx, dy], i) => (
-                      <span key={i} className={styles.starPart} style={{ '--dx': `${dx}px`, '--dy': `${dy}px`, animationDelay: `${i * 150 + Math.random() * 100}ms`, animationDuration: `${STAR_DURS[i]}s` } as any}><svg width="14" height="14" viewBox="0 0 24 24" fill="#ffd700"><path d="M12 2l1.5 5.5L17 3l-2 6.5 6-1.5-5.5 3L18 14l-6-1-1 6-1-6-6 1 4.5-3.5L3 8l6 1.5L7 3l3.5 4.5z"/></svg></span>
+                      <span key={i} className={styles.starPart} style={getStarStyle(dx, dy, i)}><svg width="14" height="14" viewBox="0 0 24 24" fill="#ffd700"><path d="M12 2l1.5 5.5L17 3l-2 6.5 6-1.5-5.5 3L18 14l-6-1-1 6-1-6-6 1 4.5-3.5L3 8l6 1.5L7 3l3.5 4.5z"/></svg></span>
                             ))}
                           </div>
                           <div className={styles.groupMeta}>
@@ -1072,7 +1086,7 @@ export default function Planner() {
                     <img src={getItemImageUrl(getMaterialImageId(mat.id))} className={`${styles.artifactImg} ${markedItems[mat.id] ? styles.imgDim : ''}`} alt="" />
                     {markedItems[mat.id] && <div className={styles.markOverlay} />}
                     {animItems[mat.id] && STAR_DIRS.map(([dx, dy], i) => (
-                      <span key={i} className={styles.starPart} style={{ '--dx': `${dx}px`, '--dy': `${dy}px`, animationDelay: `${i * 150 + Math.random() * 100}ms`, animationDuration: `${STAR_DURS[i]}s` } as any}><svg width="14" height="14" viewBox="0 0 24 24" fill="#ffd700"><path d="M12 2l1.5 5.5L17 3l-2 6.5 6-1.5-5.5 3L18 14l-6-1-1 6-1-6-6 1 4.5-3.5L3 8l6 1.5L7 3l3.5 4.5z"/></svg></span>
+                      <span key={i} className={styles.starPart} style={getStarStyle(dx, dy, i)}><svg width="14" height="14" viewBox="0 0 24 24" fill="#ffd700"><path d="M12 2l1.5 5.5L17 3l-2 6.5 6-1.5-5.5 3L18 14l-6-1-1 6-1-6-6 1 4.5-3.5L3 8l6 1.5L7 3l3.5 4.5z"/></svg></span>
                     ))}
                   </div>
                   <div className={styles.artifactInfo}>
@@ -1099,7 +1113,7 @@ export default function Planner() {
                     <img src={getItemImageUrl(getMaterialImageId(mat.id))} className={`${styles.artifactImg} ${markedItems[mat.id] ? styles.imgDim : ''}`} alt="" />
                     {markedItems[mat.id] && <div className={styles.markOverlay} />}
                     {animItems[mat.id] && STAR_DIRS.map(([dx, dy], i) => (
-                      <span key={i} className={styles.starPart} style={{ '--dx': `${dx}px`, '--dy': `${dy}px`, animationDelay: `${i * 150 + Math.random() * 100}ms`, animationDuration: `${STAR_DURS[i]}s` } as any}><svg width="14" height="14" viewBox="0 0 24 24" fill="#ffd700"><path d="M12 2l1.5 5.5L17 3l-2 6.5 6-1.5-5.5 3L18 14l-6-1-1 6-1-6-6 1 4.5-3.5L3 8l6 1.5L7 3l3.5 4.5z"/></svg></span>
+                      <span key={i} className={styles.starPart} style={getStarStyle(dx, dy, i)}><svg width="14" height="14" viewBox="0 0 24 24" fill="#ffd700"><path d="M12 2l1.5 5.5L17 3l-2 6.5 6-1.5-5.5 3L18 14l-6-1-1 6-1-6-6 1 4.5-3.5L3 8l6 1.5L7 3l3.5 4.5z"/></svg></span>
                     ))}
                   </div>
                   <div className={styles.artifactInfo}>
@@ -1126,7 +1140,7 @@ export default function Planner() {
                     <img src={getItemImageUrl(getJournalImageId(journal.type, journal.tier))} className={`${styles.artifactImg} ${markedItems[journal.id] ? styles.imgDim : ''}`} alt="" />
                     {markedItems[journal.id] && <div className={styles.markOverlay} />}
                     {animItems[journal.id] && STAR_DIRS.map(([dx, dy], i) => (
-                      <span key={i} className={styles.starPart} style={{ '--dx': `${dx}px`, '--dy': `${dy}px`, animationDelay: `${i * 150 + Math.random() * 100}ms`, animationDuration: `${STAR_DURS[i]}s` } as any}><svg width="14" height="14" viewBox="0 0 24 24" fill="#ffd700"><path d="M12 2l1.5 5.5L17 3l-2 6.5 6-1.5-5.5 3L18 14l-6-1-1 6-1-6-6 1 4.5-3.5L3 8l6 1.5L7 3l3.5 4.5z"/></svg></span>
+                      <span key={i} className={styles.starPart} style={getStarStyle(dx, dy, i)}><svg width="14" height="14" viewBox="0 0 24 24" fill="#ffd700"><path d="M12 2l1.5 5.5L17 3l-2 6.5 6-1.5-5.5 3L18 14l-6-1-1 6-1-6-6 1 4.5-3.5L3 8l6 1.5L7 3l3.5 4.5z"/></svg></span>
                     ))}
                   </div>
                   <div className={styles.artifactInfo}>
