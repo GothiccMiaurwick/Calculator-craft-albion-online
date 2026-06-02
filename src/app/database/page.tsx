@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import type { CSSProperties, ReactNode } from 'react';
+import clsx from 'clsx';
 import styles from './page.module.css';
 
 import { SPECS_DATA } from '@/lib/specsData';
@@ -318,19 +319,19 @@ export default function DatabasePage() {
         </div>
         <div className={styles.tabGroup}>
           <button
-            className={`${styles.tabBtn} ${tab === 'recursos' ? styles.tabBtnActive : ''}`}
+            className={clsx(styles.tabBtn, tab === 'recursos' && styles.tabBtnActive)}
             onClick={() => setTab('recursos')}
           >{dbText.resources}</button>
           <button
-            className={`${styles.tabBtn} ${tab === 'artefactos' ? styles.tabBtnActive : ''}`}
+            className={clsx(styles.tabBtn, tab === 'artefactos' && styles.tabBtnActive)}
             onClick={() => setTab('artefactos')}
           >{dbText.artifacts}</button>
           <button
-            className={`${styles.tabBtn} ${tab === 'diarios' ? styles.tabBtnActive : ''}`}
+            className={clsx(styles.tabBtn, tab === 'diarios' && styles.tabBtnActive)}
             onClick={() => setTab('diarios')}
           >{dbText.journals}</button>
           <button
-            className={`${styles.tabBtn} ${tab === 'specs' ? styles.tabBtnActive : ''}`}
+            className={clsx(styles.tabBtn, tab === 'specs' && styles.tabBtnActive)}
             onClick={() => setTab('specs')}
           >{dbText.specs}</button>
         </div>

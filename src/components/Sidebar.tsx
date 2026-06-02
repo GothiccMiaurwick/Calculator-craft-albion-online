@@ -20,6 +20,7 @@ import {
   SearchIcon,
   CloseIcon,
 } from './Icons';
+import clsx from 'clsx';
 import styles from './Sidebar.module.css';
 
 const ICON_MAP: Record<string, ReactNode> = {
@@ -186,13 +187,13 @@ export default function Sidebar() {
 
       <div className={styles.tabs}>
         <button
-          className={`${styles.tab} ${currentView === 'calculator' ? styles.tabActive : ''}`}
+          className={clsx(styles.tab, currentView === 'calculator' && styles.tabActive)}
           onClick={() => navigateTo('calculator')}
         >
           {t(locale, 'calculator')}
         </button>
         <button
-          className={`${styles.tab} ${currentView === 'planner' ? styles.tabActive : ''}`}
+          className={clsx(styles.tab, currentView === 'planner' && styles.tabActive)}
           onClick={() => navigateTo('planner')}
         >
           {t(locale, 'taller')}
@@ -251,7 +252,7 @@ export default function Sidebar() {
             <div key={cat.id} className={styles.catWrapper}>
               <button
                 type="button"
-                className={`${styles.catRow} ${isExpanded ? styles.catRowActive : ''}`}
+                className={clsx(styles.catRow, isExpanded && styles.catRowActive)}
                 onClick={() => toggleCat(cat.id)}
                 aria-expanded={isExpanded}
               >
@@ -268,7 +269,7 @@ export default function Sidebar() {
                   <div key={sub.id} className={styles.subWrapper}>
                     <button
                       type="button"
-                      className={`${styles.subRow} ${isSubExpanded ? styles.subRowActive : ''}`}
+                      className={clsx(styles.subRow, isSubExpanded && styles.subRowActive)}
                       onClick={() => toggleSub(sub.id)}
                       aria-expanded={isSubExpanded}
                     >
@@ -280,7 +281,7 @@ export default function Sidebar() {
                       <button
                         type="button"
                         key={item.id}
-                        className={`${styles.itemRow} ${selectedTreeItem?.id === item.id ? styles.itemRowActive : ''}`}
+                        className={clsx(styles.itemRow, selectedTreeItem?.id === item.id && styles.itemRowActive)}
                         onClick={() => selectItem(item)}
                         aria-current={selectedTreeItem?.id === item.id ? 'page' : undefined}
                       >
@@ -322,13 +323,13 @@ export default function Sidebar() {
               </div>
               <div className={styles.modeSwitch}>
                 <button
-                  className={`${styles.modeBtn} ${locale === 'es' ? styles.modeBtnActive : ''}`}
+                  className={clsx(styles.modeBtn, locale === 'es' && styles.modeBtnActive)}
                   onClick={() => setCalculatorPreferences(prev => ({ ...prev, locale: 'es' }))}
                 >
                   {t(locale, 'spanish')}
                 </button>
                 <button
-                  className={`${styles.modeBtn} ${locale === 'en' ? styles.modeBtnActive : ''}`}
+                  className={clsx(styles.modeBtn, locale === 'en' && styles.modeBtnActive)}
                   onClick={() => setCalculatorPreferences(prev => ({ ...prev, locale: 'en' }))}
                 >
                   {t(locale, 'english')}
@@ -344,7 +345,7 @@ export default function Sidebar() {
                 {(['mochi', 'midnight', 'matcha'] as const).map((tName) => (
                   <button
                     key={tName}
-                    className={`${styles.themeBtn} ${theme === tName ? styles.themeBtnActive : ''}`}
+                    className={clsx(styles.themeBtn, theme === tName && styles.themeBtnActive)}
                     onClick={() => setTheme(tName)}
                   >
                     <span className={styles.themeSwatch} data-theme={tName} />
@@ -361,7 +362,7 @@ export default function Sidebar() {
               </div>
               <div className={styles.modeSwitch}>
                 <button
-                  className={`${styles.modeBtn} ${!sidebarCollapsed ? styles.modeBtnActive : ''}`}
+                  className={clsx(styles.modeBtn, !sidebarCollapsed && styles.modeBtnActive)}
                   onClick={() => setSidebarCollapsed(false)}
                 >
                   {t(locale, 'expandedSidebar')}

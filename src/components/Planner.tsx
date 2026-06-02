@@ -22,9 +22,9 @@ import {
   FolderOpen,
   Eraser,
 } from 'lucide-react';
+import { nanoid } from 'nanoid';
 import { useApp, PlannerItem } from '@/lib/AppContext';
-import { fetchPrices } from '@/lib/api';
-import { formatSilver } from '@/lib/api';
+import { fetchPrices, formatSilver } from '@/lib/api';
 import { CITIES, getItemImageUrl } from '@/lib/items';
 import {
   calculateCrafting,
@@ -40,6 +40,7 @@ import { getFallbackRecipe } from '@/lib/fallbacks';
 import { getArtifactNameByBaseId, getDisplayLocale, getItemName, getJournalDisplayName, getJournalWorkerName, getMaterialName, t } from '@/lib/i18n';
 import { getJournalCapacity, getJournalProgress, getJournalType } from '@/lib/journals';
 import AddCraftModal from './AddCraftModal';
+import clsx from 'clsx';
 import styles from './Planner.module.css';
 
 const EXTRA_COSTS_KEY = 'planner_extra_costs';
@@ -318,7 +319,7 @@ function getStarStyle(dx: number, dy: number, index: number): StarStyle {
   function saveTaller(name: string) {
     const talleres = getSavedTalleres();
     talleres.push({
-      id: Date.now().toString(),
+      id: nanoid(),
       name,
       date: new Date().toISOString(),
       data: {
@@ -762,7 +763,7 @@ function getStarStyle(dx: number, dy: number, index: number): StarStyle {
       <div className={styles.planner}>
         <div className={styles.topBar}>
           <div className={styles.tabs}>
-            <button className={`${styles.tab} ${styles.tabActive}`}>{t(locale, 'taller')}</button>
+            <button className={clsx(styles.tab, styles.tabActive)}>{t(locale, 'taller')}</button>
             <button className={styles.tab}>{t(locale, 'materialsNeeded')}</button>
             <button className={styles.tab}>{t(locale, 'craftingSummary')}</button>
           </div>
@@ -859,19 +860,19 @@ function getStarStyle(dx: number, dy: number, index: number): StarStyle {
       <div className={styles.topBar}>
         <div className={styles.tabs}>
           <button
-            className={`${styles.tab} ${activeTab === 'planificador' ? styles.tabActive : ''}`}
+            className={clsx(styles.tab, activeTab === 'planificador' && styles.tabActive)}
             onClick={() => scrollToSection('planificador')}
           >
             {t(locale, 'taller')}
           </button>
           <button
-            className={`${styles.tab} ${activeTab === 'materiales' ? styles.tabActive : ''}`}
+            className={clsx(styles.tab, activeTab === 'materiales' && styles.tabActive)}
             onClick={() => scrollToSection('materiales')}
           >
             {t(locale, 'materialsNeeded')}
           </button>
           <button
-            className={`${styles.tab} ${activeTab === 'resumen' ? styles.tabActive : ''}`}
+            className={clsx(styles.tab, activeTab === 'resumen' && styles.tabActive)}
             onClick={() => scrollToSection('resumen')}
           >
             {t(locale, 'craftingSummary')}
@@ -968,7 +969,7 @@ function getStarStyle(dx: number, dy: number, index: number): StarStyle {
                   </div>
 
                   <div className={styles.profitCol}>
-                    <span className={`${styles.profitValue} ${row.calc.gananciaNeta >= 0 ? styles.green : styles.red}`}>
+                    <span className={clsx(styles.profitValue, row.calc.gananciaNeta >= 0 ? styles.green : styles.red)}>
                       {formatSignedExactValue(row.calc.gananciaNeta, localeCode)}
                     </span>
                     <span className={styles.profitSub}>
@@ -1004,23 +1005,23 @@ function getStarStyle(dx: number, dy: number, index: number): StarStyle {
         <section ref={materialesRef} className={styles.anchorSection}>
           <div className={styles.summaryRow}>
             <div className={styles.sumCard}>
-              <div className={`${styles.sumIconWrap} ${styles.sumIconCyan}`}><Wallet size={20} /></div>
+              <div className={clsx(styles.sumIconWrap, styles.sumIconCyan)}><Wallet size={20} /></div>
               <div className={styles.sumDetails}>
                 <span className={styles.sumLabel}>{t(locale, 'investment')}</span>
                 <span className={styles.sumValue}>{formatExactValue(totalItemInvestment, localeCode)}</span>
               </div>
             </div>
             <div className={styles.sumCard}>
-              <div className={`${styles.sumIconWrap} ${styles.sumIconGreen}`}><LineChart size={20} /></div>
+              <div className={clsx(styles.sumIconWrap, styles.sumIconGreen)}><LineChart size={20} /></div>
               <div className={styles.sumDetails}>
                 <span className={styles.sumLabel}>{t(locale, 'netProfit')}</span>
-                <span className={`${styles.sumValue} ${itemOnlyNetProfit >= 0 ? styles.green : styles.red}`}>
+                <span className={clsx(styles.sumValue, itemOnlyNetProfit >= 0 ? styles.green : styles.red)}>
                   {formatSignedExactValue(itemOnlyNetProfit, localeCode)}
                 </span>
               </div>
             </div>
             <div className={styles.sumCard}>
-              <div className={`${styles.sumIconWrap} ${styles.sumIconPurple}`}><ReceiptText size={20} /></div>
+              <div className={clsx(styles.sumIconWrap, styles.sumIconPurple)}><ReceiptText size={20} /></div>
               <div className={styles.sumDetails}>
                 <span className={styles.sumLabel}>ROI</span>
                 <span className={styles.sumValue}>{roi.toFixed(1)}%</span>
@@ -1047,7 +1048,7 @@ function getStarStyle(dx: number, dy: number, index: number): StarStyle {
                       <div key={mat.id} className={styles.groupRow}>
                         <div className={styles.groupInfo}>
                           <div className={styles.imgWrap} onClick={() => toggleMarked(mat.id)}>
-                            <img src={getItemImageUrl(getMaterialImageId(mat.id))} className={`${styles.groupImg} ${markedItems[mat.id] ? styles.imgDim : ''}`} alt="" />
+                            <img src={getItemImageUrl(getMaterialImageId(mat.id))} className={clsx(styles.groupImg, markedItems[mat.id] && styles.imgDim)} alt="" />
                             {markedItems[mat.id] && <div className={styles.markOverlay} />}
                             {animItems[mat.id] && STAR_DIRS.map(([dx, dy], i) => (
                       <span key={i} className={styles.starPart} style={getStarStyle(dx, dy, i)}><svg width="14" height="14" viewBox="0 0 24 24" fill="#ffd700"><path d="M12 2l1.5 5.5L17 3l-2 6.5 6-1.5-5.5 3L18 14l-6-1-1 6-1-6-6 1 4.5-3.5L3 8l6 1.5L7 3l3.5 4.5z"/></svg></span>
@@ -1076,7 +1077,7 @@ function getStarStyle(dx: number, dy: number, index: number): StarStyle {
               {groupedMaterials.artefactos.length > 0 ? groupedMaterials.artefactos.map((mat) => (
                 <div key={mat.id} className={styles.artifactCard}>
                   <div className={styles.imgWrap} onClick={() => toggleMarked(mat.id)}>
-                    <img src={getItemImageUrl(getMaterialImageId(mat.id))} className={`${styles.artifactImg} ${markedItems[mat.id] ? styles.imgDim : ''}`} alt="" />
+                    <img src={getItemImageUrl(getMaterialImageId(mat.id))} className={clsx(styles.artifactImg, markedItems[mat.id] && styles.imgDim)} alt="" />
                     {markedItems[mat.id] && <div className={styles.markOverlay} />}
                     {animItems[mat.id] && STAR_DIRS.map(([dx, dy], i) => (
                       <span key={i} className={styles.starPart} style={getStarStyle(dx, dy, i)}><svg width="14" height="14" viewBox="0 0 24 24" fill="#ffd700"><path d="M12 2l1.5 5.5L17 3l-2 6.5 6-1.5-5.5 3L18 14l-6-1-1 6-1-6-6 1 4.5-3.5L3 8l6 1.5L7 3l3.5 4.5z"/></svg></span>
@@ -1103,7 +1104,7 @@ function getStarStyle(dx: number, dy: number, index: number): StarStyle {
               {groupedMaterials.especiales.length > 0 ? groupedMaterials.especiales.map((mat) => (
                 <div key={mat.id} className={styles.artifactCard}>
                   <div className={styles.imgWrap} onClick={() => toggleMarked(mat.id)}>
-                    <img src={getItemImageUrl(getMaterialImageId(mat.id))} className={`${styles.artifactImg} ${markedItems[mat.id] ? styles.imgDim : ''}`} alt="" />
+                    <img src={getItemImageUrl(getMaterialImageId(mat.id))} className={clsx(styles.artifactImg, markedItems[mat.id] && styles.imgDim)} alt="" />
                     {markedItems[mat.id] && <div className={styles.markOverlay} />}
                     {animItems[mat.id] && STAR_DIRS.map(([dx, dy], i) => (
                       <span key={i} className={styles.starPart} style={getStarStyle(dx, dy, i)}><svg width="14" height="14" viewBox="0 0 24 24" fill="#ffd700"><path d="M12 2l1.5 5.5L17 3l-2 6.5 6-1.5-5.5 3L18 14l-6-1-1 6-1-6-6 1 4.5-3.5L3 8l6 1.5L7 3l3.5 4.5z"/></svg></span>
@@ -1130,7 +1131,7 @@ function getStarStyle(dx: number, dy: number, index: number): StarStyle {
               {journalSummary.details.length > 0 ? journalSummary.details.map((journal) => (
                 <div key={journal.id} className={styles.artifactCard}>
                   <div className={styles.imgWrap} onClick={() => toggleMarked(journal.id)}>
-                    <img src={getItemImageUrl(getJournalImageId(journal.type, journal.tier))} className={`${styles.artifactImg} ${markedItems[journal.id] ? styles.imgDim : ''}`} alt="" />
+                    <img src={getItemImageUrl(getJournalImageId(journal.type, journal.tier))} className={clsx(styles.artifactImg, markedItems[journal.id] && styles.imgDim)} alt="" />
                     {markedItems[journal.id] && <div className={styles.markOverlay} />}
                     {animItems[journal.id] && STAR_DIRS.map(([dx, dy], i) => (
                       <span key={i} className={styles.starPart} style={getStarStyle(dx, dy, i)}><svg width="14" height="14" viewBox="0 0 24 24" fill="#ffd700"><path d="M12 2l1.5 5.5L17 3l-2 6.5 6-1.5-5.5 3L18 14l-6-1-1 6-1-6-6 1 4.5-3.5L3 8l6 1.5L7 3l3.5 4.5z"/></svg></span>
@@ -1233,29 +1234,29 @@ function getStarStyle(dx: number, dy: number, index: number): StarStyle {
             {showWeight && (
               <div className={styles.transportPanel}>
                 <div className={styles.weightCards}>
-                  <div className={`${styles.sumCard} ${styles.weightSumCard}`}>
-                    <div className={`${styles.sumIconWrap} ${styles.sumIconCyan}`}><Boxes size={22} /></div>
+                  <div className={clsx(styles.sumCard, styles.weightSumCard)}>
+                    <div className={clsx(styles.sumIconWrap, styles.sumIconCyan)}><Boxes size={22} /></div>
                     <div className={styles.sumDetails}>
                       <span className={styles.sumLabel}>MATERIALS</span>
                       <span className={styles.sumValue}>{rawMaterialWeight.toLocaleString(localeCode, { maximumFractionDigits: 1 })} KG</span>
                     </div>
                   </div>
-                  <div className={`${styles.sumCard} ${styles.weightSumCard}`}>
-                    <div className={`${styles.sumIconWrap} ${styles.sumIconPurple}`}><Star size={22} /></div>
+                  <div className={clsx(styles.sumCard, styles.weightSumCard)}>
+                    <div className={clsx(styles.sumIconWrap, styles.sumIconPurple)}><Star size={22} /></div>
                     <div className={styles.sumDetails}>
                       <span className={styles.sumLabel}>ARTIFACTS</span>
                       <span className={styles.sumValue}>{rawArtifactWeight.toLocaleString(localeCode, { maximumFractionDigits: 1 })} KG</span>
                     </div>
                   </div>
-                  <div className={`${styles.sumCard} ${styles.weightSumCard}`}>
-                    <div className={`${styles.sumIconWrap} ${styles.sumIconGreen}`}><Book size={22} /></div>
+                  <div className={clsx(styles.sumCard, styles.weightSumCard)}>
+                    <div className={clsx(styles.sumIconWrap, styles.sumIconGreen)}><Book size={22} /></div>
                     <div className={styles.sumDetails}>
                       <span className={styles.sumLabel}>JOURNALS</span>
                       <span className={styles.sumValue}>{journalWeight.toLocaleString(localeCode, { maximumFractionDigits: 1 })} KG</span>
                     </div>
                   </div>
-                  <div className={`${styles.sumCard} ${styles.weightSumCard} ${styles.weightSumTotal}`}>
-                    <div className={`${styles.sumIconWrap} ${styles.weightSumTotalIcon}`}><Weight size={22} /></div>
+                  <div className={clsx(styles.sumCard, styles.weightSumCard, styles.weightSumTotal)}>
+                    <div className={clsx(styles.sumIconWrap, styles.weightSumTotalIcon)}><Weight size={22} /></div>
                     <div className={styles.sumDetails}>
                       <span className={styles.sumLabel}>TOTAL</span>
                       <span className={styles.sumValue}>{transportWeight.toLocaleString(localeCode, { maximumFractionDigits: 1 })} KG</span>
@@ -1275,7 +1276,7 @@ function getStarStyle(dx: number, dy: number, index: number): StarStyle {
                       {showMountDropdown && (
                         <div className={styles.selectDropdown}>
                           {MOUNTS.map((mount, index) => (
-                            <div key={mount.name} className={`${styles.selectOption} ${index === selectedMountIndex ? styles.selectOptionActive : ''}`} onClick={(e) => { e.stopPropagation(); setSelectedMountIndex(index); setShowMountDropdown(false); }}>
+                            <div key={mount.name} className={clsx(styles.selectOption, index === selectedMountIndex && styles.selectOptionActive)} onClick={(e) => { e.stopPropagation(); setSelectedMountIndex(index); setShowMountDropdown(false); }}>
                               <img src={getItemImageUrl(mount.itemId)} className={styles.optionImg} alt="" />
                               <div className={styles.optionMeta}>
                                 <span className={styles.optionName}>{mount.name}</span>
@@ -1298,7 +1299,7 @@ function getStarStyle(dx: number, dy: number, index: number): StarStyle {
                       {showBagDropdown && (
                         <div className={styles.selectDropdown}>
                           {BAG_OPTIONS.map((bag, index) => (
-                            <div key={bag.name} className={`${styles.selectOption} ${index === selectedBagIndex ? styles.selectOptionActive : ''}`} onClick={(e) => { e.stopPropagation(); setSelectedBagIndex(index); setShowBagDropdown(false); }}>
+                            <div key={bag.name} className={clsx(styles.selectOption, index === selectedBagIndex && styles.selectOptionActive)} onClick={(e) => { e.stopPropagation(); setSelectedBagIndex(index); setShowBagDropdown(false); }}>
                               {bag.itemId ? <img src={getItemImageUrl(bag.itemId)} className={styles.optionImg} alt="" /> : <div className={styles.optionImgPlaceholder} />}
                               <div className={styles.optionMeta}>
                                 <span className={styles.optionName}>{bag.name}</span>
@@ -1321,7 +1322,7 @@ function getStarStyle(dx: number, dy: number, index: number): StarStyle {
                       {showFoodDropdown && (
                         <div className={styles.selectDropdown}>
                           {FOOD_OPTIONS.map((food, index) => (
-                            <div key={food.name} className={`${styles.selectOption} ${index === selectedFoodIndex ? styles.selectOptionActive : ''}`} onClick={(e) => { e.stopPropagation(); setSelectedFoodIndex(index); setShowFoodDropdown(false); }}>
+                            <div key={food.name} className={clsx(styles.selectOption, index === selectedFoodIndex && styles.selectOptionActive)} onClick={(e) => { e.stopPropagation(); setSelectedFoodIndex(index); setShowFoodDropdown(false); }}>
                               {food.itemId ? <img src={getItemImageUrl(food.itemId)} className={styles.optionImg} alt="" /> : <div className={styles.optionImgPlaceholder} />}
                               <div className={styles.optionMeta}>
                                 <span className={styles.optionName}>{food.name}</span>
@@ -1428,7 +1429,7 @@ function getStarStyle(dx: number, dy: number, index: number): StarStyle {
                 <LineChart size={24} color="#4f8f38" />
                 <div className={styles.finalLabel}>{t(locale, 'totalProfit')}</div>
               </div>
-              <div className={`${styles.finalValue} ${totalNetProfit >= 0 ? styles.green : styles.red}`}>
+              <div className={clsx(styles.finalValue, totalNetProfit >= 0 ? styles.green : styles.red)}>
                 {formatSignedExactValue(Math.round(totalNetProfit), localeCode)}
               </div>
             </div>
@@ -1438,7 +1439,7 @@ function getStarStyle(dx: number, dy: number, index: number): StarStyle {
                 <CheckSquare size={24} color="#a06f11" />
                 <div className={styles.finalLabel}>{t(locale, 'totalSaleValue')}</div>
               </div>
-              <div className={`${styles.finalValue} ${styles.gold}`}>{formatExactValue(Math.round(totalSaleValue), localeCode)}</div>
+              <div className={clsx(styles.finalValue, styles.gold)}>{formatExactValue(Math.round(totalSaleValue), localeCode)}</div>
             </div>
           </div>
         </section>

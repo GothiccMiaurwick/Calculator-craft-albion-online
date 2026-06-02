@@ -7,6 +7,7 @@ import { CATEGORIES, TIERS, ENCHANTS, TreeItem } from '@/lib/items';
 import { getFallbackRecipe } from '@/lib/fallbacks';
 import { resolvePrice } from '@/lib/calcEngine';
 import { getTreeItemName, t } from '@/lib/i18n';
+import clsx from 'clsx';
 import styles from './AddCraftModal.module.css';
 import type { PlannerMaterialSnapshot, PlannerPriceSnapshot } from '@/lib/AppContext';
 
@@ -164,7 +165,7 @@ export default function AddCraftModal({
               {TIERS.map(tierValue => (
                 <button
                   key={tierValue}
-                  className={`${styles.pill} ${tier === tierValue ? styles.pillActive : ''}`}
+                  className={clsx(styles.pill, tier === tierValue && styles.pillActive)}
                   onClick={() => setTier(tierValue)}
                 >
                   {tierValue}
@@ -178,7 +179,7 @@ export default function AddCraftModal({
               {ENCHANTS.map(enchantValue => (
                 <button
                   key={enchantValue}
-                  className={`${styles.pill} ${enchant === enchantValue ? styles.pillActive : ''}`}
+                  className={clsx(styles.pill, enchant === enchantValue && styles.pillActive)}
                   onClick={() => setEnchant(enchantValue)}
                 >
                   {enchantValue}
@@ -234,7 +235,7 @@ export default function AddCraftModal({
             </div>
           </div>
           <div
-            className={`${styles.toggle} ${useFocus ? styles.toggleOn : ''}`}
+            className={clsx(styles.toggle, useFocus && styles.toggleOn)}
             onClick={() => setUseFocus(!useFocus)}
           >
             <div className={styles.toggleCircle} />
@@ -252,7 +253,7 @@ export default function AddCraftModal({
             </div>
           </div>
           <div
-            className={`${styles.toggle} ${blackMarket ? styles.toggleOn : ''}`}
+            className={clsx(styles.toggle, blackMarket && styles.toggleOn)}
             onClick={() => setBlackMarket(!blackMarket)}
           >
             <div className={styles.toggleCircle} />
@@ -261,13 +262,13 @@ export default function AddCraftModal({
 
         <div className={styles.cityButtons}>
           <button
-            className={`${styles.cityBtn} ${!useFocus ? styles.cityBtnActive : ''}`}
+            className={clsx(styles.cityBtn, !useFocus && styles.cityBtnActive)}
             onClick={() => setUseFocus(false)}
           >
             {t(locale, 'cityWithoutFocus')}
           </button>
           <button
-            className={`${styles.cityBtn} ${useFocus ? styles.cityBtnActive : ''}`}
+            className={clsx(styles.cityBtn, useFocus && styles.cityBtnActive)}
             onClick={() => setUseFocus(true)}
           >
             {t(locale, 'cityWithFocus')}

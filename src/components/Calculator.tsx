@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useCallback, useEffect, useRef, useMemo, memo } from 'react';
+import { useDebounce } from 'use-debounce';
 import { useApp } from '@/lib/AppContext';
 import { TIERS, ENCHANTS, CITIES, SERVERS, getItemImageUrl, CATEGORIES, normalizeId } from '@/lib/items';
 import type { AlbionItem, Server } from '@/lib/items';
@@ -11,6 +12,7 @@ import { getFallbackRecipe } from '@/lib/fallbacks';
 import { getCategoryNameById, getDisplayLocale, getItemName, getMaterialName, getServerName, getTreeItemName, t } from '@/lib/i18n';
 import { Trophy, Filter, Target, Zap, ChevronDown, Wind } from 'lucide-react';
 import styles from './Calculator.module.css';
+import clsx from 'clsx';
 import AddCraftModal from './AddCraftModal';
 
 // --- Formatting Helpers ---
@@ -79,18 +81,6 @@ function getConfiguredReturnRate(mode: ReturnRateMode, quality: number, power: n
 }
 // --- Local Database Pricing: delegated to calcEngine.ts ---
 // resolvePrice(id, resources) is imported from '@/lib/calcEngine'
-
-// --- Custom Hook for Debouncing ---
-function useDebounce<T>(value: T, delay: number): T {
-  const [debouncedValue, setDebouncedValue] = useState<T>(value);
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedValue(value);
-    }, delay);
-    return () => clearTimeout(handler);
-  }, [value, delay]);
-  return debouncedValue;
-}
 
 // --- Custom Hook for Number Animations ---
 // easeOutQuart: fast start, smooth deceleration — more premium feel than cubic.
@@ -663,7 +653,7 @@ export default function Calculator() {
             {SERVERS.map((s) => <option key={s.id} value={s.id}>{getServerName(s.id, locale)}</option>)}
           </select>
           <button 
-            className={`${styles.addPlanBtn} ${saved ? styles.addPlanSaved : ''}`}
+            className={clsx(styles.addPlanBtn, saved && styles.addPlanSaved)}
             onClick={() => {
               commitFocusedInput();
               setShowAddModal(true);
@@ -682,7 +672,7 @@ export default function Calculator() {
             {TIERS.map((t) => (
               <button
                 key={t}
-                className={`${styles.pill} ${tier === t ? styles.pillActive : ''}`}
+                className={clsx(styles.pill, tier === t && styles.pillActive)}
                 onClick={() => handleTierChange(t)}
               >{t}</button>
             ))}
@@ -690,7 +680,7 @@ export default function Calculator() {
             {ENCHANTS.map((e) => (
               <button
                 key={e}
-                className={`${styles.pill} ${enchant === e ? styles.pillActive : ''}`}
+                className={clsx(styles.pill, enchant === e && styles.pillActive)}
                 onClick={() => handleEnchantChange(e)}
               >{e}</button>
             ))}
@@ -701,7 +691,7 @@ export default function Calculator() {
               <span className={styles.cardTitle}>⚡ {t(locale, 'crafting')}</span>
               <button
                 type="button"
-                className={`${styles.marketToggle} ${blackMarket ? styles.marketToggleActive : ''}`}
+                className={clsx(styles.marketToggle, blackMarket && styles.marketToggleActive)}
                 onClick={() => setBlackMarket(prev => !prev)}
               >
                 <span className={styles.marketToggleDot} />
@@ -735,7 +725,7 @@ export default function Calculator() {
                           </div>
                         </div>
                         <FormattedInput
-                          className={`${matInput} ${isOverridden ? overrideYellow : ''}`}
+                          className={clsx(matInput, isOverridden && overrideYellow)}
                           value={unitPrice}
                           onChange={(val) => handleMaterialPriceChange(mat.id, val)}
                         />
@@ -783,7 +773,7 @@ export default function Calculator() {
                       const totalPerMat = unitPrice * mat.quantity;
                       
                       return (
-                        <div key={mat.id} className={`${matBlock} ${matBlockArtifact}`}>
+                        <div key={mat.id} className={clsx(matBlock, matBlockArtifact)}>
                           <div className={matLabel}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center' }}>
                               <span style={{ color: '#ffd700' }}>{getMaterialName(mat.id, locale)} <span className={matBadge}>×{mat.quantity}</span></span>
@@ -793,7 +783,7 @@ export default function Calculator() {
                             </div>
                           </div>
                           <FormattedInput
-                            className={`${matInput} ${isOverridden ? overrideYellow : ''}`}
+                            className={clsx(matInput, isOverridden && overrideYellow)}
                             value={unitPrice}
                             style={{ color: isOverridden ? '#fbbf24' : '#ffd700' }}
                             onChange={(val) => handleMaterialPriceChange(mat.id, val)}
@@ -808,14 +798,14 @@ export default function Calculator() {
 
             <div className={styles.taxRow}>
               <button
-                className={`${styles.taxBtn} ${usePremium ? styles.taxActive : ''}`}
+                className={clsx(styles.taxBtn, usePremium && styles.taxActive)}
                 onClick={() => {
                   setUsePremium(true);
                   setTax(6.5);
                 }}
               >{t(locale, 'taxWithPremium')} · 6.5%</button>
               <button
-                className={`${styles.taxBtn} ${!usePremium ? styles.taxActive : ''}`}
+                className={clsx(styles.taxBtn, !usePremium && styles.taxActive)}
                 onClick={() => {
                   setUsePremium(false);
                   setTax(10.5);
@@ -844,15 +834,15 @@ export default function Calculator() {
 
             <div className={styles.focusToggleCenter}>
               <button
-                className={`${styles.focusBtn} ${returnRateMode === 'city' ? styles.focusBtnActive : ''}`}
+                className={clsx(styles.focusBtn, returnRateMode === 'city' && styles.focusBtnActive)}
                 onClick={() => setReturnRateMode('city')}
               >{t(locale, 'cityWithoutFocus')}</button>
               <button
-                className={`${styles.focusBtn} ${returnRateMode === 'cityFocus' ? styles.focusBtnActive : ''}`}
+                className={clsx(styles.focusBtn, returnRateMode === 'cityFocus' && styles.focusBtnActive)}
                 onClick={() => setReturnRateMode('cityFocus')}
               >{t(locale, 'cityWithFocus')}</button>
               <button
-                className={`${styles.focusBtn} ${returnRateMode === 'hideout' ? styles.focusBtnActive : ''}`}
+                className={clsx(styles.focusBtn, returnRateMode === 'hideout' && styles.focusBtnActive)}
                 onClick={() => setReturnRateMode('hideout')}
               >HIDEOUT</button>
             </div>
@@ -865,7 +855,7 @@ export default function Calculator() {
                     {HIDEOUT_QUALITIES.map((quality) => (
                       <button
                         key={quality}
-                        className={`${styles.miniPill} ${hideoutQuality === quality ? styles.miniPillActive : ''}`}
+                        className={clsx(styles.miniPill, hideoutQuality === quality && styles.miniPillActive)}
                         onClick={() => setHideoutQuality(quality)}
                       >
                         Q{quality}
@@ -879,7 +869,7 @@ export default function Calculator() {
                     {HIDEOUT_POWERS.map((power) => (
                       <button
                         key={power}
-                        className={`${styles.miniPill} ${hideoutPower === power ? styles.miniPillActive : ''}`}
+                        className={clsx(styles.miniPill, hideoutPower === power && styles.miniPillActive)}
                         onClick={() => setHideoutPower(power)}
                       >
                         {power}
@@ -890,7 +880,7 @@ export default function Calculator() {
                 <div className={styles.hideoutRow}>
                   <span className={styles.optLabel}>{t(locale, 'focus')}</span>
                   <button
-                    className={`${styles.miniPill} ${hideoutFocus ? styles.miniPillActive : ''}`}
+                    className={clsx(styles.miniPill, hideoutFocus && styles.miniPillActive)}
                     onClick={() => setHideoutFocus(prev => !prev)}
                   >
                     {hideoutFocus ? t(locale, 'on') : t(locale, 'off')}
@@ -905,7 +895,7 @@ export default function Calculator() {
                 {DAILY_BONUSES.map((bonus) => (
                   <button
                     key={bonus}
-                    className={`${styles.miniPill} ${dailyBonus === bonus ? styles.miniPillActive : ''}`}
+                    className={clsx(styles.miniPill, dailyBonus === bonus && styles.miniPillActive)}
                     onClick={() => setDailyBonus(bonus)}
                   >
                     {bonus === 0 ? 'NONE' : `+${bonus}%`}
@@ -1075,7 +1065,7 @@ export default function Calculator() {
 
         {/* ── Right Panel ── */}
         <div className={styles.rightPanel}>
-          <div className={`${styles.statCard} ${currentCardState}`}>
+          <div className={clsx(styles.statCard, currentCardState)}>
             {/* Image Section (Top) */}
             <div className={styles.itemImgHeader}>
               <img
@@ -1090,7 +1080,7 @@ export default function Calculator() {
             <div className={styles.statLabel}>{t(locale, 'investment')}</div>
             <div
               key={Math.round(investment)}
-              className={`${styles.statValue} ${styles.cyan} ${styles.statAnimate}`}
+              className={clsx(styles.statValue, styles.cyan, styles.statAnimate)}
             >
               {formatVal(animInvestment)}
             </div>
@@ -1100,7 +1090,7 @@ export default function Calculator() {
             <div className={styles.statLabel}>{t(locale, 'netProfit')}</div>
             <div
               key={`p${Math.round(profit)}`}
-              className={`${styles.statValue} ${isProfitable ? styles.green : styles.red} ${styles.statAnimate}`}
+              className={clsx(styles.statValue, isProfitable ? styles.green : styles.red, styles.statAnimate)}
             >
               {formatVal(animProfit, true)}
             </div>
@@ -1110,7 +1100,7 @@ export default function Calculator() {
             <div className={styles.statLabel}>{t(locale, 'profitMargin')}</div>
             <div
               key={`m${Math.round(margin * 10)}`}
-              className={`${styles.statValue} ${styles.statSmall} ${isProfitable ? styles.green : styles.red} ${styles.statAnimate}`}
+              className={clsx(styles.statValue, styles.statSmall, isProfitable ? styles.green : styles.red, styles.statAnimate)}
             >
               {formatNumber(animMargin, localeCode, 1)}%
             </div>
@@ -1118,7 +1108,7 @@ export default function Calculator() {
             {/* Progress Bar (Full Width Bottom) */}
             <div className={styles.marginBar}>
               <div
-                className={`${styles.marginFill} ${isProfitable ? styles.marginGreen : styles.marginRed}`}
+                className={clsx(styles.marginFill, isProfitable ? styles.marginGreen : styles.marginRed)}
                 style={{ width: `${Math.min(Math.abs(animMargin), 100)}%` }}
               />
             </div>
