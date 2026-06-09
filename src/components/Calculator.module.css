@@ -94,6 +94,324 @@
   pointer-events: none;
 }
 
+.priceBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: rgba(var(--bg-rgb), 0.72);
+  border: 1px solid rgba(var(--cyan-rgb), 0.5);
+  color: var(--text);
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.priceBtn:hover {
+  background: rgba(var(--cyan-rgb), 0.28);
+  border-color: rgba(var(--cyan-rgb), 0.85);
+}
+
+.priceModalOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.68);
+  backdrop-filter: blur(8px);
+}
+
+.priceModal {
+  width: min(520px, 100%);
+  max-height: min(760px, calc(100vh - 40px));
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.5);
+}
+
+.priceModalHeader,
+.priceModalFooter {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+.priceModalHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.priceModalFooter {
+  border-top: 1px solid var(--border);
+  border-bottom: none;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.priceModalTitle {
+  color: var(--text);
+  font-size: 0.78rem;
+  font-weight: 950;
+  letter-spacing: 0.8px;
+}
+
+.priceModalItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 1.2px;
+}
+
+.priceModalItem img {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+}
+
+.priceModalClose {
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgba(var(--bg-rgb), 0.48);
+  color: var(--text-muted);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.priceModalClose:hover {
+  color: var(--text);
+  border-color: rgba(var(--cyan-rgb), 0.7);
+}
+
+.priceModalBody {
+  padding: 22px 24px;
+  overflow-y: auto;
+}
+
+.priceSectionLabel {
+  color: var(--text-muted);
+  font-size: 0.62rem;
+  font-weight: 950;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.priceServerGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 22px;
+}
+
+.priceServerBtn {
+  min-height: 36px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: rgba(var(--bg-rgb), 0.72);
+  color: var(--text-muted);
+  font-size: 0.68rem;
+  font-weight: 950;
+  letter-spacing: 1px;
+  cursor: pointer;
+}
+
+.priceServerBtnActive {
+  background: var(--gradient);
+  color: var(--text);
+}
+
+.priceSectionHeading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text);
+  font-size: 0.78rem;
+  font-weight: 950;
+  letter-spacing: 1px;
+  margin: 18px 0 12px;
+}
+
+.priceSectionHeading::after {
+  content: '';
+  height: 1px;
+  flex: 1;
+  background: var(--border);
+}
+
+.priceActionBtn {
+  width: 100%;
+  min-height: 42px;
+  border: none;
+  border-radius: 12px;
+  background: var(--gradient);
+  color: var(--text);
+  font-size: 0.72rem;
+  font-weight: 950;
+  letter-spacing: 0.8px;
+  cursor: pointer;
+}
+
+.priceActionBtn:disabled {
+  opacity: 0.62;
+  cursor: wait;
+}
+
+.applyCurrentPriceBtn {
+  margin-top: 8px;
+}
+
+@media (max-width: 640px) {
+  .applyCurrentPriceBtn {
+    margin-top: 6px;
+  }
+}
+
+.priceResultGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.priceResultCard {
+  min-height: 92px;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: rgba(var(--bg-rgb), 0.78);
+  color: var(--text-muted);
+  text-align: left;
+  cursor: pointer;
+}
+
+.priceResultCard:disabled {
+  cursor: default;
+  opacity: 0.65;
+}
+
+.priceResultCardActive {
+  border-color: rgba(var(--cyan-rgb), 0.85);
+  box-shadow: inset 0 0 0 1px rgba(var(--cyan-rgb), 0.28);
+}
+
+.priceResultCard span,
+.priceResultCard small {
+  display: block;
+  font-size: 0.62rem;
+  font-weight: 900;
+  letter-spacing: 1.2px;
+}
+
+.priceResultCard strong {
+  display: block;
+  margin: 8px 0 4px;
+  color: var(--text);
+  font-family: var(--font-mono), monospace;
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+.priceListScroll {
+  margin-top: 14px;
+  max-height: 260px;
+  overflow-y: auto;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: rgba(var(--bg-rgb), 0.55);
+}
+
+.priceListScroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.priceListScroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.priceListScroll::-webkit-scrollbar-thumb {
+  background: rgba(var(--primary-rgb), 0.45);
+  border-radius: 6px;
+}
+
+.priceListRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.priceListRow:last-child {
+  border-bottom: none;
+}
+
+.priceListImg {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: rgba(var(--surface-rgb), 0.6);
+  flex-shrink: 0;
+}
+
+.priceListLabel {
+  flex: 1;
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.6px;
+  color: var(--text);
+}
+
+.priceListValue {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.95rem;
+  font-weight: 900;
+  color: var(--text);
+}
+
+.priceStatus {
+  margin-top: 16px;
+  padding: 10px 12px;
+  border: 1px solid rgba(var(--cyan-rgb), 0.38);
+  border-radius: 10px;
+  color: var(--text-muted);
+  background: rgba(var(--bg-rgb), 0.5);
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.priceSecondaryBtn {
+  min-width: 90px;
+  min-height: 38px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: rgba(var(--bg-rgb), 0.5);
+  color: var(--text);
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 1px;
+  cursor: pointer;
+}
+
 /* â”€â”€â”€ Body â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .body {
   display: grid;
@@ -323,11 +641,17 @@
   background: rgba(var(--cyan-rgb), 0.68);
   color: var(--green);
   border: 1px solid rgba(var(--cyan-rgb), 0.92);
-  padding: 2px 10px;
+  padding: 7px 15px;
   border-radius: 6px;
   font-size: 0.55rem;
   font-weight: 950;
   letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: padding 0.15s ease, transform 0.15s ease;
+}
+
+.matBadge:hover {
+  padding: 12px 20px;
 }
 
 .matInput {
@@ -996,6 +1320,7 @@
 
 .cityName { color: var(--text-muted); }
 .priceGreen { color: var(--green); font-weight: 700; }
+.priceRed { color: var(--red); font-weight: 700; }
 .priceMuted { color: var(--text-dim); font-size: 0.65rem; }
 
 @media (max-width: 980px) {
@@ -1023,7 +1348,8 @@
   }
 
   .serverSelect,
-  .addPlanBtn {
+  .addPlanBtn,
+  .priceBtn {
     width: 100%;
   }
 

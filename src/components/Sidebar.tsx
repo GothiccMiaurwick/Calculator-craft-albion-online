@@ -148,9 +148,9 @@ export default function Sidebar() {
     }
   };
 
-  if (sidebarCollapsed) {
-    return (
-      <aside className={styles.sidebarCollapsed}>
+  return (
+    <aside className={clsx(styles.sidebar, sidebarCollapsed && styles.sidebarCollapsed)}>
+      {sidebarCollapsed ? (
         <button
           className={styles.collapseBtn}
           onClick={() => setSidebarCollapsed(false)}
@@ -159,12 +159,8 @@ export default function Sidebar() {
         >
           <PanelIcon size={18} side="right" />
         </button>
-      </aside>
-    );
-  }
-
-  return (
-    <aside className={styles.sidebar}>
+      ) : (
+      <>
       <div className={styles.brand}>
         <div className={styles.brandIcon}>
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -378,6 +374,8 @@ export default function Sidebar() {
           </div>
         )}
       </div>
+      </>
+      )}
     </aside>
   );
 }

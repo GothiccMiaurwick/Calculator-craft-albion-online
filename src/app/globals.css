@@ -194,3 +194,14 @@ input[type="number"] {
     min-height: 100svh;
   }
 }
+
+html {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-text-size-adjust: 100%;
+}
+
+@media (pointer: coarse) {
+  input, select, textarea, button {
+    font-size: 16px;
+  }
+}

@@ -66,31 +66,36 @@ export function resolvePrice(
 ): number {
   const normId = normalizeId(id);
 
-  if (priceOverrides[normId] !== undefined) {
-    const ovr = Number(priceOverrides[normId]);
-    if (!isNaN(ovr) && ovr > 0) return ovr;
-  }
+  const resourcePrice = findResourcePrice(normId, resources);
+  if (resourcePrice !== undefined) return resourcePrice;
 
   if (isArtifactMaterial(normId)) {
     const artPrice = Number(artifactPrices[normId]);
     if (!isNaN(artPrice) && artPrice > 0) return artPrice;
   }
 
-  const parts = normId.split('_');
-  const tier = parts[0];
-  const field = getResourceField(normId);
-
-  if (field) {
-    let enchant = 0;
-    if (normId.includes('@')) enchant = parseInt(normId.split('@')[1], 10) || 0;
-    const row = resources.find(r => r.tier === `${tier}.${enchant}`);
-    if (row && row[field]) return row[field];
+  if (priceOverrides[normId] !== undefined) {
+    const ovr = Number(priceOverrides[normId]);
+    if (!isNaN(ovr) && ovr > 0) return ovr;
   }
 
   const marketPrice = Number(marketPrices[normId]);
   if (!isNaN(marketPrice) && marketPrice > 0) return marketPrice;
 
   return 0;
+}
+
+function findResourcePrice(normId: string, resources: ResourceRow[]): number | undefined {
+  const parts = normId.split('_');
+  const tier = parts[0];
+  const field = getResourceField(normId);
+  if (!field) return undefined;
+
+  let enchant = 0;
+  if (normId.includes('@')) enchant = parseInt(normId.split('@')[1], 10) || 0;
+  const row = resources.find(r => r.tier === `${tier}.${enchant}`);
+  if (row && row[field]) return row[field];
+  return undefined;
 }
 
 interface RawMaterial {

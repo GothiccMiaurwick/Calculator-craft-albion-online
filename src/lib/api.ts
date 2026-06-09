@@ -1,12 +1,6 @@
 import { Server, normalizeId } from './items';
 import { getFallbackRecipe, type FallbackMaterial } from './fallbacks';
 
-const BASE_URLS: Record<Server, string> = {
-  west: 'https://west.albion-online-data.com',
-  east: 'https://east.albion-online-data.com',
-  europe: 'https://europe.albion-online-data.com',
-};
-
 interface MarketPrice {
   item_id: string;
   city: string;
@@ -23,13 +17,43 @@ export async function fetchPrices(
   cities: string[]
 ): Promise<MarketPrice[]> {
   if (itemIds.length === 0) return [];
-  
+
   const idsStr = itemIds.join(',');
   const citiesStr = cities.join(',');
-  const url = `${BASE_URLS[server]}/api/v2/stats/prices/${idsStr}.json?locations=${citiesStr}&qualities=1,2,3,4,5`;
+  const url = `/api/proxy/prices?ids=${encodeURIComponent(idsStr)}&server=${server}&locations=${encodeURIComponent(citiesStr)}&qualities=1,2,3,4,5`;
 
   const res = await fetch(url, { cache: 'no-store' });
   if (!res.ok) throw new Error(`Market API error: ${res.status}`);
+  return res.json();
+}
+
+export interface HistoryPoint {
+  timestamp: string;
+  avg_price: number;
+  item_count: number;
+}
+
+export interface HistoryEntry {
+  item_id: string;
+  location: string;
+  quality: number;
+  data: HistoryPoint[];
+}
+
+export async function fetchHistoryPrices(
+  itemIds: string[],
+  server: Server,
+  cities: string[],
+  timeScale: number = 24
+): Promise<HistoryEntry[]> {
+  if (itemIds.length === 0) return [];
+
+  const idsStr = itemIds.join(',');
+  const citiesStr = cities.join(',');
+  const url = `/api/proxy/history?ids=${encodeURIComponent(idsStr)}&server=${server}&locations=${encodeURIComponent(citiesStr)}&time-scale=${timeScale}`;
+
+  const res = await fetch(url, { cache: 'no-store' });
+  if (!res.ok) throw new Error(`History API error: ${res.status}`);
   return res.json();
 }
 

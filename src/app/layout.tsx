@@ -26,6 +26,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="theme-mochi">
       <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/iconPageGreatHammer.png" type="image/png" />
       </head>
       <body className={nunito.className}>

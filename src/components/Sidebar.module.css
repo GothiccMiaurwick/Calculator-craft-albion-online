@@ -5,18 +5,14 @@
   flex-direction: column;
   height: 100vh;
   flex-shrink: 0;
-  transition: width 0.25s ease;
+  transition: width 0.25s ease, height 0.25s ease, border-radius 0.25s ease;
 }
 
 .sidebarCollapsed {
   width: 52px;
-  background: var(--surface);
-  display: flex;
-  align-items: flex-start;
+  align-items: center;
   padding-top: 12px;
-  justify-content: center;
-  flex-shrink: 0;
-  height: 100vh;
+  overflow: hidden;
 }
 
 .brand {
@@ -535,19 +531,19 @@
   }
 
   .sidebarCollapsed {
-    position: fixed;
-    top: 14px;
-    left: 14px;
-    z-index: 35;
     width: 46px;
     height: 46px;
+    top: 14px;
+    left: 14px;
+    position: fixed;
+    z-index: 35;
     padding-top: 0;
     border-radius: 14px;
     border: 1px solid rgba(var(--primary-rgb), 0.32);
-    justify-content: center;
     background: rgba(var(--surface-rgb), 0.92);
     backdrop-filter: blur(12px);
     box-shadow: 0 12px 28px rgba(var(--primary-rgb), 0.2);
+    overflow: hidden;
   }
 
   .brand {

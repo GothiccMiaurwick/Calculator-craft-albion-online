@@ -625,7 +625,7 @@ function getStarStyle(dx: number, dy: number, index: number): StarStyle {
       const taxRate = calculatorPreferences.tax / 100;
       const netSellPrice = entry.sell * (1 - taxRate);
       const profitPerJournal = netSellPrice - entry.buy;
-      const totalProfit = exactQuantity * profitPerJournal;
+      const totalProfit = buyQuantity * profitPerJournal;
 
       return {
         ...entry,
@@ -670,8 +670,8 @@ function getStarStyle(dx: number, dy: number, index: number): StarStyle {
 
   const totalFocus = activeRows.reduce((sum, row) => sum + row.totalFocus, 0);
 
-  // Total Profit = ItemTheoreticalProfit + JournalRealizedProfit - ExtraCosts (matches 1,963,937)
-  const totalNetProfit = itemOnlyNetProfit + journalSummary.realizedProfit - extraCosts;
+  // Total Profit = ItemTheoreticalProfit + JournalProfit - ExtraCosts
+  const totalNetProfit = itemOnlyNetProfit + journalSummary.profit - extraCosts;
 
   // Total Sale Value (Albion Printer formula): Total Profit + Total Investment
   const totalSaleValue = totalNetProfit + totalExtraInvestment;
@@ -744,15 +744,17 @@ function getStarStyle(dx: number, dy: number, index: number): StarStyle {
           <button className={styles.addBtn} onClick={() => setShowAddModal(true)}>
             <Plus size={16} strokeWidth={3} /> {t(locale, 'newCraft')}
           </button>
-          <button className={styles.iconBtn} onClick={() => setShowSaveModal(true)} title={locale === 'es' ? 'GUARDAR TALLER' : 'SAVE WORKSHOP'}>
-            <Save size={16} />
-          </button>
-          <button className={styles.iconBtn} onClick={() => setShowLoadModal(true)} title={locale === 'es' ? 'CARGAR TALLER' : 'LOAD WORKSHOP'}>
-            <FolderOpen size={16} />
-          </button>
-          <button className={styles.iconBtn} onClick={clearPlannerItems} title={locale === 'es' ? 'LIMPIAR TALLER' : 'CLEAR WORKSHOP'}>
-            <Eraser size={16} />
-          </button>
+          <div className={styles.iconBtnRow}>
+            <button className={styles.iconBtn} onClick={() => setShowSaveModal(true)} title={locale === 'es' ? 'GUARDAR TALLER' : 'SAVE WORKSHOP'}>
+              <Save size={16} />
+            </button>
+            <button className={styles.iconBtn} onClick={() => setShowLoadModal(true)} title={locale === 'es' ? 'CARGAR TALLER' : 'LOAD WORKSHOP'}>
+              <FolderOpen size={16} />
+            </button>
+            <button className={styles.iconBtn} onClick={clearPlannerItems} title={locale === 'es' ? 'LIMPIAR TALLER' : 'CLEAR WORKSHOP'}>
+              <Eraser size={16} />
+            </button>
+          </div>
         </div>
         <div className={styles.content}>
           <div className={styles.emptyState}>
@@ -831,48 +833,50 @@ function getStarStyle(dx: number, dy: number, index: number): StarStyle {
 
   return (
     <div className={styles.planner}>
-      <div className={styles.topBar}>
-        <div className={styles.tabs}>
-          <button
-            className={clsx(styles.tab, activeTab === 'planificador' && styles.tabActive)}
-            onClick={() => scrollToSection('planificador')}
-          >
-            {t(locale, 'taller')}
-          </button>
-          <button
-            className={clsx(styles.tab, activeTab === 'materiales' && styles.tabActive)}
-            onClick={() => scrollToSection('materiales')}
-          >
-            {t(locale, 'materialsNeeded')}
-          </button>
-          <button
-            className={clsx(styles.tab, activeTab === 'resumen' && styles.tabActive)}
-            onClick={() => scrollToSection('resumen')}
-          >
-            {t(locale, 'craftingSummary')}
-          </button>
-        </div>
-
-        <div className={styles.topStatus}>
-          <div className={styles.focoBadge}>
-            <div className={styles.focoIconWrap}><Zap size={14} fill="currentColor" /></div>
-            <div className={styles.focoText}>
-              <span className={styles.focoLabel}>{t(locale, 'focusUsed')}</span>
-              <span className={styles.focoValue}>{formatCompact(totalFocus, localeCode)}</span>
+        <div className={styles.topBar}>
+          <div className={styles.tabs}>
+            <button
+              className={clsx(styles.tab, activeTab === 'planificador' && styles.tabActive)}
+              onClick={() => scrollToSection('planificador')}
+            >
+              {t(locale, 'taller')}
+            </button>
+            <button
+              className={clsx(styles.tab, activeTab === 'materiales' && styles.tabActive)}
+              onClick={() => scrollToSection('materiales')}
+            >
+              {t(locale, 'materialsNeeded')}
+            </button>
+            <button
+              className={clsx(styles.tab, activeTab === 'resumen' && styles.tabActive)}
+              onClick={() => scrollToSection('resumen')}
+            >
+              {t(locale, 'craftingSummary')}
+            </button>
+            <div className={styles.focoBadge}>
+              <div className={styles.focoIconWrap}><Zap size={14} fill="currentColor" /></div>
+              <div className={styles.focoText}>
+                <span className={styles.focoLabel}>{t(locale, 'focusUsed')}</span>
+                <span className={styles.focoValue}>{formatCompact(totalFocus, localeCode)}</span>
+              </div>
             </div>
           </div>
-          <button className={styles.addBtn} onClick={() => setShowAddModal(true)}>
+
+          <div className={styles.topStatus}>
+            <button className={styles.addBtn} onClick={() => setShowAddModal(true)}>
             <Plus size={16} strokeWidth={3} /> {t(locale, 'newCraft')}
           </button>
-          <button className={styles.iconBtn} onClick={() => setShowSaveModal(true)} title={locale === 'es' ? 'GUARDAR TALLER' : 'SAVE WORKSHOP'}>
-            <Save size={16} />
-          </button>
-          <button className={styles.iconBtn} onClick={() => setShowLoadModal(true)} title={locale === 'es' ? 'CARGAR TALLER' : 'LOAD WORKSHOP'}>
-            <FolderOpen size={16} />
-          </button>
-          <button className={styles.iconBtn} onClick={clearPlannerItems} title={locale === 'es' ? 'LIMPIAR TALLER' : 'CLEAR WORKSHOP'}>
-            <Eraser size={16} />
-          </button>
+          <div className={styles.iconBtnRow}>
+            <button className={styles.iconBtn} onClick={() => setShowSaveModal(true)} title={locale === 'es' ? 'GUARDAR TALLER' : 'SAVE WORKSHOP'}>
+              <Save size={16} />
+            </button>
+            <button className={styles.iconBtn} onClick={() => setShowLoadModal(true)} title={locale === 'es' ? 'CARGAR TALLER' : 'LOAD WORKSHOP'}>
+              <FolderOpen size={16} />
+            </button>
+            <button className={styles.iconBtn} onClick={clearPlannerItems} title={locale === 'es' ? 'LIMPIAR TALLER' : 'CLEAR WORKSHOP'}>
+              <Eraser size={16} />
+            </button>
+          </div>
         </div>
       </div>
 

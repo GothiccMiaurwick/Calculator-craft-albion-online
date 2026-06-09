@@ -5,12 +5,12 @@ import { useDebounce } from 'use-debounce';
 import { useApp } from '@/lib/AppContext';
 import { TIERS, ENCHANTS, CITIES, SERVERS, getItemImageUrl, CATEGORIES, normalizeId } from '@/lib/items';
 import type { AlbionItem, Server } from '@/lib/items';
-import { fetchPrices, fetchItemMaterials } from '@/lib/api';
+import { fetchPrices, fetchHistoryPrices, fetchItemMaterials } from '@/lib/api';
 import { calculateCrafting, isArtifactLikeMaterial, resolvePrice, getResourceField } from '@/lib/calcEngine';
 import { getAdjustedFocusCost, getCraftingSpecBonus, getExpectedSalePriceFromQualities, type QualityPriceMap } from '@/lib/craftingSpecs';
 import { getFallbackRecipe } from '@/lib/fallbacks';
 import { getCategoryNameById, getDisplayLocale, getItemName, getMaterialName, getServerName, getTreeItemName, t } from '@/lib/i18n';
-import { Trophy, Filter, Target, Zap, ChevronDown, Wind } from 'lucide-react';
+import { Trophy, Filter, Target, Zap, ChevronDown, Wind, Search, X } from 'lucide-react';
 import styles from './Calculator.module.css';
 import clsx from 'clsx';
 import AddCraftModal from './AddCraftModal';
@@ -62,6 +62,63 @@ const HIDEOUT_FOCUS_RETURN_RATES: Record<number, Record<number, number>> = {
   5: { 1: 44.44, 2: 47.3, 3: 49.62, 4: 51.52, 5: 53.05, 6: 54.29, 7: 55.46, 8: 56.38, 9: 57.63 },
   6: { 1: 45.95, 2: 48.65, 3: 50.86, 4: 52.66, 5: 54.13, 6: 55.31, 7: 56.43, 8: 57.31, 9: 58.51 },
 };
+const ROYAL_CITIES = CITIES.filter((city) => city !== 'Caerleon');
+const HISTORY_CITIES = ['Lymhurst', 'Fort Sterling', 'Martlock', 'Caerleon', 'Bridgewatch'];
+const BLACK_MARKET_LOCATION = 'Black Market';
+
+type PriceResult = {
+  value: number;
+  city: string;
+};
+
+type PriceSource = 'royal' | 'blackMarket';
+
+type PriceListRow = PriceResult & {
+  item: AlbionItem;
+  tier: number;
+  enchant: number;
+  label: string;
+};
+
+function getPriceCandidate(itemId: string, rows: Awaited<ReturnType<typeof fetchPrices>>, source: PriceSource): PriceResult | null {
+  const itemRows = rows.filter((row) => row.item_id === itemId && row.quality >= 1 && row.quality <= 4);
+  return source === 'royal' ? pickAverageSellPrice(itemRows) : pickHighestBuyPrice(itemRows);
+}
+
+function pickLowestSellPrice(rows: Awaited<ReturnType<typeof fetchPrices>>): PriceResult | null {
+  return rows.reduce<PriceResult | null>((best, row) => {
+    const candidate = row.sell_price_min || 0;
+    if (candidate <= 0) return best;
+    if (!best || candidate < best.value) {
+      return { value: candidate, city: row.city };
+    }
+    return best;
+  }, null);
+}
+
+function pickAverageSellPrice(rows: Awaited<ReturnType<typeof fetchPrices>>): PriceResult | null {
+  const values = rows
+    .map((row) => row.sell_price_min || 0)
+    .filter((value) => value > 0);
+
+  if (values.length === 0) return null;
+
+  return {
+    value: Math.round(values.reduce((sum, value) => sum + value, 0) / values.length),
+    city: 'City (Average)',
+  };
+}
+
+function pickHighestBuyPrice(rows: Awaited<ReturnType<typeof fetchPrices>>): PriceResult | null {
+  return rows.reduce<PriceResult | null>((best, row) => {
+    const candidate = row.buy_price_max || row.sell_price_min || 0;
+    if (candidate <= 0) return best;
+    if (!best || candidate > best.value) {
+      return { value: candidate, city: row.city };
+    }
+    return best;
+  }, null);
+}
 
 function applyDailyBonus(returnRate: number, dailyBonus: number) {
   if (dailyBonus === 0) return returnRate;
@@ -242,10 +299,26 @@ export default function Calculator() {
   const [sellPrice, setSellPrice] = useState<number>(0);
   const [saved, setSaved] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showPricesModal, setShowPricesModal] = useState(false);
+  const [selectedPriceServer, setSelectedPriceServer] = useState<Server>(server);
+  const [priceLoading, setPriceLoading] = useState<'current' | 'city' | 'blackMarket' | 'materials' | 'allCity' | 'allBlackMarket' | null>(null);
+  const [priceStatus, setPriceStatus] = useState('');
+  const [cityPriceResult, setCityPriceResult] = useState<PriceResult | null>(null);
+  const [blackMarketPriceResult, setBlackMarketPriceResult] = useState<PriceResult | null>(null);
+  const [salePriceSource, setSalePriceSource] = useState<PriceSource>('royal');
+  const [allCityPriceRows, setAllCityPriceRows] = useState<PriceListRow[]>([]);
+  const [allBlackMarketPriceRows, setAllBlackMarketPriceRows] = useState<PriceListRow[]>([]);
+  const [hasSearchedCurrentItem, setHasSearchedCurrentItem] = useState(false);
 
 
   // Dynamic Materials State
   const [currentMats, setCurrentMats] = useState<any[]>([]);
+
+  useEffect(() => {
+    setHasSearchedCurrentItem(false);
+    setCityPriceResult(null);
+    setBlackMarketPriceResult(null);
+  }, [selectedItem]);
 
   const handleMaterialPriceChange = useCallback((matId: string, val: number) => {
     const normId = normalizeId(matId);
@@ -295,6 +368,358 @@ export default function Calculator() {
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
   };
+
+  const applySalePrice = useCallback((value: number, source: PriceSource = salePriceSource) => {
+    if (!selectedItem || value <= 0) return;
+    setSalePriceSource(source);
+    setSellPrice(value);
+    setAllManualSellPrices(prev => ({ ...prev, [selectedItem.id]: value }));
+  }, [salePriceSource, selectedItem, setAllManualSellPrices]);
+
+  const applyAvailableSource = useCallback((source: PriceSource) => {
+    const result = source === 'royal' ? cityPriceResult : blackMarketPriceResult;
+    if (!result) {
+      setSalePriceSource(source);
+      return;
+    }
+
+    applySalePrice(result.value, source);
+  }, [applySalePrice, blackMarketPriceResult, cityPriceResult]);
+
+  const getSelectedTreeRows = useCallback((): PriceListRow[] => {
+    if (!selectedTreeItem) return [];
+
+    return TIERS.flatMap((tierValue) => (
+      ENCHANTS.map((enchantValue) => {
+        const item = selectedTreeItem.tiers[tierValue]?.[enchantValue];
+        if (!item) return null;
+        return {
+          item,
+          tier: tierValue,
+          enchant: enchantValue,
+          label: `T${tierValue}.${enchantValue}`,
+          value: 0,
+          city: '',
+        };
+      }).filter((row): row is PriceListRow => Boolean(row))
+    ));
+  }, [selectedTreeItem]);
+
+  const applyPriceRows = useCallback((rows: PriceListRow[], source: PriceSource) => {
+    if (rows.length === 0) return;
+
+    const nextPrices = rows.reduce<Record<string, number>>((acc, row) => {
+      acc[row.item.id] = row.value;
+      return acc;
+    }, {});
+
+    setAllMarketPrices(prev => ({ ...prev, ...nextPrices }));
+    setAllManualSellPrices(prev => ({ ...prev, ...nextPrices }));
+
+    if (selectedItem && nextPrices[selectedItem.id]) {
+      applySalePrice(nextPrices[selectedItem.id], source);
+    }
+  }, [applySalePrice, selectedItem, setAllManualSellPrices, setAllMarketPrices]);
+
+  const searchCurrentItemPrices = useCallback(async () => {
+    if (!selectedItem) return;
+    setPriceLoading('current');
+    setPriceStatus('');
+
+    try {
+      const [cityPrices, blackMarketHistory] = await Promise.all([
+        fetchPrices([selectedItem.id], selectedPriceServer, ROYAL_CITIES),
+        fetchHistoryPrices([selectedItem.id], selectedPriceServer, [BLACK_MARKET_LOCATION], 24),
+      ]);
+      const cityResult = getPriceCandidate(selectedItem.id, cityPrices, 'royal');
+
+      const bmEntries = blackMarketHistory.filter(
+        (entry) => entry.item_id === selectedItem.id && (entry.quality === 1 || entry.quality === 2)
+      );
+      const bmPoints: { avg: number; ts: number }[] = [];
+      for (const entry of bmEntries) {
+        for (const point of entry.data ?? []) {
+          if (point.avg_price > 0) {
+            bmPoints.push({ avg: point.avg_price, ts: new Date(point.timestamp).getTime() });
+          }
+        }
+      }
+      let bmValue = 0;
+      if (bmPoints.length > 0) {
+        bmPoints.sort((a, b) => b.ts - a.ts);
+        const latestTs = bmPoints[0].ts;
+        const latestPoints = bmPoints.filter((p) => p.ts === latestTs);
+        bmValue = Math.round(latestPoints.reduce((sum, p) => sum + p.avg, 0) / latestPoints.length);
+      }
+      const blackMarketResult = bmValue > 0 ? { value: bmValue, city: 'Black Market' } : null;
+      setCityPriceResult(cityResult);
+      setBlackMarketPriceResult(blackMarketResult);
+
+      if (cityResult) {
+        setAllMarketPrices(prev => ({ ...prev, [selectedItem.id]: cityResult.value }));
+        setAllMarketQualityPrices(prev => ({
+          ...prev,
+          [selectedItem.id]: { ...(prev[selectedItem.id] || {}), 1: cityResult.value },
+        }));
+      }
+
+      setHasSearchedCurrentItem(true);
+      if (!cityResult && !blackMarketResult) {
+        setPriceStatus(locale === 'es' ? 'No hay precio actual para la fuente seleccionada.' : 'No current price for the selected source.');
+      }
+    } catch (error) {
+      console.error('Failed to fetch current item prices', error);
+      setPriceStatus(locale === 'es' ? 'No se pudo consultar la API de precios.' : 'Could not fetch prices.');
+    } finally {
+      setPriceLoading(null);
+    }
+  }, [locale, selectedItem, selectedPriceServer, setAllMarketPrices, setAllMarketQualityPrices]);
+
+  const searchCurrentItemBlackMarketPrice = useCallback(async () => {
+    if (!selectedItem) return;
+    setPriceLoading('blackMarket');
+    setPriceStatus('');
+
+    try {
+      const history = await fetchHistoryPrices(
+        [selectedItem.id],
+        selectedPriceServer,
+        [BLACK_MARKET_LOCATION],
+        24
+      );
+
+      const entries = history.filter(
+        (entry) => entry.item_id === selectedItem.id && (entry.quality === 1 || entry.quality === 2)
+      );
+
+      const points: { avg: number; ts: number }[] = [];
+      for (const entry of entries) {
+        for (const point of entry.data ?? []) {
+          if (point.avg_price > 0) {
+            points.push({ avg: point.avg_price, ts: new Date(point.timestamp).getTime() });
+          }
+        }
+      }
+
+      let value = 0;
+      if (points.length > 0) {
+        points.sort((a, b) => b.ts - a.ts);
+        const latestTs = points[0].ts;
+        const latestPoints = points.filter((p) => p.ts === latestTs);
+        value = Math.round(latestPoints.reduce((sum, p) => sum + p.avg, 0) / latestPoints.length);
+      }
+
+      if (value > 0) {
+        const result: PriceResult = { value, city: 'Black Market' };
+        setBlackMarketPriceResult(result);
+        setPriceStatus(locale === 'es' ? 'Precio de mercado negro encontrado. Click en la tarjeta para aplicar.' : 'Black Market price found. Click the card to apply.');
+      } else {
+        setBlackMarketPriceResult(null);
+        setPriceStatus(locale === 'es' ? 'No se encontro precio de mercado negro para este item.' : 'No Black Market price found for this item.');
+      }
+    } catch (error) {
+      console.error('Failed to fetch black market price', error);
+      setPriceStatus(locale === 'es' ? 'No se pudo consultar el mercado negro.' : 'Could not fetch Black Market prices.');
+    } finally {
+      setPriceLoading(null);
+    }
+  }, [locale, selectedItem, selectedPriceServer]);
+
+  const handleBadgeClick = useCallback(async () => {
+    if (!selectedItem) return;
+    const targetSource: PriceSource = salePriceSource === 'royal' ? 'blackMarket' : 'royal';
+
+    if (targetSource === 'blackMarket') {
+      if (blackMarketPriceResult) {
+        applySalePrice(blackMarketPriceResult.value, 'blackMarket');
+        return;
+      }
+      setPriceLoading('blackMarket');
+      try {
+        const history = await fetchHistoryPrices(
+          [selectedItem.id], selectedPriceServer, [BLACK_MARKET_LOCATION], 24
+        );
+        const entries = history.filter(
+          (e) => e.item_id === selectedItem.id && (e.quality === 1 || e.quality === 2)
+        );
+        const points: { avg: number; ts: number }[] = [];
+        for (const entry of entries) {
+          for (const point of entry.data ?? []) {
+            if (point.avg_price > 0) {
+              points.push({ avg: point.avg_price, ts: new Date(point.timestamp).getTime() });
+            }
+          }
+        }
+        let value = 0;
+        if (points.length > 0) {
+          points.sort((a, b) => b.ts - a.ts);
+          const latestTs = points[0].ts;
+          const latestPoints = points.filter((p) => p.ts === latestTs);
+          value = Math.round(latestPoints.reduce((sum, p) => sum + p.avg, 0) / latestPoints.length);
+        }
+        if (value > 0) {
+          setBlackMarketPriceResult({ value, city: 'Black Market' });
+          applySalePrice(value, 'blackMarket');
+        }
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setPriceLoading(null);
+      }
+      return;
+    }
+
+    if (cityPriceResult) {
+      applySalePrice(cityPriceResult.value, 'royal');
+      return;
+    }
+    setPriceLoading('current');
+    try {
+      const prices = await fetchPrices([selectedItem.id], selectedPriceServer, ROYAL_CITIES);
+      const result = getPriceCandidate(selectedItem.id, prices, 'royal');
+      if (result) {
+        setCityPriceResult(result);
+        setAllMarketPrices(prev => ({ ...prev, [selectedItem.id]: result.value }));
+        setAllMarketQualityPrices(prev => ({
+          ...prev,
+          [selectedItem.id]: { ...(prev[selectedItem.id] || {}), 1: result.value },
+        }));
+        applySalePrice(result.value, 'royal');
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setPriceLoading(null);
+    }
+  }, [selectedItem, salePriceSource, blackMarketPriceResult, cityPriceResult, applySalePrice, selectedPriceServer, setAllMarketPrices, setAllMarketQualityPrices]);
+
+  const searchAllCityPrices = useCallback(async () => {
+    const rows = getSelectedTreeRows();
+    if (rows.length === 0) return;
+    setPriceLoading('allCity');
+    setPriceStatus('');
+
+    try {
+      const history = await fetchHistoryPrices(
+        rows.map((row) => row.item.id),
+        selectedPriceServer,
+        HISTORY_CITIES
+      );
+
+      const nextRows = rows
+        .map((row) => {
+          const entries = history.filter(
+            (entry) => entry.item_id === row.item.id && entry.quality >= 2 && entry.quality <= 4
+          );
+          const prices: number[] = [];
+          for (const entry of entries) {
+            for (const point of entry.data ?? []) {
+              if (point.avg_price > 0) {
+                prices.push(point.avg_price);
+              }
+            }
+          }
+          if (prices.length === 0) return null;
+          const avg = Math.round(prices.reduce((sum, p) => sum + p, 0) / prices.length);
+          return { ...row, value: avg, city: 'City (Average)' };
+        })
+        .filter((row): row is PriceListRow => Boolean(row));
+
+      setAllCityPriceRows(nextRows);
+      setPriceStatus(
+        locale === 'es'
+          ? `Precios de ciudad encontrados: ${nextRows.length}/${rows.length}`
+          : `City prices found: ${nextRows.length}/${rows.length}`
+      );
+    } catch (error) {
+      console.error('Failed to fetch all city prices', error);
+      setPriceStatus(locale === 'es' ? 'No se pudieron consultar todos los precios de ciudad.' : 'Could not fetch all city prices.');
+    } finally {
+      setPriceLoading(null);
+    }
+  }, [getSelectedTreeRows, locale, selectedPriceServer]);
+
+  const searchAllBlackMarketPrices = useCallback(async () => {
+    const rows = getSelectedTreeRows();
+    if (rows.length === 0) return;
+    setPriceLoading('allBlackMarket');
+    setPriceStatus('');
+
+    try {
+      const history = await fetchHistoryPrices(rows.map((row) => row.item.id), selectedPriceServer, [BLACK_MARKET_LOCATION], 24);
+      const nextRows = rows
+        .map((row) => {
+          const entries = history.filter(
+            (entry) => entry.item_id === row.item.id && (entry.quality === 1 || entry.quality === 2)
+          );
+          const points: { avg: number; ts: number }[] = [];
+          for (const entry of entries) {
+            for (const point of entry.data ?? []) {
+              if (point.avg_price > 0) {
+                points.push({ avg: point.avg_price, ts: new Date(point.timestamp).getTime() });
+              }
+            }
+          }
+          let value = 0;
+          if (points.length > 0) {
+            points.sort((a, b) => b.ts - a.ts);
+            const latestTs = points[0].ts;
+            const latestPoints = points.filter((p) => p.ts === latestTs);
+            value = Math.round(latestPoints.reduce((sum, p) => sum + p.avg, 0) / latestPoints.length);
+          }
+          return value > 0 ? { ...row, value, city: 'Black Market' } : null;
+        })
+        .filter((row): row is PriceListRow => Boolean(row));
+
+      setAllBlackMarketPriceRows(nextRows);
+      setPriceStatus(
+        locale === 'es'
+          ? `Precios de mercado negro encontrados: ${nextRows.length}/${rows.length}`
+          : `Black Market prices found: ${nextRows.length}/${rows.length}`
+      );
+    } catch (error) {
+      console.error('Failed to fetch all black market prices', error);
+      setPriceStatus(locale === 'es' ? 'No se pudieron consultar todos los precios de mercado negro.' : 'Could not fetch all Black Market prices.');
+    } finally {
+      setPriceLoading(null);
+    }
+  }, [getSelectedTreeRows, locale, selectedPriceServer]);
+
+  const searchCurrentMaterialCityPrices = useCallback(async () => {
+    if (!selectedItem || currentMats.length === 0) return;
+    setPriceLoading('materials');
+    setPriceStatus('');
+
+    try {
+      const materialIds = Array.from(new Set(currentMats.map((mat) => mat.id)));
+      const prices = await fetchPrices(materialIds, selectedPriceServer, ROYAL_CITIES);
+      const nextMarketPrices: Record<string, number> = {};
+
+      materialIds.forEach((id) => {
+        const result = pickLowestSellPrice(prices.filter((row) => row.item_id === id && row.quality === 1));
+        if (result) {
+          nextMarketPrices[id] = result.value;
+          handleMaterialPriceChange(id, result.value);
+        }
+      });
+
+      if (Object.keys(nextMarketPrices).length > 0) {
+        setAllMarketPrices(prev => ({ ...prev, ...nextMarketPrices }));
+        setPriceStatus(
+          locale === 'es'
+            ? `Materiales actualizados: ${Object.keys(nextMarketPrices).length}/${materialIds.length}`
+            : `Materials updated: ${Object.keys(nextMarketPrices).length}/${materialIds.length}`
+        );
+      } else {
+        setPriceStatus(locale === 'es' ? 'No se encontraron precios para los materiales.' : 'No material prices found.');
+      }
+    } catch (error) {
+      console.error('Failed to fetch material city prices', error);
+      setPriceStatus(locale === 'es' ? 'No se pudieron consultar los materiales.' : 'Could not fetch material prices.');
+    } finally {
+      setPriceLoading(null);
+    }
+  }, [currentMats, handleMaterialPriceChange, locale, selectedItem, selectedPriceServer, setAllMarketPrices]);
 
   // SPECULATIVE HYDRATION: Populate fallback mats instantly when selection changes
   useEffect(() => {
@@ -472,6 +897,37 @@ export default function Calculator() {
       resultsTax:       calc.taxAmount 
     };
   }, [selectedItem, currentMats, resources, artifactPrices, itemOverrides, sellPrice, returnRate, tax]);
+
+  const itemCosts = useMemo(() => {
+    const map: Record<string, number> = {};
+    if (!selectedTreeItem) return map;
+    for (const t of TIERS) {
+      for (const e of ENCHANTS) {
+        const item = selectedTreeItem.tiers[t]?.[e];
+        if (!item) continue;
+        const mats = getFallbackRecipe(item.id);
+        if (!mats || mats.length === 0) continue;
+        const overrides = itemOverrides[item.id] || {};
+        const calc = calculateCrafting({
+          materials: mats,
+          resources,
+          artifactPrices,
+          priceOverrides: overrides,
+          marketPrices: allMarketPrices,
+          salePrice: 0,
+          returnRate: Number(returnRate),
+          taxRate: Number(tax),
+        });
+        map[item.id] = calc.inversion;
+      }
+    }
+    return map;
+  }, [selectedTreeItem, resources, artifactPrices, itemOverrides, allMarketPrices, returnRate, tax]);
+
+  const checkProfitable = useCallback((salePrice: number, inversion: number) => {
+    const netRevenue = salePrice - salePrice * (Number(tax) / 100);
+    return netRevenue - inversion > 0;
+  }, [tax]);
 
   const bestCrafts = useMemo(() => {
     if (!selectedItem) return [];
@@ -660,6 +1116,18 @@ export default function Calculator() {
           >
             {saved ? `✓ ${t(locale, 'added')}` : `+ ${t(locale, 'addToPlanner')}`}
           </button>
+          <button
+            type="button"
+            className={styles.priceBtn}
+            onClick={() => {
+              commitFocusedInput();
+              setSelectedPriceServer(server);
+              setShowPricesModal(true);
+            }}
+          >
+            <Search size={14} />
+            GET PRICES
+          </button>
         </div>
       </div>
 
@@ -708,8 +1176,7 @@ export default function Calculator() {
                   return currentMats.filter(m => !isArtifactLikeMaterial(m.id)).map((mat) => {
                     const itemOvr = itemOverrides[selectedItem.id] || {};
                     const isOverridden = itemOvr[mat.id] !== undefined;
-                    const overrides = itemOverrides[selectedItem.id] || {};
-                    const unitPrice = overrides[mat.id] !== undefined ? Number(overrides[mat.id]) || 0 : resolvePrice(mat.id, resources, artifactPrices, {}, allMarketPrices);
+                    const unitPrice = resolvePrice(mat.id, resources, artifactPrices, itemOvr, allMarketPrices);
                     
                     const totalPerMat = unitPrice * mat.quantity;
                     
@@ -735,8 +1202,8 @@ export default function Calculator() {
 
                 <div className={styles.matBlock}>
                 <div className={styles.matLabel}>
-                  <span>{t(locale, 'salePrice')}</span>
-                  <span className={styles.matBadge}>$</span>
+                  <span>{salePriceSource === 'blackMarket' ? (locale === 'es' ? 'PRECIO DE VENTA MERCADO NEGRO' : 'BLACK MARKET SALE PRICE') : (locale === 'es' ? 'VENTA EN CIUDAD' : 'CITY SALE PRICE')}</span>
+                  <button className={styles.matBadge} onClick={handleBadgeClick}>$</button>
                 </div>
                 <FormattedInput
                     className={styles.matInput}
@@ -767,8 +1234,7 @@ export default function Calculator() {
                     return currentMats.filter(m => isArtifactLikeMaterial(m.id)).map((mat) => {
                       const itemOvr = itemOverrides[selectedItem.id] || {};
                       const isOverridden = itemOvr[mat.id] !== undefined;
-                      const overrides = itemOverrides[selectedItem.id] || {};
-                      const unitPrice = overrides[mat.id] !== undefined ? Number(overrides[mat.id]) || 0 : resolvePrice(mat.id, resources, artifactPrices, {}, allMarketPrices);
+                      const unitPrice = resolvePrice(mat.id, resources, artifactPrices, itemOvr, allMarketPrices);
                       const totalPerMat = unitPrice * mat.quantity;
                       
                       return (
@@ -1125,11 +1591,180 @@ export default function Calculator() {
           initialMaterialsSnapshot={currentMats}
           initialMaterialPricesSnapshot={currentMats.reduce<Record<string, number>>((acc, mat) => {
             const overrides = selectedItem ? itemOverrides[selectedItem.id] || {} : {};
-            acc[mat.id] = overrides[mat.id] !== undefined ? Number(overrides[mat.id]) || 0 : resolvePrice(mat.id, resources, artifactPrices, {}, allMarketPrices);
+            acc[mat.id] = resolvePrice(mat.id, resources, artifactPrices, overrides, allMarketPrices);
             return acc;
           }, {})}
           onAdded={handlePlannerItemAdded}
         />
+      )}
+      {showPricesModal && selectedItem && (
+        <div className={styles.priceModalOverlay} onClick={() => setShowPricesModal(false)}>
+          <div className={styles.priceModal} onClick={(event) => event.stopPropagation()}>
+            <div className={styles.priceModalHeader}>
+              <div>
+                <div className={styles.priceModalTitle}>GET PRICES</div>
+                <div className={styles.priceModalItem}>
+                  <img src={getItemImageUrl(selectedItem.id)} alt="" />
+                  <span>{getItemName(selectedItem, locale).toUpperCase()} · T{tier}.{enchant}</span>
+                </div>
+              </div>
+              <button className={styles.priceModalClose} onClick={() => setShowPricesModal(false)} aria-label="Close">
+                <X size={16} />
+              </button>
+            </div>
+
+            <div className={styles.priceModalBody}>
+              <div className={styles.priceSectionLabel}>{t(locale, 'server')}</div>
+              <div className={styles.priceServerGrid}>
+                {SERVERS.map((s) => (
+                  <button
+                    key={s.id}
+                    className={clsx(styles.priceServerBtn, selectedPriceServer === s.id && styles.priceServerBtnActive)}
+                    onClick={() => setSelectedPriceServer(s.id)}
+                  >
+                    {s.id === 'west' ? 'AMERICA' : s.id === 'east' ? 'ASIA' : 'EUROPE'}
+                  </button>
+                ))}
+              </div>
+
+              <div className={styles.priceSectionHeading}>
+                <span>{locale === 'es' ? 'ITEM ACTUAL' : 'CURRENT ITEM'}</span>
+              </div>
+              <button
+                className={styles.priceActionBtn}
+                disabled={Boolean(priceLoading)}
+                onClick={searchCurrentItemPrices}
+              >
+                  {priceLoading === 'current' ? t(locale, 'loading') : (locale === 'es' ? 'BUSCAR PRECIOS' : 'SEARCH PRICES')}
+                </button>
+
+                {hasSearchedCurrentItem && (
+                <div className={styles.priceResultGrid}>
+                <button
+                  className={clsx(styles.priceResultCard, cityPriceResult && styles.priceResultCardActive)}
+                  disabled={!cityPriceResult}
+                  onClick={() => { if (cityPriceResult) { applySalePrice(cityPriceResult.value); setShowPricesModal(false); } }}
+                >
+                  <span>{locale === 'es' ? 'PRECIO DE VENTA' : 'SALE PRICE'}</span>
+                  <strong>{formatNumber(cityPriceResult?.value ?? 0, localeCode)}</strong>
+                  <small>{cityPriceResult?.city ?? '-'}</small>
+                </button>
+                <button
+                  className={clsx(styles.priceResultCard, blackMarketPriceResult && styles.priceResultCardActive)}
+                  disabled={!blackMarketPriceResult}
+                  onClick={() => { if (blackMarketPriceResult) { applySalePrice(blackMarketPriceResult.value); setShowPricesModal(false); } }}
+                >
+                  <span>{t(locale, 'blackMarket')}</span>
+                  <strong>{formatNumber(blackMarketPriceResult?.value ?? 0, localeCode)}</strong>
+                  <small>{blackMarketPriceResult?.city ?? '-'}</small>
+                </button>
+              </div>
+              )}
+              {(cityPriceResult || blackMarketPriceResult) && (
+                <button
+                  className={clsx(styles.priceActionBtn, styles.applyCurrentPriceBtn)}
+                  onClick={() => {
+                    const preferred = salePriceSource === 'blackMarket' ? blackMarketPriceResult : cityPriceResult;
+                    if (preferred) {
+                      applySalePrice(preferred.value, salePriceSource);
+                      setShowPricesModal(false);
+                    }
+                  }}
+                >
+                  {locale === 'es' ? '+ APLICAR' : '+ APPLY'}
+                </button>
+              )}
+
+              <div className={styles.priceSectionHeading}>
+                <span>{locale === 'es' ? 'TODAS LAS CIUDADES' : 'ALL CITIES'}</span>
+              </div>
+              <button
+                className={styles.priceActionBtn}
+                disabled={Boolean(priceLoading)}
+                onClick={searchAllCityPrices}
+              >
+                {priceLoading === 'allCity' ? t(locale, 'loading') : (locale === 'es' ? 'TRAER PRECIOS DE CIUDAD' : 'GET ALL CITY PRICES')}
+              </button>
+
+              {allCityPriceRows.length > 0 && (
+                <div className={styles.priceListScroll}>
+                  {allCityPriceRows.map((row) => {
+                    const cost = itemCosts[row.item.id];
+                    const profitable = cost != null && checkProfitable(row.value, cost);
+                    return (
+                      <div key={row.item.id} className={styles.priceListRow}>
+                        <img src={getItemImageUrl(row.item.id)} alt="" className={styles.priceListImg} />
+                        <span className={styles.priceListLabel}>{getItemName(row.item, locale).toUpperCase()} · T{row.tier}.{row.enchant}</span>
+                        <strong className={clsx(styles.priceListValue, profitable ? styles.priceGreen : styles.priceRed)}>{formatNumber(row.value, localeCode)}</strong>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+
+              {allCityPriceRows.length > 0 && (
+                <button
+                  className={styles.priceActionBtn}
+                  disabled={Boolean(priceLoading)}
+                  onClick={() => {
+                    applyPriceRows(allCityPriceRows, 'royal');
+                    setShowPricesModal(false);
+                  }}
+                >
+                  {locale === 'es' ? '+ APLICAR TODO' : '+ APPLY ALL'}
+                </button>
+              )}
+
+              <div className={styles.priceSectionHeading}>
+                <span>{locale === 'es' ? 'MERCADO NEGRO' : 'BLACK MARKET'}</span>
+              </div>
+              <button
+                className={styles.priceActionBtn}
+                disabled={Boolean(priceLoading)}
+                onClick={searchAllBlackMarketPrices}
+              >
+                {priceLoading === 'allBlackMarket' ? t(locale, 'loading') : (locale === 'es' ? 'TRAER PRECIOS DE MERCADO NEGRO' : 'GET ALL BLACK MARKET PRICES')}
+              </button>
+
+              {allBlackMarketPriceRows.length > 0 && (
+                <div className={styles.priceListScroll}>
+                  {allBlackMarketPriceRows.map((row) => {
+                    const cost = itemCosts[row.item.id];
+                    const profitable = cost != null && checkProfitable(row.value, cost);
+                    return (
+                      <div key={row.item.id} className={styles.priceListRow}>
+                        <img src={getItemImageUrl(row.item.id)} alt="" className={styles.priceListImg} />
+                        <span className={styles.priceListLabel}>{getItemName(row.item, locale).toUpperCase()} · T{row.tier}.{row.enchant}</span>
+                        <strong className={clsx(styles.priceListValue, profitable ? styles.priceGreen : styles.priceRed)}>{formatNumber(row.value, localeCode)}</strong>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+
+              {allBlackMarketPriceRows.length > 0 && (
+                <button
+                  className={styles.priceActionBtn}
+                  disabled={Boolean(priceLoading)}
+                  onClick={() => {
+                    applyPriceRows(allBlackMarketPriceRows, 'blackMarket');
+                    setShowPricesModal(false);
+                  }}
+                >
+                  {locale === 'es' ? '+ APLICAR TODO' : '+ APPLY ALL'}
+                </button>
+              )}
+
+              {priceStatus && <div className={styles.priceStatus}>{priceStatus}</div>}
+            </div>
+
+            <div className={styles.priceModalFooter}>
+              <button className={styles.priceSecondaryBtn} onClick={() => setShowPricesModal(false)}>
+                CLOSE
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </>
   );

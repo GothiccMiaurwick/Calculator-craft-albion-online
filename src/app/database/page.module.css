@@ -6,6 +6,16 @@
   padding-bottom: 60px;
 }
 
+.dbContent {
+  font-size: 113%;
+}
+
+@media (max-width: 768px) {
+  .dbContent {
+    font-size: 108%;
+  }
+}
+
 /* â”€â”€ Header â”€â”€ */
 .header {
   display: flex;
@@ -15,11 +25,23 @@
   flex-wrap: wrap;
 }
 
+.headerCopy {
+  min-width: 260px;
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+
 .title {
   font-size: 2.2rem;
   font-weight: 900;
   letter-spacing: 2px;
-  margin-bottom: 6px;
+  margin-bottom: 0;
 }
 
 .subtitle {
@@ -60,6 +82,402 @@
   color: var(--text);
 }
 
+.getPricesBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 14px;
+  border: 1px solid rgba(var(--green-rgb), 0.48);
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--green), rgba(var(--green-rgb), 0.78));
+  color: #fff;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.getPricesBtn:hover {
+  filter: brightness(1.06);
+  transform: translateY(-1px);
+}
+.getPricesBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.resourceSections {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.resourceTierSection {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tierHeading {
+  font-size: 0.95rem;
+  font-weight: 900;
+  letter-spacing: 1.4px;
+}
+
+.resourceGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(220px, 1fr));
+  gap: 12px 14px;
+}
+
+.resourceCard {
+  background: rgba(var(--surface-rgb), 0.82);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px 18px;
+  min-width: 0;
+}
+
+.resourceCardLabel {
+  margin-bottom: 10px;
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.resourceCardBody {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr);
+  align-items: center;
+  gap: 14px;
+}
+
+.resourceImg {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 5px rgba(0,0,0,0.35));
+}
+
+.resourcePriceInput {
+  width: 100%;
+  min-width: 0;
+  height: 46px;
+  background: rgba(var(--surface-3-rgb), 0.92);
+  border: 1px solid transparent;
+  border-radius: 6px;
+  color: var(--text);
+  font-size: 1rem;
+  font-weight: 900;
+  padding: 6px 14px;
+  text-align: center;
+  outline: none;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.resourcePriceInput:focus {
+  border-color: var(--primary);
+  background: var(--surface-3);
+}
+
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(0, 0, 0, 0.56);
+  backdrop-filter: blur(10px);
+}
+
+.pricesModal {
+  width: min(560px, 100%);
+  max-height: min(92vh, 760px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.34);
+}
+
+.modalHeader,
+.modalFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 22px 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+.modalFooter {
+  border-top: 1px solid var(--border);
+  border-bottom: none;
+}
+
+.modalTitleWrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.modalTitleIcon {
+  color: var(--green);
+}
+
+.modalTitle {
+  font-size: 1.18rem;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+}
+
+.iconButton {
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(var(--surface-3-rgb), 0.55);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.iconButton:hover {
+  color: var(--text);
+  border-color: var(--primary);
+}
+
+.modalBody {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  overflow-y: auto;
+  padding: 22px 24px;
+}
+
+.optionBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.optionLabel {
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 1.2px;
+}
+
+.resourcePicker {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.pickerCard,
+.serverBtn {
+  border: 1px solid transparent;
+  background: rgba(var(--surface-3-rgb), 0.7);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s, transform 0.15s;
+}
+
+.pickerCard {
+  min-height: 76px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border-radius: 12px;
+  font-size: 0.82rem;
+  font-weight: 900;
+  letter-spacing: 1px;
+}
+
+.pickerCard:hover,
+.serverBtn:hover {
+  border-color: rgba(var(--green-rgb), 0.34);
+  transform: translateY(-1px);
+}
+
+.pickerCardActive,
+.serverBtnActive {
+  background: linear-gradient(135deg, var(--green), rgba(var(--green-rgb), 0.82));
+  color: #fff;
+  border-color: rgba(var(--green-rgb), 0.54);
+}
+
+.pickerImg {
+  width: 38px;
+  height: 38px;
+  object-fit: contain;
+}
+
+.cityNote {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  font-style: italic;
+}
+
+.cityNote span {
+  color: var(--text-dim);
+  font-size: 0.72rem;
+}
+
+.serverPicker {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.serverBtn {
+  min-height: 38px;
+  border-radius: 10px;
+  font-size: 0.82rem;
+  font-weight: 900;
+  letter-spacing: 1px;
+}
+
+.searchPricesBtn,
+.updateDbBtn,
+.cancelBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-height: 42px;
+  border-radius: 11px;
+  font-size: 0.82rem;
+  font-weight: 900;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: filter 0.15s, opacity 0.15s, transform 0.15s;
+}
+
+.searchPricesBtn,
+.updateDbBtn {
+  border: 1px solid rgba(var(--green-rgb), 0.45);
+  background: linear-gradient(135deg, var(--green), rgba(var(--green-rgb), 0.82));
+  color: #fff;
+}
+
+.searchPricesBtn {
+  width: 100%;
+}
+
+.cancelBtn {
+  min-width: 110px;
+  padding: 0 18px;
+  background: rgba(var(--surface-3-rgb), 0.48);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+}
+
+.updateDbBtn {
+  min-width: 220px;
+  padding: 0 20px;
+}
+
+.searchPricesBtn:hover,
+.updateDbBtn:hover,
+.cancelBtn:hover {
+  filter: brightness(1.06);
+  transform: translateY(-1px);
+}
+
+.searchPricesBtn:disabled,
+.updateDbBtn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.resultsBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.resultsHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--text-muted);
+  font-size: 0.76rem;
+  font-weight: 800;
+}
+
+.resultsStatus {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--green);
+  letter-spacing: 0.8px;
+}
+
+.resultsList {
+  max-height: 238px;
+  overflow-y: auto;
+  background: rgba(var(--surface-3-rgb), 0.58);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.resultRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 60px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.resultRow:last-child {
+  border-bottom: none;
+}
+
+.resultItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.resultImg {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+}
+
+.resultTier {
+  color: #2f8cff;
+  font-size: 0.95rem;
+  font-weight: 900;
+}
+
+.resultLabel {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
 /* â”€â”€ Table (shared) â”€â”€ */
 .tableWrap {
   background: var(--surface);
@@ -75,8 +493,8 @@
 
 .th {
   text-align: left;
-  padding: 12px 16px;
-  font-size: 0.68rem;
+  padding: 16px 20px;
+  font-size: 0.8rem;
   font-weight: 700;
   letter-spacing: 1.5px;
   color: var(--text-muted);
@@ -87,17 +505,17 @@
 .thContent {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
 .headerImg {
-  width: 24px;
-  height: 24px;
+  width: 38px;
+  height: 38px;
   object-fit: contain;
   filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
 }
 
-.th:first-child { width: 90px; }
+.th:first-child { width: 110px; }
 
 .tr {
   border-bottom: 1px solid var(--border);
@@ -107,21 +525,21 @@
 .tr:hover { background: rgba(255,255,255,0.015); }
 
 .tdTier {
-  padding: 10px 16px;
-  font-size: 0.82rem;
+  padding: 14px 20px;
+  font-size: 0.95rem;
   font-weight: 800;
   letter-spacing: 0.5px;
-  width: 90px;
+  width: 110px;
 }
 
 .tdArtifactInfo {
-  padding: 12px 16px;
+  padding: 16px 20px;
   background: rgba(var(--surface-3-rgb), 0.42);
 }
 
 .artifactRoundImg {
-  width: 42px;
-  height: 42px;
+  width: 64px;
+  height: 64px;
   background: rgba(var(--surface-3-rgb), 0.72);
   border: 1px solid rgba(var(--primary-rgb), 0.28);
   padding: 2px;
@@ -131,11 +549,11 @@
 .artifactName {
   font-weight: 700;
   color: var(--text);
-  font-size: 0.88rem;
+  font-size: 1rem;
 }
 
 .artifactCat {
-  font-size: 0.68rem;
+  font-size: 0.8rem;
   color: var(--text-muted);
   font-weight: 600;
   letter-spacing: 1px;
@@ -149,9 +567,9 @@
   border: 1px solid var(--border);
   border-radius: 8px;
   color: var(--text);
-  font-size: 0.9rem;
+  font-size: 1rem;
   font-weight: 600;
-  padding: 10px 14px;
+  padding: 14px 18px;
   width: 100%;
   outline: none;
   transition: border-color 0.15s;
@@ -181,31 +599,31 @@
 .journalHeader {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 16px 20px;
+  gap: 16px;
+  padding: 20px 24px;
   border-bottom: 1px solid var(--border);
 }
 
 .journalIconImg {
-  width: 40px;
-  height: 40px;
+  width: 62px;
+  height: 62px;
   object-fit: contain;
   filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5));
 }
 
 .journalIcon {
-  font-size: 1.2rem;
+  font-size: 1.4rem;
   color: var(--primary);
 }
 
 .journalName {
-  font-size: 0.9rem;
+  font-size: 1rem;
   font-weight: 800;
   letter-spacing: 0.5px;
 }
 
 .journalSub {
-  font-size: 0.65rem;
+  font-size: 0.75rem;
   color: var(--text-muted);
   letter-spacing: 2px;
   margin-top: 2px;
@@ -222,9 +640,9 @@
   background: var(--surface-2);
   border: 1px solid var(--border);
   border-radius: 8px;
-  padding: 14px 16px;
+  padding: 18px 20px;
   color: var(--text);
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   width: 100%;
   outline: none;
   transition: border-color 0.15s;
@@ -288,13 +706,13 @@
 }
 
 .autocompleteTitle {
-  font-size: 0.82rem;
+  font-size: 0.9rem;
   font-weight: 800;
   color: var(--text);
 }
 
 .autocompleteSub {
-  font-size: 0.68rem;
+  font-size: 0.75rem;
   color: var(--text-muted);
   line-height: 1.35;
 }
@@ -346,6 +764,10 @@
 
 @media (max-width: 1000px) {
   .specsGrid { column-count: 1; }
+
+  .resourceGrid {
+    grid-template-columns: repeat(2, minmax(220px, 1fr));
+  }
 }
 
 .specsSubCard {
@@ -521,14 +943,49 @@
     min-width: 620px;
   }
 
+  .resourceGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .modalOverlay {
+    align-items: stretch;
+    padding: 12px;
+  }
+
+  .pricesModal {
+    max-height: calc(100vh - 24px);
+    border-radius: 12px;
+  }
+
+  .modalHeader,
+  .modalBody,
+  .modalFooter {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .resourcePicker {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .modalFooter {
+    flex-wrap: wrap;
+  }
+
+  .cancelBtn,
+  .updateDbBtn {
+    flex: 1;
+    min-width: 0;
+  }
+
   .journalHeader {
     padding: 14px 16px;
   }
 
   .artifactRoundImg,
   .journalIconImg {
-    width: 36px;
-    height: 36px;
+    width: 54px;
+    height: 54px;
   }
 
   .specsInfo {
@@ -544,6 +1001,15 @@
 }
 
 @media (max-width: 480px) {
+  .serverPicker {
+    grid-template-columns: 1fr;
+  }
+
+  .titleRow {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
   .specsInput,
   .specsInputMain {
     width: 84px;
